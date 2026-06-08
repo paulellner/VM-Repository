@@ -1,0 +1,946 @@
+{%- comment -%}
+  sections/bike-selector.liquid — VeloMatch 3-Step Bike Selector
+  Self-contained: all CSS tokens, component styles, and JS are embedded.
+  Bike catalog is the BIKES array in the <script> block — replace with your real data.
+  Add this section via Shopify Customize → Add section → "Bike Selector".
+  Move the Google Fonts <link> tags to theme.liquid for production (avoids duplicate loads).
+{%- endcomment -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── VeloMatch Design Tokens & Bike-Selector Styles ──────────────────────── */
+
+.vm-s {
+  --vm-olive:      #3D4A2F;
+  --vm-olive-deep: #2A331F;
+  --vm-moss:       #5E7142;
+  --vm-sage:       #9CA982;
+  --vm-signal:     #C9E45B;
+  --vm-ink:        #14160F;
+  --vm-bone:       #F2F0E6;
+  --vm-paper:      #FBFAF3;
+  --vm-stroke:     1.5px;
+  --vm-stroke-2:   2.5px;
+  --vm-dur:        220ms;
+  --vm-ease:       cubic-bezier(0.2, 0.7, 0.2, 1);
+  --vm-mono:       'Courier New', 'Lucida Console', monospace;
+  --vm-sans:       'Helvetica Neue', Arial, sans-serif;
+
+  background:  var(--vm-bone);
+  padding:     64px 40px;
+  font-family: var(--vm-sans);
+  color:       var(--vm-ink);
+  box-sizing:  border-box;
+}
+
+.vm-s *, .vm-s *::before, .vm-s *::after { box-sizing: inherit; }
+
+.vm-s__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── STEPPER ─────────────────────────────────────────────────────────────── */
+.vm-stepper {
+  display:    flex;
+  border:     var(--vm-stroke) solid var(--vm-ink);
+  margin-bottom: 32px;
+  overflow:   hidden;
+}
+
+.vm-step-seg {
+  flex:       1;
+  display:    flex;
+  align-items: center;
+  gap:        12px;
+  padding:    12px 16px;
+  border-right: var(--vm-stroke) solid var(--vm-ink);
+  transition: background var(--vm-dur) var(--vm-ease),
+              color      var(--vm-dur) var(--vm-ease);
+}
+.vm-step-seg:last-child { border-right: none; }
+
+.vm-step-seg[data-state="done"]   { background: var(--vm-olive);  color: var(--vm-bone); }
+.vm-step-seg[data-state="active"] { background: var(--vm-signal); color: var(--vm-ink);  }
+.vm-step-seg[data-state="idle"]   { background: transparent;      color: var(--vm-sage); }
+
+.vm-step-seg__num {
+  font-family:     var(--vm-mono);
+  font-size:       13px;
+  width:           22px;
+  height:          22px;
+  border:          1.5px solid currentColor;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+}
+
+.vm-step-seg__label {
+  font-size:       12px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.14em;
+}
+
+/* ── BREADCRUMB ──────────────────────────────────────────────────────────── */
+.vm-bc {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  margin-bottom: 32px;
+  font-size:     14px;
+  min-height:    24px;
+}
+
+.vm-bc__back {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--vm-sans);
+  font-size:   14px;
+  color:       var(--vm-ink);
+  padding:     0;
+  transition:  opacity var(--vm-dur) var(--vm-ease);
+}
+.vm-bc__back:hover { opacity: 0.55; }
+
+.vm-bc__sep           { color: var(--vm-sage); user-select: none; }
+.vm-bc__crumb         { color: var(--vm-sage); }
+.vm-bc__crumb--active { color: var(--vm-ink); font-weight: 700; }
+
+/* ── STEPS ───────────────────────────────────────────────────────────────── */
+.vm-step                   { display: none; }
+.vm-step[aria-hidden="false"] { display: block; }
+
+.vm-step__hd {
+  display:       flex;
+  align-items:   baseline;
+  gap:           16px;
+  margin-bottom: 32px;
+}
+
+.vm-step__n {
+  font-family: var(--vm-mono);
+  font-size:   72px;
+  color:       var(--vm-moss);
+  line-height: 0.92;
+  flex-shrink: 0;
+}
+
+.vm-step__h2 {
+  font-family:    var(--vm-sans);
+  font-size:      44px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.0;
+  color:          var(--vm-ink);
+  margin:         0;
+}
+
+/* ── PICK CARDS ──────────────────────────────────────────────────────────── */
+.vm-grid      { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.vm-grid--3   { grid-template-columns: repeat(3, 1fr); }
+
+.vm-pick {
+  background:   var(--vm-paper);
+  border:       var(--vm-stroke) solid var(--vm-ink);
+  border-radius: 0;
+  padding:      24px;
+  min-height:   180px;
+  display:      flex;
+  flex-direction: column;
+  cursor:       pointer;
+  text-align:   left;
+  font-family:  var(--vm-sans);
+  position:     relative;
+  transition:   transform      var(--vm-dur) var(--vm-ease),
+                box-shadow     var(--vm-dur) var(--vm-ease),
+                border-color   var(--vm-dur) var(--vm-ease),
+                background     var(--vm-dur) var(--vm-ease),
+                color          var(--vm-dur) var(--vm-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-pick:hover {
+    transform:    translate(-3px, -3px);
+    box-shadow:   6px 6px 0 var(--vm-olive);
+    border-color: var(--vm-olive);
+  }
+  .vm-pick[aria-pressed="true"] {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-ink);
+  }
+}
+
+.vm-pick[aria-pressed="true"] {
+  background:   var(--vm-olive);
+  color:        var(--vm-bone);
+  border-color: var(--vm-olive);
+}
+
+.vm-pick:focus-visible {
+  outline:        3px solid var(--vm-signal);
+  outline-offset: 2px;
+}
+
+.vm-pick__idx {
+  font-family:    var(--vm-mono);
+  font-size:      12px;
+  letter-spacing: 0.08em;
+  opacity:        0.55;
+}
+
+.vm-pick__name {
+  font-size:      28px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    0.98;
+  margin:         12px 0 8px;
+  flex:           1;
+}
+
+.vm-pick__meta {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  font-size:   13px;
+  opacity:     0.65;
+  margin-top:  auto;
+}
+
+.vm-pick__chip {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        2px 6px;
+  border:         1px solid currentColor;
+}
+
+.vm-pick__go {
+  position:  absolute;
+  bottom:    24px;
+  right:     24px;
+  font-size: 18px;
+  opacity:   0;
+  transform: translateX(-4px);
+  transition: opacity   var(--vm-dur) var(--vm-ease),
+              transform var(--vm-dur) var(--vm-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-pick:hover .vm-pick__go {
+    opacity:   1;
+    transform: translateX(0);
+  }
+}
+
+/* ── RESULT PANEL ────────────────────────────────────────────────────────── */
+.vm-result                    { display: none; flex-direction: column; border: var(--vm-stroke-2) solid var(--vm-signal); margin-top: 48px; }
+.vm-result[aria-hidden="false"] { display: flex; }
+
+.vm-result__body {
+  display: flex;
+  flex:    1;
+}
+
+/* Left column — summary */
+.vm-result__sum {
+  width:          340px;
+  flex-shrink:    0;
+  background:     var(--vm-olive);
+  color:          var(--vm-bone);
+  padding:        48px 32px;
+  display:        flex;
+  flex-direction: column;
+  gap:            20px;
+}
+
+.vm-result__sum-lbl {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-signal);
+}
+
+.vm-result__sum-brand {
+  font-size:      44px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    0.92;
+  margin:         0;
+}
+
+.vm-result__sum-model {
+  font-size:      28px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.05;
+  opacity:        0.75;
+  margin:         0;
+}
+
+.vm-result__specs {
+  list-style:  none;
+  padding:     0;
+  margin:      4px 0 0;
+  border-top:  1px solid rgba(156, 169, 130, 0.3);
+}
+
+.vm-result__spec {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  padding:         10px 0;
+  border-bottom:   1px solid rgba(156, 169, 130, 0.2);
+}
+
+.vm-result__spec-k {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity:        0.6;
+}
+
+.vm-result__spec-v {
+  font-weight: 600;
+  font-size:   13px;
+  text-align:  right;
+  max-width:   55%;
+}
+
+.vm-result__reset {
+  background:          none;
+  border:              none;
+  cursor:              pointer;
+  font-family:         var(--vm-sans);
+  font-size:           13px;
+  color:               var(--vm-sage);
+  padding:             0;
+  text-decoration:     underline;
+  text-underline-offset: 3px;
+  margin-top:          auto;
+  text-align:          left;
+  transition:          color var(--vm-dur) var(--vm-ease);
+}
+.vm-result__reset:hover { color: var(--vm-bone); }
+
+/* Right column — components */
+.vm-result__comps {
+  flex:       1;
+  background: var(--vm-bone);
+  padding:    32px;
+}
+
+.vm-result__comps-hd {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   20px;
+  padding-bottom:  16px;
+  border-bottom:   var(--vm-stroke) solid var(--vm-ink);
+}
+
+.vm-result__comps-title {
+  font-size:      16px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.vm-result__comps-chip {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        3px 8px;
+}
+
+.vm-comp-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   12px;
+}
+
+.vm-comp-card {
+  background:     var(--vm-paper);
+  border:         var(--vm-stroke) solid var(--vm-ink);
+  padding:        16px;
+  display:        flex;
+  flex-direction: column;
+  gap:            8px;
+}
+
+.vm-comp-card__idx {
+  font-family: var(--vm-mono);
+  font-size:   11px;
+  opacity:     0.5;
+}
+
+.vm-comp-card__lbl {
+  font-size:      14px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+/* Full-width CTA */
+.vm-result__cta {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             12px;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  text-decoration: none;
+  font-family:     var(--vm-sans);
+  font-size:       16px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+  padding:         24px 32px;
+  border:          none;
+  transition:      box-shadow var(--vm-dur) var(--vm-ease),
+                   transform  var(--vm-dur) var(--vm-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-result__cta:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-ink);
+  }
+  .vm-result__cta:hover .vm-cta__arr { transform: translateX(4px); }
+}
+
+.vm-cta__arr {
+  display:    inline-block;
+  transition: transform var(--vm-dur) var(--vm-ease);
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .vm-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 880px) {
+  .vm-s              { padding: 40px 20px; }
+  .vm-step__n        { font-size: 44px; }
+  .vm-step__h2       { font-size: 28px; }
+  .vm-step-seg__label { display: none; }
+  .vm-grid           { grid-template-columns: repeat(2, 1fr); }
+  .vm-grid--3        { grid-template-columns: repeat(2, 1fr); }
+  .vm-result__body   { flex-direction: column; }
+  .vm-result__sum    { width: 100%; }
+  .vm-comp-grid      { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<!-- ── SECTION MARKUP ──────────────────────────────────────────────────── -->
+<section class="vm-s" id="vm-s-{{ section.id }}">
+  <div class="vm-s__inner">
+
+    <!-- STEPPER -->
+    <div class="vm-stepper" role="list" aria-label="Auswahlschritte">
+      <div class="vm-step-seg" data-seg="1" data-state="active" role="listitem">
+        <span class="vm-step-seg__num" aria-hidden="true">1</span>
+        <span class="vm-step-seg__label">Marke</span>
+      </div>
+      <div class="vm-step-seg" data-seg="2" data-state="idle" role="listitem">
+        <span class="vm-step-seg__num" aria-hidden="true">2</span>
+        <span class="vm-step-seg__label">Modell</span>
+      </div>
+      <div class="vm-step-seg" data-seg="3" data-state="idle" role="listitem">
+        <span class="vm-step-seg__num" aria-hidden="true">3</span>
+        <span class="vm-step-seg__label">Variante</span>
+      </div>
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div class="vm-bc" aria-label="Auswahlpfad">
+      <button class="vm-bc__back" type="button" data-back hidden>← Zurück</button>
+      <span data-bc-trail></span>
+    </div>
+
+    <!-- STEP 1: Marke -->
+    <div class="vm-step" data-step="1" aria-hidden="false">
+      <div class="vm-step__hd">
+        <span class="vm-step__n" aria-hidden="true">01</span>
+        <h2 class="vm-step__h2">{{ section.settings.heading_step1 | default: 'Wähle deine Marke' }}</h2>
+      </div>
+      <div class="vm-grid" data-grid="brands" role="list" aria-label="Markenauswahl"></div>
+    </div>
+
+    <!-- STEP 2: Modell -->
+    <div class="vm-step" data-step="2" aria-hidden="true">
+      <div class="vm-step__hd">
+        <span class="vm-step__n" aria-hidden="true">02</span>
+        <h2 class="vm-step__h2">{{ section.settings.heading_step2 | default: 'Wähle dein Modell' }}</h2>
+      </div>
+      <div class="vm-grid vm-grid--3" data-grid="models" role="list" aria-label="Modellauswahl"></div>
+    </div>
+
+    <!-- STEP 3: Variante -->
+    <div class="vm-step" data-step="3" aria-hidden="true">
+      <div class="vm-step__hd">
+        <span class="vm-step__n" aria-hidden="true">03</span>
+        <h2 class="vm-step__h2">{{ section.settings.heading_step3 | default: 'Wähle deine Ausstattung' }}</h2>
+      </div>
+      <div class="vm-grid vm-grid--3" data-grid="variants" role="list" aria-label="Variantenauswahl"></div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="vm-result" aria-hidden="true" aria-live="polite" aria-label="Deine Auswahl">
+      <div class="vm-result__body">
+
+        <!-- Left: summary -->
+        <div class="vm-result__sum">
+          <span class="vm-result__sum-lbl">Deine Auswahl</span>
+          <div>
+            <p class="vm-result__sum-brand" data-r-brand></p>
+            <p class="vm-result__sum-model" data-r-model></p>
+          </div>
+          <ul class="vm-result__specs">
+            <li class="vm-result__spec">
+              <span class="vm-result__spec-k">Variante</span>
+              <span class="vm-result__spec-v" data-r-variant></span>
+            </li>
+            <li class="vm-result__spec">
+              <span class="vm-result__spec-k">Schaltgruppe</span>
+              <span class="vm-result__spec-v" data-r-schalt></span>
+            </li>
+            <li class="vm-result__spec">
+              <span class="vm-result__spec-k">Modelljahre</span>
+              <span class="vm-result__spec-v" data-r-jahre></span>
+            </li>
+          </ul>
+          <button class="vm-result__reset" type="button" data-reset>Andere Auswahl treffen</button>
+        </div>
+
+        <!-- Right: components -->
+        <div class="vm-result__comps">
+          <div class="vm-result__comps-hd">
+            <span class="vm-result__comps-title">Passende Komponenten&thinsp;&middot;&thinsp;9</span>
+            <span class="vm-result__comps-chip">Alle kompatibel</span>
+          </div>
+          <div class="vm-comp-grid" data-comp-grid></div>
+        </div>
+
+      </div>
+
+      <!-- Full-width CTA -->
+      <a class="vm-result__cta"
+         href="{{ section.settings.parts_collection_url | default: '/collections/all' }}"
+         data-cta>
+        {{ section.settings.cta_text | default: 'Passende Teile anzeigen' }}&ensp;<span class="vm-cta__arr" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── SELECTOR LOGIC ──────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── IDs / DOM ──────────────────────────────────────────────────────────── */
+  var sid   = '{{ section.id }}';
+  var root  = document.getElementById('vm-s-' + sid);
+  if (!root) return;
+
+  var $segs    = root.querySelectorAll('.vm-step-seg');
+  var $steps   = root.querySelectorAll('.vm-step');
+  var $back    = root.querySelector('[data-back]');
+  var $trail   = root.querySelector('[data-bc-trail]');
+  var $gBrands = root.querySelector('[data-grid="brands"]');
+  var $gModels = root.querySelector('[data-grid="models"]');
+  var $gVars   = root.querySelector('[data-grid="variants"]');
+  var $result  = root.querySelector('.vm-result');
+  var $reset   = root.querySelector('[data-reset]');
+  var $cta     = root.querySelector('[data-cta]');
+  var SK       = 'vm_sel_' + sid; /* localStorage key */
+
+  /* ── BIKE CATALOG ───────────────────────────────────────────────────────
+     Replace this array with your full catalog or load from assets/bikes.json.
+     Each variant's collectionTag is appended to the parts URL as:
+       ?filter.p.tag=<collectionTag>
+  ───────────────────────────────────────────────────────────────────────── */
+  var BIKES = [
+    {
+      id: 'canyon', name: 'Canyon', meta: 'Koblenz · DE', type: 'Carbon',
+      models: [
+        { id: 'aeroad-cfr', name: 'Aeroad CFR', meta: 'Aero Road', type: 'Carbon',
+          variants: [
+            { id: 'aeroad-cfr-di2',  name: 'Di2 12-fach', meta: 'Shimano Dura-Ace',  schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'aeroad-cfr-di2' },
+            { id: 'aeroad-cfr-etap', name: 'AXS 12-fach', meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2023–2025', collectionTag: 'aeroad-cfr-etap' }
+          ]
+        },
+        { id: 'ultimate-cfr', name: 'Ultimate CFR', meta: 'All-Round Road', type: 'Carbon',
+          variants: [
+            { id: 'ultimate-cfr-di2',   name: 'Di2 12-fach', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2022–2025', collectionTag: 'ultimate-cfr-di2' },
+            { id: 'ultimate-cfr-force', name: 'Force AXS',   meta: 'SRAM Force AXS',      schaltgruppe: 'SRAM Force AXS',      modelljahre: '2022–2025', collectionTag: 'ultimate-cfr-force' }
+          ]
+        },
+        { id: 'endurace-cfr', name: 'Endurace CFR', meta: 'Endurance Road', type: 'Carbon',
+          variants: [
+            { id: 'endurace-cfr-di2', name: 'Di2 12-fach', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'endurace-cfr-di2' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'trek', name: 'Trek', meta: 'Waterloo · US', type: 'Carbon',
+      models: [
+        { id: 'madone-slr', name: 'Madone SLR', meta: 'Aero Road', type: 'Carbon',
+          variants: [
+            { id: 'madone-slr-9-etap', name: 'SLR 9 AXS', meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2023–2025', collectionTag: 'madone-slr-9-etap' },
+            { id: 'madone-slr-7-di2',  name: 'SLR 7 Di2', meta: 'Shimano Dura-Ace',  schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'madone-slr-7-di2' }
+          ]
+        },
+        { id: 'emonda-slr', name: 'Émonda SLR', meta: 'Climbing Road', type: 'Carbon',
+          variants: [
+            { id: 'emonda-slr-9-etap', name: 'SLR 9 AXS', meta: 'SRAM Red AXS', schaltgruppe: 'SRAM Red AXS', modelljahre: '2022–2025', collectionTag: 'emonda-slr-9-etap' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'specialized', name: 'Specialized', meta: 'Morgan Hill · US', type: 'Carbon',
+      models: [
+        { id: 'tarmac-sl8', name: 'Tarmac SL8', meta: 'All-Round Race', type: 'Carbon',
+          variants: [
+            { id: 'tarmac-sl8-pro-etap',    name: 'Pro AXS',    meta: 'SRAM Force AXS',      schaltgruppe: 'SRAM Force AXS',      modelljahre: '2024–2025', collectionTag: 'tarmac-sl8-pro-etap' },
+            { id: 'tarmac-sl8-expert-di2',  name: 'Expert Di2', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2024–2025', collectionTag: 'tarmac-sl8-expert-di2' }
+          ]
+        },
+        { id: 'venge', name: 'Venge', meta: 'Aero Road', type: 'Carbon',
+          variants: [
+            { id: 'venge-pro-etap', name: 'Pro AXS', meta: 'SRAM Red AXS', schaltgruppe: 'SRAM Red AXS', modelljahre: '2021–2023', collectionTag: 'venge-pro-etap' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'cervelo', name: 'Cervélo', meta: 'Toronto · CA', type: 'Carbon',
+      models: [
+        { id: 's5', name: 'S5', meta: 'Aero Road', type: 'Carbon',
+          variants: [
+            { id: 's5-red-axs',       name: 'Red AXS',     meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2022–2025', collectionTag: 's5-red-axs' },
+            { id: 's5-ultegra-di2',   name: 'Ultegra Di2', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2022–2025', collectionTag: 's5-ultegra-di2' }
+          ]
+        },
+        { id: 'r5', name: 'R5', meta: 'All-Round Race', type: 'Carbon',
+          variants: [
+            { id: 'r5-dura-ace-di2', name: 'Dura-Ace Di2', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2021–2025', collectionTag: 'r5-dura-ace-di2' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'pinarello', name: 'Pinarello', meta: 'Treviso · IT', type: 'Carbon',
+      models: [
+        { id: 'dogma-f', name: 'Dogma F', meta: 'All-Round Race', type: 'Carbon',
+          variants: [
+            { id: 'dogma-f-dura-ace-di2', name: 'Dura-Ace Di2', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2022–2025', collectionTag: 'dogma-f-dura-ace-di2' },
+            { id: 'dogma-f-red-axs',      name: 'Red AXS',      meta: 'SRAM Red AXS',         schaltgruppe: 'SRAM Red AXS',         modelljahre: '2022–2025', collectionTag: 'dogma-f-red-axs' }
+          ]
+        },
+        { id: 'prince-fx', name: 'Prince FX', meta: 'Endurance Race', type: 'Carbon',
+          variants: [
+            { id: 'prince-fx-105-di2', name: '105 Di2', meta: 'Shimano 105 Di2', schaltgruppe: 'Shimano 105 Di2', modelljahre: '2023–2025', collectionTag: 'prince-fx-105-di2' }
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* Fixed component list per spec */
+  var COMPS = [
+    { n: '01', label: 'Bremsanlage' },
+    { n: '02', label: 'Innenlager' },
+    { n: '03', label: 'Kurbelgarnitur' },
+    { n: '04', label: 'Kassette' },
+    { n: '05', label: 'Laufradsatz' },
+    { n: '06', label: 'Reifen' },
+    { n: '07', label: 'Sattel' },
+    { n: '08', label: 'Sattelstütze' },
+    { n: '09', label: 'Cockpit' }
+  ];
+
+  /* ── STATE ──────────────────────────────────────────────────────────────── */
+  var S = { step: 1, brand: null, model: null, variant: null };
+
+  /* ── LOOKUPS ────────────────────────────────────────────────────────────── */
+  function findBrand(id) {
+    return BIKES.find(function (b) { return b.id === id; });
+  }
+  function findModel(bid, mid) {
+    var b = findBrand(bid);
+    return b ? b.models.find(function (m) { return m.id === mid; }) : null;
+  }
+  function findVariant(bid, mid, vid) {
+    var m = findModel(bid, mid);
+    return m ? m.variants.find(function (v) { return v.id === vid; }) : null;
+  }
+
+  /* ── HELPERS ────────────────────────────────────────────────────────────── */
+  function pad(n, total) {
+    return ('0' + n).slice(-2) + ' / ' + ('0' + total).slice(-2);
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── CARD RENDERER ──────────────────────────────────────────────────────── */
+  function renderCards(container, items, selId, onClick) {
+    container.innerHTML = '';
+    items.forEach(function (item, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vm-pick';
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('aria-pressed', item.id === selId ? 'true' : 'false');
+      btn.innerHTML =
+        '<span class="vm-pick__idx">' + pad(i + 1, items.length) + '</span>' +
+        '<span class="vm-pick__name">' + esc(item.name) + '</span>' +
+        '<div class="vm-pick__meta">' +
+          '<span>' + esc(item.meta) + '</span>' +
+          (item.type ? '<span class="vm-pick__chip">' + esc(item.type) + '</span>' : '') +
+        '</div>' +
+        '<span class="vm-pick__go" aria-hidden="true">→</span>';
+      btn.addEventListener('click', function () { onClick(item.id); });
+      container.appendChild(btn);
+    });
+  }
+
+  /* ── STEPPER ────────────────────────────────────────────────────────────── */
+  function updateStepper() {
+    $segs.forEach(function (seg) {
+      var n = parseInt(seg.dataset.seg, 10);
+      seg.dataset.state = n < S.step ? 'done' : n === S.step ? 'active' : 'idle';
+    });
+  }
+
+  /* ── BREADCRUMB ─────────────────────────────────────────────────────────── */
+  function updateBreadcrumb() {
+    var parts = [];
+    if (S.brand)   { var b = findBrand(S.brand);                  if (b) parts.push(b.name); }
+    if (S.model)   { var m = findModel(S.brand, S.model);          if (m) parts.push(m.name); }
+    if (S.variant) { var v = findVariant(S.brand, S.model, S.variant); if (v) parts.push(v.name); }
+
+    $back.hidden = parts.length === 0;
+    $trail.innerHTML = parts.map(function (p, i) {
+      var active = i === parts.length - 1;
+      return (i > 0 ? '<span class="vm-bc__sep"> › </span>' : '') +
+             '<span class="vm-bc__crumb' + (active ? ' vm-bc__crumb--active' : '') + '">' + esc(p) + '</span>';
+    }).join('');
+  }
+
+  /* ── VISIBILITY ─────────────────────────────────────────────────────────── */
+  function showStep(n) {
+    $steps.forEach(function (el) {
+      el.setAttribute('aria-hidden', parseInt(el.dataset.step, 10) === n ? 'false' : 'true');
+    });
+    $result.setAttribute('aria-hidden', n === 4 ? 'false' : 'true');
+  }
+
+  /* ── SCROLL ─────────────────────────────────────────────────────────────── */
+  function scrollToSelector() {
+    var rect = root.getBoundingClientRect();
+    var y = window.pageYOffset + rect.top - 80;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  }
+
+  /* ── GO TO STEP ─────────────────────────────────────────────────────────── */
+  function goTo(n) {
+    S.step = n;
+    showStep(n);
+    updateStepper();
+    updateBreadcrumb();
+    save();
+    if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel);
+    if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant);
+    if (n === 4) renderResult();
+  }
+
+  /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
+  function back() {
+    if      (S.step === 2) { S.model = null; S.variant = null; goTo(1); }
+    else if (S.step === 3) { S.variant = null;                 goTo(2); }
+    else if (S.step === 4) { S.variant = null;                 goTo(3); }
+    scrollToSelector();
+  }
+
+  function reset() {
+    S = { step: 1, brand: null, model: null, variant: null };
+    showStep(1);
+    updateStepper();
+    updateBreadcrumb();
+    renderCards($gBrands, BIKES, null, pickBrand);
+    clearSave();
+    scrollToSelector();
+  }
+
+  /* ── PICKERS ────────────────────────────────────────────────────────────── */
+  function pickBrand(id) {
+    S.brand = id; S.model = null; S.variant = null;
+    renderCards($gBrands, BIKES, id, pickBrand);
+    setTimeout(function () { goTo(2); scrollToSelector(); }, 160);
+  }
+
+  function pickModel(id) {
+    S.model = id; S.variant = null;
+    renderCards($gModels, findBrand(S.brand).models, id, pickModel);
+    setTimeout(function () { goTo(3); scrollToSelector(); }, 160);
+  }
+
+  function pickVariant(id) {
+    S.variant = id;
+    renderCards($gVars, findModel(S.brand, S.model).variants, id, pickVariant);
+    setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
+  }
+
+  /* ── RESULT PANEL ───────────────────────────────────────────────────────── */
+  function renderResult() {
+    var b = findBrand(S.brand);
+    var m = findModel(S.brand, S.model);
+    var v = findVariant(S.brand, S.model, S.variant);
+    if (!b || !m || !v) return;
+
+    root.querySelector('[data-r-brand]').textContent   = b.name;
+    root.querySelector('[data-r-model]').textContent   = m.name;
+    root.querySelector('[data-r-variant]').textContent = v.name;
+    root.querySelector('[data-r-schalt]').textContent  = v.schaltgruppe;
+    root.querySelector('[data-r-jahre]').textContent   = v.modelljahre;
+
+    var grid = root.querySelector('[data-comp-grid]');
+    grid.innerHTML = COMPS.map(function (c) {
+      return '<div class="vm-comp-card">' +
+        '<span class="vm-comp-card__idx">' + c.n + '</span>' +
+        '<span class="vm-comp-card__lbl">' + esc(c.label) + '</span>' +
+      '</div>';
+    }).join('');
+
+    /* Update CTA href with collection filter tag */
+    if ($cta) {
+      var base = $cta.getAttribute('href').split('?')[0];
+      $cta.setAttribute('href', base + '?filter.p.tag=' + encodeURIComponent(v.collectionTag));
+    }
+  }
+
+  /* ── PERSISTENCE (localStorage) ────────────────────────────────────────── */
+  function save() {
+    try {
+      localStorage.setItem(SK, JSON.stringify({ brand: S.brand, model: S.model, variant: S.variant }));
+    } catch (e) { /* ignore quota/private-mode errors */ }
+  }
+
+  function clearSave() {
+    try { localStorage.removeItem(SK); } catch (e) {}
+  }
+
+  function loadSaved() {
+    try {
+      var d = JSON.parse(localStorage.getItem(SK) || 'null');
+      if (!d || !d.brand) return;
+      var b = findBrand(d.brand);
+      if (!b) return;
+      S.brand = d.brand;
+      if (d.model && findModel(d.brand, d.model)) {
+        S.model = d.model;
+        if (d.variant && findVariant(d.brand, d.model, d.variant)) {
+          S.variant = d.variant;
+        }
+      }
+      var target = S.variant ? 4 : S.model ? 3 : 2;
+      renderCards($gBrands, BIKES, S.brand, pickBrand);
+      if (target >= 3) {
+        renderCards($gModels, b.models, S.model, pickModel);
+      }
+      if (target >= 4) {
+        var mm = findModel(S.brand, S.model);
+        if (mm) renderCards($gVars, mm.variants, S.variant, pickVariant);
+      }
+      goTo(target);
+    } catch (e) {}
+  }
+
+  /* ── INIT ───────────────────────────────────────────────────────────────── */
+  $back.addEventListener('click', back);
+  $reset.addEventListener('click', reset);
+  renderCards($gBrands, BIKES, null, pickBrand);
+  loadSaved();
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Bike Selector",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Schritt-Überschriften"
+    },
+    {
+      "type": "text",
+      "id": "heading_step1",
+      "label": "Schritt 1",
+      "default": "Wähle deine Marke"
+    },
+    {
+      "type": "text",
+      "id": "heading_step2",
+      "label": "Schritt 2",
+      "default": "Wähle dein Modell"
+    },
+    {
+      "type": "text",
+      "id": "heading_step3",
+      "label": "Schritt 3",
+      "default": "Wähle deine Ausstattung"
+    },
+    {
+      "type": "header",
+      "content": "Ergebnis & CTA"
+    },
+    {
+      "type": "url",
+      "id": "parts_collection_url",
+      "label": "Teile-Kollektion URL",
+      "info": "Basis-URL deiner Teile-Kollektion, z.B. /collections/teile. Der Bike-Tag wird automatisch als ?filter.p.tag=… angehängt."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "Passende Teile anzeigen"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bike Selector",
+      "category": "VeloMatch"
+    }
+  ]
+}
+{% endschema %}
