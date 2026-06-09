@@ -1,0 +1,651 @@
+<style>
+/* ── VeloMatch Collection Page ───────────────────────────────────────────── */
+
+/* Compatibility banner */
+.vm-compat {
+  background:    var(--vm-olive);
+  color:         var(--vm-bone);
+  border-bottom: var(--vm-stroke) solid var(--vm-ink);
+  padding:       20px 40px;
+}
+
+.vm-compat__inner {
+  max-width:       1200px;
+  margin:          0 auto;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             16px;
+  flex-wrap:       wrap;
+}
+
+.vm-compat__left {
+  display:     flex;
+  align-items: center;
+  gap:         16px;
+}
+
+.vm-compat__label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color:          var(--vm-signal);
+  flex-shrink:    0;
+}
+
+.vm-compat__bike {
+  font-size:   15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.vm-compat__chip {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding:        4px 10px;
+}
+
+.vm-compat__reset {
+  background:     none;
+  border:         none;
+  cursor:         pointer;
+  font-family:    var(--vm-sans);
+  font-size:      13px;
+  color:          var(--vm-sage);
+  padding:        0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition:     color 220ms ease;
+  white-space:    nowrap;
+}
+.vm-compat__reset:hover { color: var(--vm-bone); }
+
+/* "Keine Auswahl" state */
+.vm-compat--empty .vm-compat__chip { display: none; }
+
+/* Page layout */
+.vm-coll {
+  background:  var(--vm-bone);
+  min-height:  80vh;
+  padding:     48px 40px 96px;
+}
+
+.vm-coll__inner {
+  max-width: 1200px;
+  margin:    0 auto;
+}
+
+/* Page header */
+.vm-coll__hd {
+  display:       flex;
+  align-items:   baseline;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: var(--vm-stroke) solid var(--vm-ink);
+  gap:           16px;
+  flex-wrap:     wrap;
+}
+
+.vm-coll__title {
+  font-size:      32px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin:         0;
+}
+
+.vm-coll__count {
+  font-family: var(--vm-mono);
+  font-size:   13px;
+  color:       var(--vm-sage);
+}
+
+/* Category filter chips */
+.vm-cat-bar {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           8px;
+  margin-bottom: 32px;
+}
+
+.vm-cat-chip {
+  font-family:    var(--vm-sans);
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        6px 14px;
+  border:         var(--vm-stroke) solid var(--vm-ink);
+  border-radius:  999px;
+  background:     transparent;
+  color:          var(--vm-ink);
+  cursor:         pointer;
+  transition:     background 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+
+.vm-cat-chip:hover,
+.vm-cat-chip[aria-pressed="true"] {
+  background: var(--vm-signal);
+  border-color: var(--vm-signal);
+  color: var(--vm-ink);
+}
+
+/* Product grid */
+.vm-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Product card */
+.vm-product {
+  background:    var(--vm-paper);
+  border:        var(--vm-stroke) solid var(--vm-ink);
+  display:       flex;
+  flex-direction: column;
+  transition:    box-shadow 220ms ease, transform 220ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-product:hover {
+    transform:  translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--vm-olive);
+  }
+}
+
+.vm-product__link { display: block; }
+
+/* Media */
+.vm-product__media {
+  position:   relative;
+  aspect-ratio: 4 / 3;
+  background: #e5e2d6;
+  border-bottom: var(--vm-stroke) solid var(--vm-ink);
+  overflow:   hidden;
+}
+
+.vm-product__media img {
+  width:       100%;
+  height:      100%;
+  object-fit:  cover;
+  display:     block;
+  transition:  transform 400ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-product:hover .vm-product__media img { transform: scale(1.04); }
+}
+
+/* Placeholder */
+.vm-ph {
+  width:           100%;
+  height:          100%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      #ddd9ca;
+}
+
+.vm-ph__type {
+  font-family:    var(--vm-mono);
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          #8a8677;
+}
+
+/* Compatibility badge */
+.vm-product__badge {
+  position:    absolute;
+  top:         12px;
+  left:        12px;
+  font-family: var(--vm-mono);
+  font-size:   10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:     4px 8px;
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  z-index:     1;
+}
+
+.vm-product__badge--fit {
+  background: var(--vm-signal);
+  color:      var(--vm-ink);
+}
+
+.vm-product__badge--neutral {
+  background: var(--vm-bone);
+  color:      var(--vm-sage);
+  border:     1px solid var(--vm-sage);
+}
+
+.vm-product__badge-dot {
+  width:         6px;
+  height:        6px;
+  border-radius: 50%;
+  background:    var(--vm-ink);
+  flex-shrink:   0;
+}
+
+/* Favourite */
+.vm-product__fav {
+  position:   absolute;
+  top:        10px;
+  right:      10px;
+  width:      34px;
+  height:     34px;
+  background: var(--vm-paper);
+  border:     var(--vm-stroke) solid var(--vm-ink);
+  cursor:     pointer;
+  display:    flex;
+  align-items: center;
+  justify-content: center;
+  font-size:  16px;
+  line-height: 1;
+  z-index:    1;
+  transition: background 220ms ease;
+}
+
+.vm-product__fav:hover,
+.vm-product__fav.is-saved { background: var(--vm-signal); }
+
+/* Body */
+.vm-product__body {
+  padding:        20px;
+  display:        flex;
+  flex-direction: column;
+  flex:           1;
+  gap:            6px;
+}
+
+.vm-product__brand {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-sage);
+}
+
+.vm-product__name {
+  font-size:      18px;
+  font-weight:    700;
+  line-height:    1.15;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin:         0;
+}
+
+.vm-product__name a {
+  text-decoration: none;
+  color:           var(--vm-ink);
+}
+
+.vm-product__name a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.vm-product__specs {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        6px;
+  margin-top: 4px;
+}
+
+.vm-product__spec {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding:        2px 7px;
+  border:         1px solid var(--vm-ink);
+  color:          var(--vm-ink);
+  opacity:        0.65;
+}
+
+/* Footer */
+.vm-product__footer {
+  margin-top:  auto;
+  padding-top: 16px;
+  border-top:  var(--vm-stroke) solid rgba(20,22,15,0.08);
+  display:     flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.vm-product__cta {
+  background:     var(--vm-olive);
+  color:          var(--vm-bone);
+  text-decoration: none;
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        8px 16px;
+  transition:     background 220ms ease, transform 220ms ease, box-shadow 220ms ease;
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-product__cta:hover {
+    transform:  translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--vm-ink);
+  }
+}
+
+/* Empty state */
+.vm-coll__empty {
+  text-align:    center;
+  padding:       80px 20px;
+  border:        var(--vm-stroke) solid var(--vm-ink);
+  background:    var(--vm-paper);
+}
+
+.vm-coll__empty-title {
+  font-size:   28px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin:      0 0 12px;
+}
+
+.vm-coll__empty-sub {
+  color:     var(--vm-sage);
+  font-size: 15px;
+  margin:    0 0 32px;
+}
+
+.vm-coll__empty-cta {
+  display:     inline-flex;
+  align-items: center;
+  gap:         8px;
+  background:  var(--vm-signal);
+  color:       var(--vm-ink);
+  text-decoration: none;
+  font-weight: 800;
+  font-size:   13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding:     12px 24px;
+  transition:  transform 220ms ease, box-shadow 220ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-coll__empty-cta:hover {
+    transform:  translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--vm-ink);
+  }
+}
+
+/* Pagination */
+.vm-pagination {
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+  gap:             8px;
+  margin-top:      48px;
+  font-family:     var(--vm-mono);
+  font-size:       13px;
+}
+
+.vm-pagination a,
+.vm-pagination span {
+  width:       36px;
+  height:      36px;
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  border:      var(--vm-stroke) solid var(--vm-ink);
+  text-decoration: none;
+  color:       var(--vm-ink);
+  transition:  background 220ms ease;
+}
+
+.vm-pagination a:hover,
+.vm-pagination .current { background: var(--vm-signal); border-color: var(--vm-signal); }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .vm-prod-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 880px) {
+  .vm-compat  { padding: 16px 20px; }
+  .vm-coll    { padding: 32px 20px 64px; }
+  .vm-prod-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .vm-product__body { padding: 14px; }
+}
+
+@media (max-width: 560px) {
+  .vm-prod-grid { grid-template-columns: 1fr; }
+}
+
+/* Filter: hidden cards */
+.vm-product[data-hidden="true"] { display: none; }
+</style>
+
+<!-- ── COMPATIBILITY BANNER ──────────────────────────────────────────────── -->
+<div class="vm-compat vm-compat--empty" id="vm-compat-banner">
+  <div class="vm-compat__inner">
+    <div class="vm-compat__left">
+      <span class="vm-compat__label">Dein Rad</span>
+      <span class="vm-compat__bike" id="vm-compat-bike">Kein Fahrrad ausgewählt</span>
+      <span class="vm-compat__chip" id="vm-compat-chip">Alle kompatibel</span>
+    </div>
+    <button class="vm-compat__reset" id="vm-compat-reset" type="button">
+      ← Andere Auswahl treffen
+    </button>
+  </div>
+</div>
+
+<!-- ── COLLECTION PAGE ───────────────────────────────────────────────────── -->
+<div class="vm-coll">
+  <div class="vm-coll__inner">
+
+    <!-- Header -->
+    <div class="vm-coll__hd">
+      <h1 class="vm-coll__title">{{ section.settings.title | default: collection.title | default: 'Passende Teile' }}</h1>
+      <span class="vm-coll__count" id="vm-prod-count">
+        {%- if collection.products_count > 0 -%}
+          {{ collection.products_count }} {{ section.settings.products_label | default: 'Produkte' }}
+        {%- endif -%}
+      </span>
+    </div>
+
+    <!-- Category filter chips -->
+    <div class="vm-cat-bar" role="toolbar" aria-label="Kategorie filtern" id="vm-cat-bar">
+      <button class="vm-cat-chip" aria-pressed="true" data-cat="" type="button">Alle</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="bremsanlage" type="button">01 Bremsanlage</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="innenlager" type="button">02 Innenlager</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="kurbelgarnitur" type="button">03 Kurbelgarnitur</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="kassette" type="button">04 Kassette</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="laufradsatz" type="button">05 Laufradsatz</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="reifen" type="button">06 Reifen</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattel" type="button">07 Sattel</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattelstutze" type="button">08 Sattelstütze</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="cockpit" type="button">09 Cockpit</button>
+    </div>
+
+    <!-- Product grid -->
+    {%- if collection.products.size > 0 -%}
+      {%- paginate collection.products by 30 -%}
+        <div class="vm-prod-grid" id="vm-prod-grid">
+          {%- for product in collection.products -%}
+            {% render 'card-product', product: product, compatible: true %}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="vm-pagination" aria-label="Seitennavigation">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" aria-label="Zurück">←</a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span class="current" aria-current="page">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" aria-label="Weiter">→</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+
+    {%- else -%}
+      <!-- Empty state -->
+      <div class="vm-coll__empty">
+        <p class="vm-coll__empty-title">Noch keine Produkte</p>
+        <p class="vm-coll__empty-sub">
+          Füge Produkte hinzu und tagge sie mit dem passenden Fahrradvarianten-Handle,<br>
+          damit der Selektor sie hier anzeigt.
+        </p>
+        <a class="vm-coll__empty-cta" href="{{ routes.root_url }}">
+          ← Zum Bike Selector
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<!-- ── COMPATIBILITY JS ──────────────────────────────────────────────────── -->
+<script>
+(function () {
+  var SK         = 'vm_selection';
+  var banner     = document.getElementById('vm-compat-banner');
+  var bikeEl     = document.getElementById('vm-compat-bike');
+  var chipEl     = document.getElementById('vm-compat-chip');
+  var resetBtn   = document.getElementById('vm-compat-reset');
+  var catBar     = document.getElementById('vm-cat-bar');
+  var grid       = document.getElementById('vm-prod-grid');
+  var countEl    = document.getElementById('vm-prod-count');
+
+  /* ── Read saved selection ────────────────────────────────────────────── */
+  function loadSelection() {
+    try { return JSON.parse(localStorage.getItem(SK) || 'null'); }
+    catch (e) { return null; }
+  }
+
+  /* ── Bike name from URL tag param (fallback) ─────────────────────────── */
+  function tagFromURL() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get('filter.p.tag') || params.get('tag') || '';
+  }
+
+  /* ── Friendly label from collectionTag slug ──────────────────────────── */
+  function labelFromTag(tag) {
+    if (!tag) return '';
+    return tag
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+
+  /* ── Update banner ───────────────────────────────────────────────────── */
+  function updateBanner() {
+    var sel = loadSelection();
+    var tag = tagFromURL();
+
+    var hasSelection = sel && (sel.brand || sel.variant);
+    var displayName  = '';
+
+    if (sel && sel.brand) {
+      var parts = [];
+      if (sel.brand)   parts.push(capitalize(sel.brand));
+      if (sel.model)   parts.push(deSlug(sel.model));
+      if (sel.variant) parts.push(deSlug(sel.variant));
+      displayName = parts.join(' · ');
+    } else if (tag) {
+      displayName = labelFromTag(tag);
+      hasSelection = true;
+    }
+
+    if (hasSelection && displayName) {
+      banner.classList.remove('vm-compat--empty');
+      bikeEl.textContent = displayName;
+      chipEl.style.display = '';
+    } else {
+      banner.classList.add('vm-compat--empty');
+      bikeEl.textContent = 'Kein Fahrrad ausgewählt — gehe zum Bike Selector';
+      chipEl.style.display = 'none';
+    }
+  }
+
+  function capitalize(s) {
+    return (s || '').charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function deSlug(s) {
+    return (s || '').replace(/-/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  }
+
+  /* ── Reset → go to selector ──────────────────────────────────────────── */
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function () {
+      try { localStorage.removeItem(SK); } catch(e) {}
+      window.location.href = '{{ routes.root_url }}';
+    });
+  }
+
+  /* ── Category filter chips ───────────────────────────────────────────── */
+  if (catBar && grid) {
+    var chips    = catBar.querySelectorAll('.vm-cat-chip');
+    var products = grid.querySelectorAll('.vm-product');
+
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var cat = this.dataset.cat;
+
+        chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+        this.setAttribute('aria-pressed', 'true');
+
+        var visible = 0;
+        products.forEach(function (p) {
+          var type = p.dataset.productType || '';
+          var show = cat === '' || type === cat;
+          p.dataset.hidden = show ? 'false' : 'true';
+          if (show) visible++;
+        });
+
+        if (countEl) {
+          countEl.textContent = visible + ' Produkte';
+        }
+      });
+    });
+  }
+
+  updateBanner();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Passende Teile",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Seitentitel",
+      "default": "Passende Teile"
+    },
+    {
+      "type": "text",
+      "id": "products_label",
+      "label": "Produktbezeichnung (Plural)",
+      "default": "Produkte"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,80 @@
+{%- comment -%}
+  Renders a VeloMatch product card.
+  Usage: {% render 'card-product', product: product, compatible: true %}
+  compatible: true  → "Passt" (signal badge)
+  compatible: false → "Nicht geprüft" (ghost badge)
+{%- endcomment -%}
+
+{%- assign show_compatible = compatible | default: true -%}
+
+<article class="vm-product" data-product-type="{{ product.type | handleize }}">
+  <a class="vm-product__link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+
+    <!-- Media (4:3) -->
+    <div class="vm-product__media">
+      {%- if show_compatible -%}
+        <span class="vm-product__badge vm-product__badge--fit">
+          <span class="vm-product__badge-dot" aria-hidden="true"></span>Passt
+        </span>
+      {%- else -%}
+        <span class="vm-product__badge vm-product__badge--neutral">Teile</span>
+      {%- endif -%}
+
+      <button class="vm-product__fav" type="button" aria-label="Merken" onclick="event.preventDefault();this.classList.toggle('is-saved')">
+        <span aria-hidden="true">♡</span>
+      </button>
+
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 480 }}"
+          alt="{{ product.featured_image.alt | escape | default: product.title }}"
+          width="480"
+          height="360"
+          loading="lazy">
+      {%- else -%}
+        <div class="vm-ph">
+          <span class="vm-ph__type">{{ product.type | default: 'Teile' }}</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </a>
+
+  <!-- Body -->
+  <div class="vm-product__body">
+    <span class="vm-product__brand">{{ product.vendor }}</span>
+
+    <h3 class="vm-product__name">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <!-- Spec chips: show tags that are NOT collection-filter handles -->
+    {%- assign spec_tags = '' -%}
+    {%- for tag in product.tags -%}
+      {%- unless tag contains 'canyon-' or tag contains 'cube-' or tag contains 'trek-'
+               or tag contains 'specialized-' or tag contains 'bmc-' or tag contains 'cervelo-'
+               or tag contains 'colnago-' or tag contains 'pinarello-' or tag contains 'rose-'
+               or tag contains 'scott-' or tag contains 'factor-' or tag contains 'look-' -%}
+        {%- assign spec_tags = spec_tags | append: tag | append: '|' -%}
+      {%- endunless -%}
+    {%- endfor -%}
+
+    {%- if spec_tags != '' -%}
+      <div class="vm-product__specs">
+        {%- assign tag_array = spec_tags | split: '|' -%}
+        {%- for t in tag_array limit: 4 -%}
+          {%- if t != '' -%}
+            <span class="vm-product__spec">{{ t }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Footer: no price yet — CTA only -->
+    <div class="vm-product__footer">
+      <a class="vm-product__cta" href="{{ product.url }}">
+        Ansehen <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</article>

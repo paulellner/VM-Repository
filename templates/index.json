@@ -1,12 +1,18 @@
 {
   "sections": {
-    "hero": {
-      "type": "main-index",
+    "intro": {
+      "type": "vm-intro",
       "settings": {
-        "label": "Bike Selector",
-        "heading": "Die richtigen Teile für dein Rad.",
-        "subheading": "Wähle dein Fahrrad in drei Schritten — wir zeigen dir nur die Teile, die wirklich passen.",
-        "cta_text": "Jetzt Fahrrad wählen"
+        "headline": "Nur Teile, die wirklich passen.",
+        "subtext": "Wähle dein Fahrrad in drei Schritten — Marke, Modell, Ausstattung. VeloMatch zeigt dir danach ausschließlich die Komponenten, die mit deinem konkreten Aufbau kompatibel sind.",
+        "stat1_num": "12",
+        "stat1_lbl": "Marken",
+        "stat2_num": "88",
+        "stat2_lbl": "Modellreihen",
+        "stat3_num": "247",
+        "stat3_lbl": "Varianten",
+        "stat4_num": "9",
+        "stat4_lbl": "Komponenten"
       }
     },
     "selector": {
@@ -14,5 +20,5 @@
       "settings": {}
     }
   },
-  "order": ["hero", "selector"]
+  "order": ["intro", "selector"]
 }

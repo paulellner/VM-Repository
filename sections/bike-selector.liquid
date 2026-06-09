@@ -566,7 +566,7 @@
   var $result  = root.querySelector('.vm-result');
   var $reset   = root.querySelector('[data-reset]');
   var $cta     = root.querySelector('[data-cta]');
-  var SK       = 'vm_sel_' + sid; /* localStorage key */
+  var SK = 'vm_selection'; /* site-wide key — shared with collection page */
 
   /* ── BIKE CATALOG ─────────────────────────────────────────────────────────
      Generiert aus rennrad_datenbank_nur_master.xlsx
@@ -1550,7 +1550,7 @@
 
 {% schema %}
 {
-  "name": "Bike Selector",
+  "name": "VeloMatch Selector",
   "settings": [
     {
       "type": "header",
@@ -1593,7 +1593,7 @@
   ],
   "presets": [
     {
-      "name": "Bike Selector",
+      "name": "VeloMatch Selector",
       "category": "VeloMatch"
     }
   ]

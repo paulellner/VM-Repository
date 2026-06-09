@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "title": "Passende Teile",
+        "products_label": "Produkte"
+      }
+    }
+  },
+  "order": ["main"]
+}
