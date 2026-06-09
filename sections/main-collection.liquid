@@ -645,7 +645,7 @@
     if (!sel || !sel.brand || !sel.variant) return true;
     var tags = ' ' + (productEl.dataset.tags || '') + ' ';
     if (tags.indexOf(' vm-universal ') !== -1) return true;
-    var collTag = ' ' + sel.brand + '-' + sel.variant + ' ';
+    var collTag = ' ' + sel.variant + ' ';
     return tags.indexOf(collTag) !== -1;
   }
 
