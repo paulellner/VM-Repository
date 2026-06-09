@@ -441,6 +441,169 @@
   .vm-result__sum    { width: 100%; }
   .vm-comp-grid      { grid-template-columns: repeat(2, 1fr); }
 }
+/* ── Selbst zusammenstellen — special brand card ────────────────────────── */
+.vm-pick--custom {
+  border-color:   var(--vm-signal);
+  border-width:   2px;
+  background:     var(--vm-ink);
+  color:          var(--vm-bone);
+  min-height:     180px;
+}
+
+.vm-pick--custom .vm-pick__name { color: var(--vm-signal); }
+
+.vm-pick--custom .vm-pick__meta {
+  color:   var(--vm-sage);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-pick--custom:hover {
+    transform:    translate(-3px, -3px);
+    box-shadow:   6px 6px 0 var(--vm-signal);
+    border-color: var(--vm-signal);
+    background:   var(--vm-ink);
+  }
+}
+
+.vm-pick--custom[aria-pressed="true"] {
+  background:   var(--vm-olive);
+  border-color: var(--vm-signal);
+  box-shadow:   6px 6px 0 var(--vm-signal);
+}
+
+.vm-pick__icon {
+  position:  absolute;
+  bottom:    22px;
+  right:     22px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ── Custom config step ──────────────────────────────────────────────────── */
+.vm-custom-intro {
+  font-size:   16px;
+  color:       var(--vm-sage);
+  margin:      0 0 32px;
+  line-height: 1.5;
+  max-width:   680px;
+}
+
+.vm-custom-form { margin-bottom: 40px; }
+
+.vm-custom-form__grid {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   20px;
+  margin-bottom:         24px;
+}
+
+.vm-custom-field {
+  display:       flex;
+  flex-direction: column;
+  gap:           8px;
+}
+
+.vm-custom-field__lbl {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-moss);
+}
+
+.vm-custom-select {
+  font-family:   var(--vm-sans);
+  font-size:     15px;
+  color:         var(--vm-ink);
+  background:    var(--vm-paper);
+  border:        1.5px solid var(--vm-ink);
+  border-radius: 0;
+  padding:       12px 14px;
+  appearance:    none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2314160F' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:   no-repeat;
+  background-position: right 14px center;
+  cursor:        pointer;
+  transition:    border-color var(--vm-dur) var(--vm-ease);
+}
+
+.vm-custom-select:focus {
+  outline:    none;
+  box-shadow: 0 0 0 3px var(--vm-signal);
+  border-color: var(--vm-ink);
+}
+
+.vm-custom-btn {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  border:         none;
+  padding:        16px 40px;
+  font-family:    var(--vm-sans);
+  font-size:      15px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  cursor:         pointer;
+  transition:     transform var(--vm-dur) var(--vm-ease),
+                  box-shadow var(--vm-dur) var(--vm-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-custom-btn:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-ink);
+  }
+}
+
+.vm-custom-results { margin-top: 40px; }
+
+.vm-custom-results__hd {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   20px;
+  padding-bottom:  16px;
+  border-bottom:   1.5px solid var(--vm-ink);
+}
+
+.vm-custom-results__title {
+  font-size:      16px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.vm-custom-results__none {
+  padding:     40px;
+  background:  var(--vm-paper);
+  border:      1.5px solid var(--vm-ink);
+  text-align:  center;
+  font-size:   15px;
+  color:       var(--vm-sage);
+}
+
+/* ── Result card in custom results ──────────────────────────────────────── */
+.vm-pick--result .vm-pick__brand {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-moss);
+  margin-bottom:  6px;
+  display:        block;
+}
+
+.vm-pick--result .vm-pick__name { font-size: 22px; }
+.vm-pick--result .vm-pick__sub  { font-size: 12px; color: var(--vm-sage); margin-top: 4px; }
+
+@media (max-width: 880px) {
+  .vm-custom-form__grid { grid-template-columns: 1fr; }
+}
+
 </style>
 
 <!-- ── SECTION MARKUP ──────────────────────────────────────────────────── -->
@@ -494,6 +657,93 @@
         <h2 class="vm-step__h2">{{ section.settings.heading_step3 | default: 'Wähle deine Ausstattung' }}</h2>
       </div>
       <div class="vm-grid vm-grid--3" data-grid="variants" role="list" aria-label="Variantenauswahl"></div>
+    </div>
+
+    <!-- STEP CUSTOM: Selbst zusammenstellen -->
+    <div class="vm-step" data-step="custom" aria-hidden="true">
+      <div class="vm-step__hd">
+        <span class="vm-step__n" aria-hidden="true">02</span>
+        <h2 class="vm-step__h2">Konfiguriere dein Rad</h2>
+      </div>
+      <p class="vm-custom-intro">Kein Markenbike oder individuelle Komponenten? Wähle deine Spezifikationen — wir finden die passenden Varianten aus unserer Datenbank.</p>
+
+      <div class="vm-custom-form">
+        <div class="vm-custom-form__grid">
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Rahmenmaterial</span>
+            <select class="vm-custom-select" id="vm-cfg-material">
+              <option value="">Alle Materialien</option>
+              <option value="Carbon">Carbon</option>
+              <option value="Aluminium">Aluminium</option>
+              <option value="Stahl">Stahl</option>
+            </select>
+          </label>
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Schaltgruppen-Hersteller</span>
+            <select class="vm-custom-select" id="vm-cfg-hersteller">
+              <option value="">Alle Hersteller</option>
+              <option value="shimano">Shimano</option>
+              <option value="sram">SRAM</option>
+              <option value="campagnolo">Campagnolo</option>
+            </select>
+          </label>
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Schaltniveau</span>
+            <select class="vm-custom-select" id="vm-cfg-niveau">
+              <option value="">Alle Niveaus</option>
+              <option value="race">Race — Dura-Ace / Red / Super Record</option>
+              <option value="performance">Performance — Ultegra / Force</option>
+              <option value="sport">Sport — 105 / Rival</option>
+              <option value="einsteiger">Einsteiger — Tiagra / Claris / CUES</option>
+            </select>
+          </label>
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Schaltungstyp</span>
+            <select class="vm-custom-select" id="vm-cfg-antrieb">
+              <option value="">Elektronisch &amp; Mechanisch</option>
+              <option value="elektronisch">Elektronisch (Di2 / eTap AXS)</option>
+              <option value="mechanisch">Mechanisch</option>
+            </select>
+          </label>
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Bremsanlage</span>
+            <select class="vm-custom-select" id="vm-cfg-bremsen">
+              <option value="">Alle Bremsarten</option>
+              <option value="hydraulisch">Hydraulisch Scheibe</option>
+              <option value="felge">Felgenbremse</option>
+              <option value="mechanisch-scheibe">Mechanisch Scheibe</option>
+            </select>
+          </label>
+
+          <label class="vm-custom-field">
+            <span class="vm-custom-field__lbl">Ganganzahl</span>
+            <select class="vm-custom-select" id="vm-cfg-gaenge">
+              <option value="">Alle</option>
+              <option value="12">12-fach (2x12)</option>
+              <option value="11">11-fach (2x11)</option>
+              <option value="10">10-fach (2x10)</option>
+              <option value="1x">1-fach (1x)</option>
+            </select>
+          </label>
+
+        </div>
+        <button class="vm-custom-btn" type="button" id="vm-custom-search">
+          Passende Bikes suchen →
+        </button>
+      </div>
+
+      <!-- Results appear here after search -->
+      <div class="vm-custom-results" id="vm-custom-results" hidden>
+        <div class="vm-custom-results__hd">
+          <span class="vm-custom-results__title" id="vm-custom-count"></span>
+        </div>
+        <div class="vm-grid vm-grid--3" data-grid="custom-results" role="list"></div>
+      </div>
     </div>
 
     <!-- RESULT PANEL -->
@@ -1320,6 +1570,10 @@
           ]
         }
       ]
+    },
+    {
+      id: "selbst-zusammenstellen", name: "Selbst zusammenstellen", meta: "Kein Markenbike?", type: "Konfigurieren",
+      models: []
     }
   ];
 
@@ -1368,20 +1622,30 @@
   /* ── CARD RENDERER ──────────────────────────────────────────────────────── */
   function renderCards(container, items, selId, onClick) {
     container.innerHTML = '';
-    items.forEach(function (item, i) {
+    var realItems = items.filter(function(it) { return it.id !== 'selbst-zusammenstellen'; });
+    items.forEach(function (item) {
+      var isCustom = item.id === 'selbst-zusammenstellen';
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'vm-pick';
+      btn.className = 'vm-pick' + (isCustom ? ' vm-pick--custom' : '');
       btn.setAttribute('role', 'listitem');
       btn.setAttribute('aria-pressed', item.id === selId ? 'true' : 'false');
-      btn.innerHTML =
-        '<span class="vm-pick__idx">' + pad(i + 1, items.length) + '</span>' +
-        '<span class="vm-pick__name">' + esc(item.name) + '</span>' +
-        '<div class="vm-pick__meta">' +
-          '<span>' + esc(item.meta) + '</span>' +
-          (item.type ? '<span class="vm-pick__chip">' + esc(item.type) + '</span>' : '') +
-        '</div>' +
-        '<span class="vm-pick__go" aria-hidden="true">→</span>';
+      if (isCustom) {
+        btn.innerHTML =
+          '<span class="vm-pick__name">' + esc(item.name) + '</span>' +
+          '<div class="vm-pick__meta"><span>' + esc(item.meta) + '</span></div>' +
+          '<span class="vm-pick__icon" aria-hidden="true">⊕</span>';
+      } else {
+        var ri = realItems.indexOf(item) + 1;
+        btn.innerHTML =
+          '<span class="vm-pick__idx">' + pad(ri, realItems.length) + '</span>' +
+          '<span class="vm-pick__name">' + esc(item.name) + '</span>' +
+          '<div class="vm-pick__meta">' +
+            '<span>' + esc(item.meta) + '</span>' +
+            (item.type ? '<span class="vm-pick__chip">' + esc(item.type) + '</span>' : '') +
+          '</div>' +
+          '<span class="vm-pick__go" aria-hidden="true">→</span>';
+      }
       btn.addEventListener('click', function () { onClick(item.id); });
       container.appendChild(btn);
     });
@@ -1391,14 +1655,25 @@
   function updateStepper() {
     $segs.forEach(function (seg) {
       var n = parseInt(seg.dataset.seg, 10);
-      seg.dataset.state = n < S.step ? 'done' : n === S.step ? 'active' : 'idle';
+      if (S.step === 'custom') {
+        seg.dataset.state = n === 1 ? 'done' : n === 2 ? 'active' : 'idle';
+      } else {
+        seg.dataset.state = n < S.step ? 'done' : n === S.step ? 'active' : 'idle';
+      }
     });
   }
 
   /* ── BREADCRUMB ─────────────────────────────────────────────────────────── */
   function updateBreadcrumb() {
+    if (S.step === 'custom') {
+      $back.hidden = false;
+      $trail.innerHTML = '<span class="vm-bc__crumb vm-bc__crumb--active">Konfiguration</span>';
+      return;
+    }
     var parts = [];
-    if (S.brand)   { var b = findBrand(S.brand);                  if (b) parts.push(b.name); }
+    if (S.brand && S.brand !== 'selbst-zusammenstellen') {
+      var b = findBrand(S.brand); if (b) parts.push(b.name);
+    }
     if (S.model)   { var m = findModel(S.brand, S.model);          if (m) parts.push(m.name); }
     if (S.variant) { var v = findVariant(S.brand, S.model, S.variant); if (v) parts.push(v.name); }
 
@@ -1413,7 +1688,9 @@
   /* ── VISIBILITY ─────────────────────────────────────────────────────────── */
   function showStep(n) {
     $steps.forEach(function (el) {
-      el.setAttribute('aria-hidden', parseInt(el.dataset.step, 10) === n ? 'false' : 'true');
+      var step = el.dataset.step;
+      var match = (n === 'custom') ? (step === 'custom') : (parseInt(step, 10) === n);
+      el.setAttribute('aria-hidden', match ? 'false' : 'true');
     });
     $result.setAttribute('aria-hidden', n === 4 ? 'false' : 'true');
   }
@@ -1439,14 +1716,16 @@
 
   /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
   function back() {
-    if      (S.step === 2) { S.model = null; S.variant = null; goTo(1); }
-    else if (S.step === 3) { S.variant = null;                 goTo(2); }
-    else if (S.step === 4) { S.variant = null;                 goTo(3); }
+    if      (S.step === 2)        { S.model = null; S.variant = null; goTo(1); }
+    else if (S.step === 3)        { S.variant = null;                 goTo(2); }
+    else if (S.step === 4 && !S.fromCustom) { S.variant = null;      goTo(3); }
+    else if (S.step === 4 && S.fromCustom)  { S.variant = null; S.model = null; S.brand = 'selbst-zusammenstellen'; S.fromCustom = false; goToCustom(); }
+    else if (S.step === 'custom') { S.brand = null;                   goTo(1); }
     scrollToSelector();
   }
 
   function reset() {
-    S = { step: 1, brand: null, model: null, variant: null };
+    S = { step: 1, brand: null, model: null, variant: null, fromCustom: false };
     showStep(1);
     updateStepper();
     updateBreadcrumb();
@@ -1457,9 +1736,13 @@
 
   /* ── PICKERS ────────────────────────────────────────────────────────────── */
   function pickBrand(id) {
-    S.brand = id; S.model = null; S.variant = null;
+    S.brand = id; S.model = null; S.variant = null; S.fromCustom = false;
     renderCards($gBrands, BIKES, id, pickBrand);
-    setTimeout(function () { goTo(2); scrollToSelector(); }, 160);
+    if (id === 'selbst-zusammenstellen') {
+      setTimeout(function () { goToCustom(); scrollToSelector(); }, 160);
+    } else {
+      setTimeout(function () { goTo(2); scrollToSelector(); }, 160);
+    }
   }
 
   function pickModel(id) {
@@ -1472,6 +1755,111 @@
     S.variant = id;
     renderCards($gVars, findModel(S.brand, S.model).variants, id, pickVariant);
     setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
+  }
+
+  /* ── CUSTOM CONFIG ─────────────────────────────────────────────────────── */
+  var $customSearch  = document.getElementById('vm-custom-search');
+  var $customResults = document.getElementById('vm-custom-results');
+  var $customCount   = document.getElementById('vm-custom-count');
+  var $customGrid    = root.querySelector('[data-grid="custom-results"]');
+
+  function goToCustom() {
+    S.step = 'custom';
+    showStep('custom');
+    updateStepper();
+    updateBreadcrumb();
+    // reset results
+    if ($customResults) { $customResults.hidden = true; }
+  }
+
+  function filterCustom() {
+    var material   = document.getElementById('vm-cfg-material').value;
+    var hersteller = document.getElementById('vm-cfg-hersteller').value;
+    var niveau     = document.getElementById('vm-cfg-niveau').value;
+    var antrieb    = document.getElementById('vm-cfg-antrieb').value;
+    var bremsen    = document.getElementById('vm-cfg-bremsen').value;
+    var gaenge     = document.getElementById('vm-cfg-gaenge').value;
+
+    var results = [];
+    BIKES.forEach(function (brand) {
+      if (brand.id === 'selbst-zusammenstellen') return;
+      brand.models.forEach(function (model) {
+        if (material && model.type !== material) return;
+        model.variants.forEach(function (v) {
+          var sg = (v.schaltgruppe || '').toLowerCase();
+          if (hersteller === 'shimano'    && sg.indexOf('shimano') < 0) return;
+          if (hersteller === 'sram'       && sg.indexOf('sram') < 0) return;
+          if (hersteller === 'campagnolo' && sg.indexOf('campagnolo') < 0) return;
+          if (niveau === 'race'        && !sg.match(/dura.ace|(?:^|\s)red\s|super record/)) return;
+          if (niveau === 'performance' && !sg.match(/ultegra|force etap|force axs/)) return;
+          if (niveau === 'sport'       && !sg.match(/\b105\b|rival/)) return;
+          if (niveau === 'einsteiger'  && !sg.match(/tiagra|claris|cues/)) return;
+          if (antrieb === 'elektronisch' && !sg.match(/di2|etap|eps|wrl/)) return;
+          if (antrieb === 'mechanisch'   &&  sg.match(/di2|etap|eps|wrl/)) return;
+          if (gaenge === '12' && sg.indexOf('2x12') < 0) return;
+          if (gaenge === '11' && sg.indexOf('2x11') < 0 && sg.indexOf('11-fach') < 0) return;
+          if (gaenge === '10' && sg.indexOf('2x10') < 0) return;
+          if (gaenge === '1x' && sg.indexOf('1x') < 0) return;
+          /* Bremsen — all DB entries are hydraulic disc; extend if needed */
+          if (bremsen === 'felge' || bremsen === 'mechanisch-scheibe') return; /* none in DB */
+          results.push({ brand: brand, model: model, variant: v });
+        });
+      });
+    });
+    return results;
+  }
+
+  function renderCustomResults(results) {
+    if (!$customGrid || !$customResults || !$customCount) return;
+    $customResults.hidden = false;
+
+    if (results.length === 0) {
+      $customCount.textContent = 'Keine Treffer — Filter anpassen';
+      $customGrid.innerHTML = '<div class="vm-custom-results__none">Keine Bikes gefunden. Bitte die Filter anpassen.</div>';
+      return;
+    }
+
+    var shown = results.slice(0, 12);
+    $customCount.textContent = shown.length + (results.length > 12 ? ' von ' + results.length : '') + ' passende Variante' + (shown.length !== 1 ? 'n' : '');
+
+    $customGrid.innerHTML = '';
+    shown.forEach(function (r, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vm-pick vm-pick--result';
+      btn.setAttribute('role', 'listitem');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML =
+        '<span class="vm-pick__idx">' + pad(i + 1, shown.length) + '</span>' +
+        '<span class="vm-pick__brand">' + esc(r.brand.name) + '</span>' +
+        '<span class="vm-pick__name">' + esc(r.model.name) + '</span>' +
+        '<div class="vm-pick__meta">' +
+          '<span>' + esc(r.variant.name) + '</span>' +
+        '</div>' +
+        '<span class="vm-pick__sub">' + esc(r.variant.schaltgruppe) + ' · ' + esc(r.variant.modelljahre) + '</span>' +
+        '<span class="vm-pick__go" aria-hidden="true">→</span>';
+      btn.addEventListener('click', function () { pickCustomResult(r.brand.id, r.model.id, r.variant.id); });
+      $customGrid.appendChild(btn);
+    });
+  }
+
+  function pickCustomResult(brandId, modelId, variantId) {
+    S.brand = brandId;
+    S.model = modelId;
+    S.variant = variantId;
+    S.fromCustom = true;
+    /* highlight picked card */
+    var cards = $customGrid.querySelectorAll('.vm-pick');
+    cards.forEach(function(c) { c.setAttribute('aria-pressed', 'false'); });
+    /* show result */
+    setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
+  }
+
+  if ($customSearch) {
+    $customSearch.addEventListener('click', function () {
+      var results = filterCustom();
+      renderCustomResults(results);
+    });
   }
 
   /* ── RESULT PANEL ───────────────────────────────────────────────────────── */
