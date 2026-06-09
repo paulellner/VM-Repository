@@ -636,12 +636,13 @@
     });
   }
 
-  /* ── Compatibility check (brand-level) ──────────────────────────────── */
+  /* ── Compatibility check (per-variant collectionTag) ────────────────── */
   function isCompatible(productEl, sel) {
-    if (!sel || !sel.brand) return true;
-    var tags = (productEl.dataset.tags || '');
-    if (tags.indexOf('vm-bike-') === -1) return true;
-    return tags.indexOf('vm-bike-' + sel.brand) !== -1;
+    if (!sel || !sel.brand || !sel.variant) return true;
+    var tags = ' ' + (productEl.dataset.tags || '') + ' ';
+    if (tags.indexOf(' vm-universal ') !== -1) return true;
+    var collTag = ' ' + sel.brand + '-' + sel.variant + ' ';
+    return tags.indexOf(collTag) !== -1;
   }
 
   /* ── Category + compatibility filter ────────────────────────────────── */
