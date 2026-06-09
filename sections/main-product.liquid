@@ -305,11 +305,6 @@
           </div>
         {%- endif -%}
 
-        <!-- Description -->
-        {%- if product.description != blank -%}
-          <div class="vm-pdp__desc">{{ product.description }}</div>
-        {%- endif -%}
-
         <!-- Add to cart -->
         {%- if product.available -%}
           <form action="/cart/add" method="post" id="vm-pdp-form">
