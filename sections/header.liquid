@@ -110,10 +110,10 @@
 .vm-header__cart-badge:empty { display: none; }
 
 @media (max-width: 880px) {
-  .vm-header__inner    { padding: 0 20px; }
-  .vm-header__nav      { display: none; }
+  .vm-header__inner     { padding: 0 20px; }
+  .vm-header__nav       { display: none; }
   .vm-header__cart-text { display: none; }
-  .vm-header__cart     { padding: 8px 12px; }
+  .vm-header__cart      { padding: 10px 14px; min-width: 44px; justify-content: center; }
 }
 </style>
 
@@ -139,12 +139,12 @@
 
     <a class="vm-header__cart" href="{{ routes.cart_url }}" aria-label="Warenkorb">
       <span class="vm-header__cart-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="square" stroke-linejoin="miter">
-          <path d="M6 2H3L1 8v13h22V8L21 2h-3"/>
-          <rect x="6" y="2" width="12" height="6"/>
-          <path d="M9 14a3 3 0 006 0"/>
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/>
+          <circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
         </svg>
         <span class="vm-header__cart-badge" id="vm-cart-count">
           {%- if cart.item_count > 0 -%}{{ cart.item_count }}{%- endif -%}
