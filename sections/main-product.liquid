@@ -1,0 +1,388 @@
+<style>
+/* ── main-product ─────────────────────────────────────────────────────────── */
+.vm-pdp {
+  background:  var(--vm-bone);
+  padding:     0 40px 80px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color:       var(--vm-ink);
+}
+.vm-pdp__inner { max-width: 1200px; margin: 0 auto; }
+
+/* Breadcrumb */
+.vm-pdp__crumb {
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  padding:        20px 0;
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-sage);
+  border-bottom:  1px solid rgba(61,74,47,0.15);
+  margin-bottom:  40px;
+}
+.vm-pdp__crumb a { color: var(--vm-sage); text-decoration: none; }
+.vm-pdp__crumb a:hover { color: var(--vm-ink); }
+.vm-pdp__crumb-sep { opacity: 0.45; }
+
+/* 2-col layout */
+.vm-pdp__layout {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   64px;
+  align-items:           start;
+}
+
+/* Image */
+.vm-pdp__media {
+  aspect-ratio:    4/3;
+  background:      var(--vm-paper);
+  border:          1.5px solid var(--vm-ink);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  overflow:        hidden;
+  position:        relative;
+}
+.vm-pdp__media img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 24px;
+}
+.vm-pdp__ph {
+  text-align:     center;
+  font-size:      13px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-sage);
+}
+.vm-pdp__ph span { display: block; font-size: 48px; opacity: 0.15; margin-bottom: 8px; }
+
+/* Info */
+.vm-pdp__kat {
+  display:        inline-block;
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border:         1px solid var(--vm-moss);
+  color:          var(--vm-moss);
+  padding:        3px 9px;
+  margin-bottom:  16px;
+}
+.vm-pdp__vendor {
+  font-size:      13px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color:          var(--vm-sage);
+  margin-bottom:  8px;
+}
+.vm-pdp__title {
+  font-size:      clamp(20px, 2.5vw, 32px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.0;
+  margin:         0 0 24px;
+}
+.vm-pdp__price {
+  font-family:  'Courier New', monospace;
+  font-size:    36px;
+  font-weight:  400;
+  color:        var(--vm-signal);
+  margin-bottom: 28px;
+  letter-spacing: -0.02em;
+  line-height:  1;
+}
+.vm-pdp__price small {
+  font-size:   13px;
+  color:       var(--vm-sage);
+  margin-left: 8px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Compatibility */
+.vm-pdp__compat-label {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-sage);
+  margin-bottom:  10px;
+}
+.vm-pdp__compat-chips {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           8px;
+  margin-bottom: 28px;
+}
+.vm-pdp__chip {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border:         1.5px solid var(--vm-sage);
+  color:          var(--vm-sage);
+  padding:        4px 10px;
+}
+
+/* Description */
+.vm-pdp__desc {
+  font-size:    15px;
+  line-height:  1.65;
+  color:        var(--vm-ink);
+  margin-bottom: 32px;
+  border-top:   1px solid rgba(61,74,47,0.15);
+  padding-top:  24px;
+}
+.vm-pdp__desc p  { margin: 0 0 10px; }
+.vm-pdp__desc ul { padding-left: 20px; margin: 0 0 10px; }
+.vm-pdp__desc li { margin-bottom: 5px; }
+
+/* Add to cart */
+.vm-pdp__qty-wrap {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  margin-bottom: 14px;
+}
+.vm-pdp__qty-label {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-sage);
+}
+.vm-pdp__qty {
+  width:       68px;
+  height:      44px;
+  border:      1.5px solid var(--vm-ink);
+  background:  var(--vm-paper);
+  font-size:   20px;
+  text-align:  center;
+  font-family: 'Courier New', monospace;
+  color:       var(--vm-ink);
+  -moz-appearance: textfield;
+}
+.vm-pdp__qty::-webkit-inner-spin-button { -webkit-appearance: none; }
+.vm-pdp__qty:focus { outline: 2px solid var(--vm-signal); }
+
+.vm-pdp__add {
+  display:        block;
+  width:          100%;
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  border:         none;
+  padding:        17px 24px;
+  font-family:    'Helvetica Neue', Arial, sans-serif;
+  font-size:      14px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor:         pointer;
+  text-align:     center;
+  transition:     transform 220ms ease, box-shadow 220ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vm-pdp__add:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-olive);
+  }
+}
+.vm-pdp__add:disabled { opacity: 0.6; cursor: default; transform: none; box-shadow: none; }
+
+.vm-pdp__unavail {
+  text-align:     center;
+  padding:        16px;
+  border:         1.5px solid var(--vm-sage);
+  color:          var(--vm-sage);
+  font-size:      13px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vm-pdp__back {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            8px;
+  margin-top:     20px;
+  color:          var(--vm-sage);
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+.vm-pdp__back:hover { color: var(--vm-ink); }
+
+@media (max-width: 880px) {
+  .vm-pdp          { padding: 0 20px 48px; }
+  .vm-pdp__layout  { grid-template-columns: 1fr; gap: 32px; }
+}
+</style>
+
+<div class="vm-pdp">
+  <div class="vm-pdp__inner">
+
+    <nav class="vm-pdp__crumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">velomatch.</a>
+      <span class="vm-pdp__crumb-sep" aria-hidden="true">→</span>
+      <a href="{{ routes.collections_url }}">Teile</a>
+      <span class="vm-pdp__crumb-sep" aria-hidden="true">→</span>
+      <span>{{ product.type }}</span>
+    </nav>
+
+    <div class="vm-pdp__layout">
+
+      <!-- Media -->
+      <div class="vm-pdp__media">
+        {%- if product.featured_image -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 800 }}"
+            alt="{{ product.featured_image.alt | escape | default: product.title }}"
+            width="800" height="600" loading="eager">
+        {%- else -%}
+          <div class="vm-pdp__ph">
+            <span aria-hidden="true">{{ product.type | upcase | slice: 0, 2 }}</span>
+            {{ product.type | default: 'Teile' }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Info -->
+      <div class="vm-pdp__info">
+
+        {%- if product.type != blank -%}
+          <span class="vm-pdp__kat">{{ product.type }}</span>
+        {%- endif -%}
+
+        <div class="vm-pdp__vendor">{{ product.vendor }}</div>
+        <h1 class="vm-pdp__title">{{ product.title }}</h1>
+
+        <div class="vm-pdp__price">
+          {{ product.price | money }}
+          <small>UVP inkl. MwSt.</small>
+        </div>
+
+        <!-- Compatibility chips from vm-* tags -->
+        {%- assign has_compat = false -%}
+        {%- for tag in product.tags -%}
+          {%- if tag contains 'vm-' and tag != 'vm-universal' -%}
+            {%- unless tag contains 'vm-kat-' or tag contains '-alle' -%}
+              {%- assign has_compat = true -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if has_compat or product.tags contains 'vm-universal' -%}
+          <p class="vm-pdp__compat-label">Kompatibilität</p>
+          <div class="vm-pdp__compat-chips">
+            {%- if product.tags contains 'vm-universal' -%}
+              <span class="vm-pdp__chip">Universal — alle Räder</span>
+            {%- endif -%}
+            {%- for tag in product.tags -%}
+              {%- if tag contains 'vm-kat-' or tag contains '-alle' or tag == 'vm-universal' -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- if tag contains 'vm-groupset-' -%}
+                <span class="vm-pdp__chip">Schaltgruppe: {{ tag | remove: 'vm-groupset-' | capitalize }}</span>
+              {%- elsif tag contains 'vm-speed-' -%}
+                <span class="vm-pdp__chip">{{ tag | remove: 'vm-speed-' }}-fach</span>
+              {%- elsif tag contains 'vm-bb-' -%}
+                <span class="vm-pdp__chip">{{ tag | remove: 'vm-bb-' | upcase }}</span>
+              {%- elsif tag contains 'vm-brake-' -%}
+                <span class="vm-pdp__chip">{{ tag | remove: 'vm-brake-' | replace: '-', ' ' | capitalize }}</span>
+              {%- elsif tag contains 'vm-bike-' -%}
+                <span class="vm-pdp__chip">Nur: {{ tag | remove: 'vm-bike-' | capitalize }}</span>
+              {%- elsif tag contains 'vm-seatpost-' -%}
+                <span class="vm-pdp__chip">{{ tag | remove: 'vm-seatpost-' | replace: '-', ' ' | capitalize }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <!-- Description -->
+        {%- if product.description != blank -%}
+          <div class="vm-pdp__desc">{{ product.description }}</div>
+        {%- endif -%}
+
+        <!-- Add to cart -->
+        {%- if product.available -%}
+          <form action="/cart/add" method="post" id="vm-pdp-form">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <div class="vm-pdp__qty-wrap">
+              <span class="vm-pdp__qty-label">Menge</span>
+              <input class="vm-pdp__qty" type="number" name="quantity"
+                value="1" min="1" max="10" aria-label="Menge">
+            </div>
+            <button class="vm-pdp__add" type="submit" name="add"
+              data-default-text="Zum Warenkorb hinzufügen +">
+              Zum Warenkorb hinzufügen +
+            </button>
+          </form>
+        {%- else -%}
+          <div class="vm-pdp__unavail">Derzeit nicht verfügbar</div>
+        {%- endif -%}
+
+        <a class="vm-pdp__back" href="javascript:history.back()">← Zurück</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById('vm-pdp-form');
+  if (!form) return;
+  var btn = form.querySelector('.vm-pdp__add');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = '…';
+    var id  = form.querySelector('[name="id"]').value;
+    var qty = parseInt(form.querySelector('[name="quantity"]').value) || 1;
+
+    fetch('/cart/add.js', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ id: parseInt(id), quantity: qty })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function () {
+      btn.textContent = '✓ Im Warenkorb';
+      refreshCartCount();
+      setTimeout(function () {
+        btn.textContent = btn.dataset.defaultText;
+        btn.disabled = false;
+      }, 2500);
+    })
+    .catch(function () {
+      btn.textContent = btn.dataset.defaultText;
+      btn.disabled = false;
+    });
+  });
+
+  function refreshCartCount() {
+    fetch('/cart.js')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var el = document.getElementById('vm-cart-count');
+        if (el) el.textContent = d.item_count > 0 ? '(' + d.item_count + ')' : '';
+      });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Produktseite",
+  "settings": [],
+  "presets": [{ "name": "Produktseite", "category": "VeloMatch" }]
+}
+{% endschema %}

@@ -1,0 +1,422 @@
+<style>
+/* ── main-cart ────────────────────────────────────────────────────────────── */
+.vm-cart {
+  background:  var(--vm-bone);
+  padding:     48px 40px 80px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color:       var(--vm-ink);
+  min-height:  60vh;
+}
+.vm-cart__inner { max-width: 1200px; margin: 0 auto; }
+
+.vm-cart__heading {
+  font-size:      clamp(28px, 4vw, 48px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  margin:         0 0 40px;
+  display:        flex;
+  align-items:    baseline;
+  gap:            16px;
+}
+.vm-cart__count {
+  font-size:   0.45em;
+  color:       var(--vm-signal);
+  font-family: 'Courier New', monospace;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Empty */
+.vm-cart__empty {
+  text-align:  center;
+  padding:     96px 0;
+}
+.vm-cart__empty-glyph {
+  display:      block;
+  font-size:    56px;
+  opacity:      0.15;
+  margin-bottom: 20px;
+  font-family:  'Courier New', monospace;
+}
+.vm-cart__empty p {
+  font-size:     16px;
+  color:         var(--vm-sage);
+  margin-bottom: 28px;
+}
+.vm-cart__empty-cta {
+  display:        inline-block;
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  padding:        14px 28px;
+  font-weight:    800;
+  font-size:      13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition:     transform 220ms ease, box-shadow 220ms ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vm-cart__empty-cta:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--vm-olive); }
+}
+
+/* 2-col layout */
+.vm-cart__layout {
+  display:               grid;
+  grid-template-columns: 1fr 360px;
+  gap:                   48px;
+  align-items:           start;
+}
+
+/* Item */
+.vm-cart__item {
+  display:       grid;
+  grid-template-columns: 96px 1fr auto;
+  gap:           20px;
+  align-items:   start;
+  padding:       24px 0;
+  border-bottom: 1px solid rgba(61,74,47,0.15);
+}
+.vm-cart__item:first-child { border-top: 1px solid rgba(61,74,47,0.15); }
+
+.vm-cart__item-img {
+  width:      96px;
+  height:     72px;
+  border:     1.5px solid var(--vm-ink);
+  object-fit: contain;
+  background: var(--vm-paper);
+  padding:    6px;
+  display:    block;
+}
+.vm-cart__item-ph {
+  width:           96px;
+  height:          72px;
+  border:          1.5px solid var(--vm-ink);
+  background:      var(--vm-paper);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     'Courier New', monospace;
+  font-size:       10px;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-sage);
+}
+
+.vm-cart__item-vendor {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-sage);
+  margin-bottom:  4px;
+}
+.vm-cart__item-title {
+  font-size:       15px;
+  font-weight:     700;
+  color:           var(--vm-ink);
+  text-decoration: none;
+  display:         block;
+  margin-bottom:   12px;
+  line-height:     1.25;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+}
+.vm-cart__item-title:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.vm-cart__qty-row {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+.vm-cart__qty-btn {
+  width:           30px;
+  height:          30px;
+  border:          1.5px solid var(--vm-ink);
+  background:      none;
+  cursor:          pointer;
+  font-size:       18px;
+  line-height:     1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  color:           var(--vm-ink);
+  transition:      background 180ms ease;
+}
+.vm-cart__qty-btn:hover { background: var(--vm-ink); color: var(--vm-bone); }
+.vm-cart__qty-input {
+  width:       44px;
+  height:      30px;
+  border:      1.5px solid var(--vm-ink);
+  background:  var(--vm-paper);
+  font-family: 'Courier New', monospace;
+  font-size:   16px;
+  text-align:  center;
+  color:       var(--vm-ink);
+  -moz-appearance: textfield;
+}
+.vm-cart__qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.vm-cart__remove {
+  display:        block;
+  margin-top:     8px;
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color:          var(--vm-sage);
+  text-decoration: none;
+  cursor:         pointer;
+  background:     none;
+  border:         none;
+  padding:        0;
+}
+.vm-cart__remove:hover { color: var(--vm-ink); }
+
+.vm-cart__item-price {
+  font-family: 'Courier New', monospace;
+  font-size:   20px;
+  text-align:  right;
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+/* Summary */
+.vm-cart__summary {
+  border:     2.5px solid var(--vm-ink);
+  padding:    28px;
+  background: var(--vm-paper);
+  position:   sticky;
+  top:        88px;
+}
+.vm-cart__summary-heading {
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-sage);
+  margin-bottom:  20px;
+}
+.vm-cart__summary-row {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  padding:         10px 0;
+  border-top:      1px solid rgba(61,74,47,0.12);
+  font-size:       13px;
+}
+.vm-cart__summary-row span:last-child {
+  font-family: 'Courier New', monospace;
+}
+.vm-cart__summary-total {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  padding:         16px 0 20px;
+  border-top:      2px solid var(--vm-ink);
+  margin-top:      6px;
+  font-weight:     800;
+  font-size:       18px;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+}
+.vm-cart__summary-total span:last-child {
+  font-family: 'Courier New', monospace;
+  color:       var(--vm-signal);
+}
+
+.vm-cart__checkout {
+  display:        block;
+  width:          100%;
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  border:         none;
+  padding:        18px 24px;
+  font-family:    'Helvetica Neue', Arial, sans-serif;
+  font-size:      14px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor:         pointer;
+  text-align:     center;
+  text-decoration: none;
+  transition:     transform 220ms ease, box-shadow 220ms ease;
+  box-sizing:     border-box;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vm-cart__checkout:hover { transform: translate(-3px,-3px); box-shadow: 6px 6px 0 var(--vm-olive); }
+}
+
+.vm-cart__update {
+  display:     block;
+  width:       100%;
+  background:  none;
+  border:      1.5px solid var(--vm-ink);
+  color:       var(--vm-ink);
+  padding:     12px;
+  font-size:   12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor:      pointer;
+  margin-top:  10px;
+  transition:  background 180ms ease;
+  box-sizing:  border-box;
+}
+.vm-cart__update:hover { background: var(--vm-ink); color: var(--vm-bone); }
+
+.vm-cart__note {
+  font-size:   12px;
+  color:       var(--vm-sage);
+  text-align:  center;
+  margin-top:  14px;
+  line-height: 1.5;
+}
+.vm-cart__continue {
+  display:        block;
+  text-align:     center;
+  margin-top:     14px;
+  color:          var(--vm-sage);
+  font-size:      12px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+.vm-cart__continue:hover { color: var(--vm-ink); }
+
+@media (max-width: 880px) {
+  .vm-cart          { padding: 32px 20px 48px; }
+  .vm-cart__layout  { grid-template-columns: 1fr; }
+  .vm-cart__summary { position: static; }
+  .vm-cart__item    { grid-template-columns: 72px 1fr auto; gap: 14px; }
+}
+</style>
+
+<div class="vm-cart">
+  <div class="vm-cart__inner">
+
+    <h1 class="vm-cart__heading">
+      Warenkorb
+      {%- if cart.item_count > 0 -%}
+        <span class="vm-cart__count">{{ cart.item_count }}</span>
+      {%- endif -%}
+    </h1>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="vm-cart__empty">
+        <span class="vm-cart__empty-glyph" aria-hidden="true">◯</span>
+        <p>Dein Warenkorb ist leer.</p>
+        <a class="vm-cart__empty-cta" href="{{ routes.root_url }}">Teile finden →</a>
+      </div>
+
+    {%- else -%}
+      <form action="/cart" method="post" id="vm-cart-form">
+        <div class="vm-cart__layout">
+
+          <!-- Items -->
+          <div class="vm-cart__items">
+            {%- for item in cart.items -%}
+              <div class="vm-cart__item">
+
+                {%- if item.image -%}
+                  <img class="vm-cart__item-img"
+                    src="{{ item.image | image_url: width: 192 }}"
+                    alt="{{ item.image.alt | escape | default: item.title }}"
+                    width="96" height="72" loading="lazy">
+                {%- else -%}
+                  <div class="vm-cart__item-ph">{{ item.product.type | truncate: 6, '' }}</div>
+                {%- endif -%}
+
+                <div>
+                  <div class="vm-cart__item-vendor">{{ item.vendor }}</div>
+                  <a class="vm-cart__item-title" href="{{ item.url }}">{{ item.title }}</a>
+                  <div class="vm-cart__qty-row">
+                    <button type="button" class="vm-cart__qty-btn vm-qty-minus"
+                      data-key="{{ item.key }}" aria-label="Weniger">−</button>
+                    <input class="vm-cart__qty-input"
+                      type="number"
+                      name="updates[{{ item.key }}]"
+                      id="qty-{{ forloop.index }}"
+                      value="{{ item.quantity }}"
+                      min="0" max="10"
+                      aria-label="Menge für {{ item.title }}">
+                    <button type="button" class="vm-cart__qty-btn vm-qty-plus"
+                      data-key="{{ item.key }}" aria-label="Mehr">+</button>
+                  </div>
+                  <a class="vm-cart__remove"
+                    href="{{ routes.cart_change_url }}?id={{ item.key }}&quantity=0">
+                    Entfernen
+                  </a>
+                </div>
+
+                <div class="vm-cart__item-price">{{ item.line_price | money }}</div>
+
+              </div>
+            {%- endfor -%}
+          </div>
+
+          <!-- Summary -->
+          <aside class="vm-cart__summary" aria-label="Bestellübersicht">
+            <div class="vm-cart__summary-heading">Bestellübersicht</div>
+
+            {%- for item in cart.items -%}
+              <div class="vm-cart__summary-row">
+                <span>{{ item.title | truncate: 28 }}</span>
+                <span>{{ item.line_price | money }}</span>
+              </div>
+            {%- endfor -%}
+
+            <div class="vm-cart__summary-total">
+              <span>Gesamt</span>
+              <span>{{ cart.total_price | money }}</span>
+            </div>
+
+            <a class="vm-cart__checkout" href="/checkout">Zur Kasse →</a>
+
+            <button class="vm-cart__update" type="submit" name="update">
+              Aktualisieren
+            </button>
+
+            <p class="vm-cart__note">
+              Versand &amp; Steuern werden beim Checkout berechnet.
+            </p>
+
+            <a class="vm-cart__continue" href="{{ routes.root_url }}">
+              ← Weiter einkaufen
+            </a>
+          </aside>
+
+        </div>
+      </form>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById('vm-cart-form');
+  if (!form) return;
+
+  /* +/- buttons update the number input */
+  form.querySelectorAll('.vm-qty-minus, .vm-qty-plus').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var key   = this.dataset.key;
+      var input = form.querySelector('input[name="updates[' + key + ']"]');
+      if (!input) return;
+      var delta = this.classList.contains('vm-qty-plus') ? 1 : -1;
+      var newVal = Math.max(0, parseInt(input.value || 0) + delta);
+      input.value = newVal;
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Warenkorb",
+  "settings": [],
+  "presets": [{ "name": "Warenkorb", "category": "VeloMatch" }]
+}
+{% endschema %}

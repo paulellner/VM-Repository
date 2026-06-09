@@ -73,8 +73,15 @@
       </div>
     {%- endif -%}
 
-    <!-- Footer: no price yet — CTA only -->
+    <!-- Footer: CTA + Add to Cart (shown when bike is selected) -->
     <div class="vm-product__footer">
+      <form class="vm-product__cart-form" action="/cart/add" method="post">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="button" class="vm-product__add"
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+          + Warenkorb
+        </button>
+      </form>
       <a class="vm-product__cta" href="{{ product.url }}">
         Ansehen <span aria-hidden="true">→</span>
       </a>

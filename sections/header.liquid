@@ -110,9 +110,9 @@
 
     <a class="vm-header__cart" href="{{ routes.cart_url }}">
       Warenkorb
-      {%- if cart.item_count > 0 -%}
-        <span class="vm-header__cart-count">({{ cart.item_count }})</span>
-      {%- endif -%}
+      <span class="vm-header__cart-count" id="vm-cart-count">
+        {%- if cart.item_count > 0 -%}({{ cart.item_count }}){%- endif -%}
+      </span>
     </a>
 
   </div>
