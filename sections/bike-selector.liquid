@@ -574,94 +574,755 @@
   var $cta     = root.querySelector('[data-cta]');
   var SK       = 'vm_sel_' + sid; /* localStorage key */
 
-  /* ── BIKE CATALOG ───────────────────────────────────────────────────────
-     Replace this array with your full catalog or load from assets/bikes.json.
-     Each variant's collectionTag is appended to the parts URL as:
-       ?filter.p.tag=<collectionTag>
-  ───────────────────────────────────────────────────────────────────────── */
+  /* ── BIKE CATALOG ─────────────────────────────────────────────────────────
+     Generiert aus rennrad_datenbank_nur_master.xlsx
+     12 Marken · 88 Modellreihen · 247 Varianten
+     collectionTag wird als ?filter.p.tag=<tag> an die Teile-URL angehängt.
+  ─────────────────────────────────────────────────────────────────────────── */
   var BIKES = [
     {
-      id: 'canyon', name: 'Canyon', meta: 'Koblenz · DE', type: 'Carbon',
+      id: "cube", name: "Cube", meta: "Waldershof \u00b7 DE", type: "Carbon",
       models: [
-        { id: 'aeroad-cfr', name: 'Aeroad CFR', meta: 'Aero Road', type: 'Carbon',
+        {
+          id: "cube-litening-air-c-68x", name: "Litening Air C:68X", meta: "Leichtgewicht Race", type: "Carbon",
           variants: [
-            { id: 'aeroad-cfr-di2',  name: 'Di2 12-fach', meta: 'Shimano Dura-Ace',  schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'aeroad-cfr-di2' },
-            { id: 'aeroad-cfr-etap', name: 'AXS 12-fach', meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2023–2025', collectionTag: 'aeroad-cfr-etap' }
+            { id: "cube-litening-air-c-68x-slt", name: "Litening Air C:68X SLT", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024\u20132026", collectionTag: "cube-litening-air-c-68x-slt" },
+            { id: "cube-litening-air-c-68x-slx", name: "Litening Air C:68X SLX", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "cube-litening-air-c-68x-slx" },
+            { id: "cube-litening-air-c-68x-race", name: "Litening Air C:68X Race", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "cube-litening-air-c-68x-race" },
+            { id: "cube-litening-air-c-68x-pro", name: "Litening Air C:68X Pro", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "cube-litening-air-c-68x-pro" }
           ]
         },
-        { id: 'ultimate-cfr', name: 'Ultimate CFR', meta: 'All-Round Road', type: 'Carbon',
+        {
+          id: "cube-litening-aero-c-68x", name: "Litening Aero C:68X", meta: "Aero Race", type: "Carbon",
           variants: [
-            { id: 'ultimate-cfr-di2',   name: 'Di2 12-fach', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2022–2025', collectionTag: 'ultimate-cfr-di2' },
-            { id: 'ultimate-cfr-force', name: 'Force AXS',   meta: 'SRAM Force AXS',      schaltgruppe: 'SRAM Force AXS',      modelljahre: '2022–2025', collectionTag: 'ultimate-cfr-force' }
+            { id: "cube-litening-aero-c-68x-slt", name: "Litening Aero C:68X SLT", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023\u20132026", collectionTag: "cube-litening-aero-c-68x-slt" },
+            { id: "cube-litening-aero-c-68x-slx", name: "Litening Aero C:68X SLX", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "cube-litening-aero-c-68x-slx" },
+            { id: "cube-litening-aero-c-68x-race", name: "Litening Aero C:68X Race", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025\u20132026", collectionTag: "cube-litening-aero-c-68x-race" },
+            { id: "cube-litening-aero-c-68x-pro", name: "Litening Aero C:68X Pro", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "cube-litening-aero-c-68x-pro" }
           ]
         },
-        { id: 'endurace-cfr', name: 'Endurace CFR', meta: 'Endurance Road', type: 'Carbon',
+        {
+          id: "cube-agree-c-62", name: "Agree C:62", meta: "Aero Endurance", type: "Carbon",
           variants: [
-            { id: 'endurace-cfr-di2', name: 'Di2 12-fach', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'endurace-cfr-di2' }
+            { id: "cube-agree-c-62-slt", name: "Agree C:62 SLT", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024\u20132026", collectionTag: "cube-agree-c-62-slt" },
+            { id: "cube-agree-c-62-slx", name: "Agree C:62 SLX", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2023\u20132026", collectionTag: "cube-agree-c-62-slx" },
+            { id: "cube-agree-c-62-race", name: "Agree C:62 Race", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "cube-agree-c-62-race" },
+            { id: "cube-agree-c-62-pro", name: "Agree C:62 Pro", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "cube-agree-c-62-pro" },
+            { id: "cube-agree-c-62-one", name: "Agree C:62 ONE", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "cube-agree-c-62-one" }
+          ]
+        },
+        {
+          id: "cube-attain-c-62", name: "Attain C:62", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "cube-attain-c-62-slt", name: "Attain C:62 SLT", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025\u20132026", collectionTag: "cube-attain-c-62-slt" },
+            { id: "cube-attain-c-62-slx", name: "Attain C:62 SLX", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "cube-attain-c-62-slx" },
+            { id: "cube-attain-c-62-race", name: "Attain C:62 Race", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "cube-attain-c-62-race" }
+          ]
+        },
+        {
+          id: "cube-attain-hpa", name: "Attain HPA", meta: "Endurance (Einstieg)", type: "Aluminium",
+          variants: [
+            { id: "cube-attain-slx", name: "Attain SLX", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2025\u20132026", collectionTag: "cube-attain-slx" },
+            { id: "cube-attain-race", name: "Attain Race", meta: "Shimano Tiagra 4700 2x10", schaltgruppe: "Shimano Tiagra 4700 2x10", modelljahre: "2025\u20132026", collectionTag: "cube-attain-race" },
+            { id: "cube-attain-pro", name: "Attain Pro", meta: "Shimano Claris R2000 2x8", schaltgruppe: "Shimano Claris R2000 2x8", modelljahre: "2025\u20132026", collectionTag: "cube-attain-pro" }
           ]
         }
       ]
     },
     {
-      id: 'trek', name: 'Trek', meta: 'Waterloo · US', type: 'Carbon',
+      id: "rose", name: "Rose", meta: "Bocholt \u00b7 DE", type: "Carbon",
       models: [
-        { id: 'madone-slr', name: 'Madone SLR', meta: 'Aero Road', type: 'Carbon',
+        {
+          id: "rose-shave-ffx", name: "Shave FFX", meta: "Aero Race", type: "Carbon",
           variants: [
-            { id: 'madone-slr-9-etap', name: 'SLR 9 AXS', meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2023–2025', collectionTag: 'madone-slr-9-etap' },
-            { id: 'madone-slr-7-di2',  name: 'SLR 7 Di2', meta: 'Shimano Dura-Ace',  schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2023–2025', collectionTag: 'madone-slr-7-di2' }
+            { id: "rose-shave-ffx-red-axs", name: "Shave FFX Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2026", collectionTag: "rose-shave-ffx-red-axs" },
+            { id: "rose-shave-ffx-dura-ace-di2", name: "Shave FFX Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "rose-shave-ffx-dura-ace-di2" }
           ]
         },
-        { id: 'emonda-slr', name: 'Émonda SLR', meta: 'Climbing Road', type: 'Carbon',
+        {
+          id: "rose-shave-ff", name: "Shave FF", meta: "Race", type: "Carbon",
           variants: [
-            { id: 'emonda-slr-9-etap', name: 'SLR 9 AXS', meta: 'SRAM Red AXS', schaltgruppe: 'SRAM Red AXS', modelljahre: '2022–2025', collectionTag: 'emonda-slr-9-etap' }
+            { id: "rose-shave-ff-force-axs", name: "Shave FF Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2026", collectionTag: "rose-shave-ff-force-axs" },
+            { id: "rose-shave-ff-ultegra-di2", name: "Shave FF Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "rose-shave-ff-ultegra-di2" }
+          ]
+        },
+        {
+          id: "rose-shave", name: "Shave", meta: "Aero Endurance", type: "Carbon",
+          variants: [
+            { id: "rose-shave-force-axs", name: "Shave Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2026", collectionTag: "rose-shave-force-axs" },
+            { id: "rose-shave-ultegra-di2", name: "Shave Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "rose-shave-ultegra-di2" },
+            { id: "rose-shave-rival-axs", name: "Shave Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2026", collectionTag: "rose-shave-rival-axs" },
+            { id: "rose-shave-105-di2", name: "Shave 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2026", collectionTag: "rose-shave-105-di2" }
+          ]
+        },
+        {
+          id: "rose-xlite-06", name: "XLITE 06", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "rose-xlite-06-red-etap-axs", name: "XLITE 06 Red eTap AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2023", collectionTag: "rose-xlite-06-red-etap-axs" },
+            { id: "rose-xlite-06-dura-ace-di2", name: "XLITE 06 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023", collectionTag: "rose-xlite-06-dura-ace-di2" },
+            { id: "rose-xlite-06-force-etap-axs", name: "XLITE 06 Force eTap AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2023", collectionTag: "rose-xlite-06-force-etap-axs" },
+            { id: "rose-xlite-06-ultegra-di2", name: "XLITE 06 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023\u20132025", collectionTag: "rose-xlite-06-ultegra-di2" }
+          ]
+        },
+        {
+          id: "rose-xlite-unltd", name: "XLITE UNLTD", meta: "Race (Flagship)", type: "Carbon",
+          variants: [
+            { id: "rose-xlite-unltd-dura-ace-di2", name: "XLITE UNLTD Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "rose-xlite-unltd-dura-ace-di2" }
+          ]
+        },
+        {
+          id: "rose-xlite-04", name: "XLITE 04", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "rose-xlite-04-force-etap-axs", name: "XLITE 04 Force eTap AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2023", collectionTag: "rose-xlite-04-force-etap-axs" },
+            { id: "rose-xlite-04-ultegra-di2", name: "XLITE 04 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "rose-xlite-04-ultegra-di2" },
+            { id: "rose-xlite-04-105-mech", name: "XLITE 04 105 mech.", meta: "Shimano 105 R7000 2x12 mech.", schaltgruppe: "Shimano 105 R7000 2x12 mech.", modelljahre: "2023", collectionTag: "rose-xlite-04-105-mech" }
+          ]
+        },
+        {
+          id: "rose-reveal-06", name: "Reveal 06", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "rose-reveal-06-ultegra-di2", name: "Reveal 06 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "rose-reveal-06-ultegra-di2" }
+          ]
+        },
+        {
+          id: "rose-reveal-04", name: "Reveal 04", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "rose-reveal-04-105-di2", name: "Reveal 04 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "rose-reveal-04-105-di2" },
+            { id: "rose-reveal-04-rival-axs", name: "Reveal 04 Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2024", collectionTag: "rose-reveal-04-rival-axs" }
           ]
         }
       ]
     },
     {
-      id: 'specialized', name: 'Specialized', meta: 'Morgan Hill · US', type: 'Carbon',
+      id: "canyon", name: "Canyon", meta: "Koblenz \u00b7 DE", type: "Carbon",
       models: [
-        { id: 'tarmac-sl8', name: 'Tarmac SL8', meta: 'All-Round Race', type: 'Carbon',
+        {
+          id: "canyon-aeroad-cfr", name: "Aeroad CFR", meta: "Aero Race", type: "Carbon",
           variants: [
-            { id: 'tarmac-sl8-pro-etap',    name: 'Pro AXS',    meta: 'SRAM Force AXS',      schaltgruppe: 'SRAM Force AXS',      modelljahre: '2024–2025', collectionTag: 'tarmac-sl8-pro-etap' },
-            { id: 'tarmac-sl8-expert-di2',  name: 'Expert Di2', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2024–2025', collectionTag: 'tarmac-sl8-expert-di2' }
+            { id: "canyon-aeroad-cfr-di2", name: "Aeroad CFR Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025\u20132026", collectionTag: "canyon-aeroad-cfr-di2" },
+            { id: "canyon-aeroad-cfr-axs", name: "Aeroad CFR AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "canyon-aeroad-cfr-axs" },
+            { id: "canyon-aeroad-cfr-mach874", name: "Aeroad CFR MACH874", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "canyon-aeroad-cfr-mach874" }
           ]
         },
-        { id: 'venge', name: 'Venge', meta: 'Aero Road', type: 'Carbon',
+        {
+          id: "canyon-aeroad-cf-slx", name: "Aeroad CF SLX", meta: "Aero Race", type: "Carbon",
           variants: [
-            { id: 'venge-pro-etap', name: 'Pro AXS', meta: 'SRAM Red AXS', schaltgruppe: 'SRAM Red AXS', modelljahre: '2021–2023', collectionTag: 'venge-pro-etap' }
+            { id: "canyon-aeroad-cf-slx-8-di2", name: "Aeroad CF SLX 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025\u20132026", collectionTag: "canyon-aeroad-cf-slx-8-di2" },
+            { id: "canyon-aeroad-cf-slx-8-axs", name: "Aeroad CF SLX 8 AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025\u20132026", collectionTag: "canyon-aeroad-cf-slx-8-axs" },
+            { id: "canyon-aeroad-cf-slx-7-di2", name: "Aeroad CF SLX 7 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025\u20132026", collectionTag: "canyon-aeroad-cf-slx-7-di2" },
+            { id: "canyon-aeroad-cf-slx-8-axs-speed", name: "Aeroad CF SLX 8 AXS Speed", meta: "SRAM Force AXS E1 2x12", schaltgruppe: "SRAM Force AXS E1 2x12", modelljahre: "2026", collectionTag: "canyon-aeroad-cf-slx-8-axs-speed" },
+            { id: "canyon-aeroad-cf-slx-7-axs-speed", name: "Aeroad CF SLX 7 AXS Speed", meta: "SRAM Rival AXS E1 2x12", schaltgruppe: "SRAM Rival AXS E1 2x12", modelljahre: "2026", collectionTag: "canyon-aeroad-cf-slx-7-axs-speed" }
+          ]
+        },
+        {
+          id: "canyon-aeroad-cfr-gen3", name: "Aeroad CFR (Gen3)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "canyon-aeroad-cfr-di2", name: "Aeroad CFR Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023\u20132024", collectionTag: "canyon-aeroad-cfr-di2" }
+          ]
+        },
+        {
+          id: "canyon-aeroad-cf-slx-gen3", name: "Aeroad CF SLX (Gen3)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "canyon-aeroad-cf-slx-8-di2", name: "Aeroad CF SLX 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023\u20132024", collectionTag: "canyon-aeroad-cf-slx-8-di2" },
+            { id: "canyon-aeroad-cf-slx-8-disc-di2", name: "Aeroad CF SLX 8 Disc Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2022", collectionTag: "canyon-aeroad-cf-slx-8-disc-di2" }
+          ]
+        },
+        {
+          id: "canyon-ultimate-cfr", name: "Ultimate CFR", meta: "Race / Allrounder", type: "Carbon",
+          variants: [
+            { id: "canyon-ultimate-cfr-di2", name: "Ultimate CFR Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023\u20132025", collectionTag: "canyon-ultimate-cfr-di2" },
+            { id: "canyon-ultimate-cfr-etap", name: "Ultimate CFR eTap", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "canyon-ultimate-cfr-etap" }
+          ]
+        },
+        {
+          id: "canyon-ultimate-cf-slx", name: "Ultimate CF SLX", meta: "Race / Allrounder", type: "Carbon",
+          variants: [
+            { id: "canyon-ultimate-cf-slx-8-di2", name: "Ultimate CF SLX 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023\u20132025", collectionTag: "canyon-ultimate-cf-slx-8-di2" },
+            { id: "canyon-ultimate-cf-slx-8-axs", name: "Ultimate CF SLX 8 AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "canyon-ultimate-cf-slx-8-axs" }
+          ]
+        },
+        {
+          id: "canyon-ultimate-cf-sl", name: "Ultimate CF SL", meta: "Race / Allrounder", type: "Carbon",
+          variants: [
+            { id: "canyon-ultimate-cf-sl-8-di2", name: "Ultimate CF SL 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "canyon-ultimate-cf-sl-8-di2" },
+            { id: "canyon-ultimate-cf-sl-7-di2", name: "Ultimate CF SL 7 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2023\u20132025", collectionTag: "canyon-ultimate-cf-sl-7-di2" }
+          ]
+        },
+        {
+          id: "canyon-ultimate-cf", name: "Ultimate CF", meta: "Race / Allrounder", type: "Carbon",
+          variants: [
+            { id: "canyon-ultimate-cf-7", name: "Ultimate CF 7", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2026", collectionTag: "canyon-ultimate-cf-7" }
+          ]
+        },
+        {
+          id: "canyon-endurace-cfr", name: "Endurace CFR", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "canyon-endurace-cfr-di2", name: "Endurace CFR Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cfr-di2" },
+            { id: "canyon-endurace-cfr-axs", name: "Endurace CFR AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cfr-axs" }
+          ]
+        },
+        {
+          id: "canyon-endurace-cf-slx", name: "Endurace CF SLX", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "canyon-endurace-cf-slx-8-di2-aero", name: "Endurace CF SLX 8 Di2 Aero", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cf-slx-8-di2-aero" },
+            { id: "canyon-endurace-cf-slx-8-axs-aero", name: "Endurace CF SLX 8 AXS Aero", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cf-slx-8-axs-aero" }
+          ]
+        },
+        {
+          id: "canyon-endurace-cf-sl", name: "Endurace CF SL", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "canyon-endurace-cf-sl-8-di2", name: "Endurace CF SL 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cf-sl-8-di2" },
+            { id: "canyon-endurace-cf-sl-7-di2", name: "Endurace CF SL 7 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "canyon-endurace-cf-sl-7-di2" }
+          ]
+        },
+        {
+          id: "canyon-endurace-cf", name: "Endurace CF", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "canyon-endurace-cf-8-di2", name: "Endurace CF 8 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "canyon-endurace-cf-8-di2" }
+          ]
+        },
+        {
+          id: "canyon-endurace-cfr-2026", name: "Endurace CFR (2026)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "canyon-endurace-cfr-di2", name: "Endurace CFR Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "canyon-endurace-cfr-di2" }
+          ]
+        },
+        {
+          id: "canyon-endurace-allroad", name: "Endurace AllRoad", meta: "Endurance/Allroad", type: "Aluminium",
+          variants: [
+            { id: "canyon-endurace-allroad", name: "Endurace AllRoad", meta: "Shimano CUES U6000 2x11", schaltgruppe: "Shimano CUES U6000 2x11", modelljahre: "2025", collectionTag: "canyon-endurace-allroad" }
           ]
         }
       ]
     },
     {
-      id: 'cervelo', name: 'Cervélo', meta: 'Toronto · CA', type: 'Carbon',
+      id: "pinarello", name: "Pinarello", meta: "Treviso \u00b7 IT", type: "Carbon",
       models: [
-        { id: 's5', name: 'S5', meta: 'Aero Road', type: 'Carbon',
+        {
+          id: "pinarello-dogma-f-2025", name: "Dogma F (2025)", meta: "Race / Aero", type: "Carbon",
           variants: [
-            { id: 's5-red-axs',       name: 'Red AXS',     meta: 'SRAM Red AXS',      schaltgruppe: 'SRAM Red AXS',         modelljahre: '2022–2025', collectionTag: 's5-red-axs' },
-            { id: 's5-ultegra-di2',   name: 'Ultegra Di2', meta: 'Shimano Ultegra Di2', schaltgruppe: 'Shimano Ultegra Di2', modelljahre: '2022–2025', collectionTag: 's5-ultegra-di2' }
+            { id: "pinarello-dogma-f-dura-ace-di2", name: "Dogma F Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "pinarello-dogma-f-dura-ace-di2" },
+            { id: "pinarello-dogma-f-dura-ace-di2-powermeter", name: "Dogma F Dura-Ace Di2 Powermeter", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "pinarello-dogma-f-dura-ace-di2-powermeter" },
+            { id: "pinarello-dogma-f-sram-red-axs", name: "Dogma F SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "pinarello-dogma-f-sram-red-axs" }
           ]
         },
-        { id: 'r5', name: 'R5', meta: 'All-Round Race', type: 'Carbon',
+        {
+          id: "pinarello-dogma-f-gen1", name: "Dogma F (Gen1)", meta: "Race / Aero", type: "Carbon",
           variants: [
-            { id: 'r5-dura-ace-di2', name: 'Dura-Ace Di2', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2021–2025', collectionTag: 'r5-dura-ace-di2' }
+            { id: "pinarello-dogma-f-dura-ace-di2", name: "Dogma F Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "pinarello-dogma-f-dura-ace-di2" },
+            { id: "pinarello-dogma-f-sram-red-axs", name: "Dogma F SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2022", collectionTag: "pinarello-dogma-f-sram-red-axs" }
+          ]
+        },
+        {
+          id: "pinarello-dogma-x", name: "Dogma X", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "pinarello-dogma-x-dura-ace-di2", name: "Dogma X Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "pinarello-dogma-x-dura-ace-di2" },
+            { id: "pinarello-dogma-x-sram-red-axs", name: "Dogma X SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "pinarello-dogma-x-sram-red-axs" },
+            { id: "pinarello-dogma-x-campagnolo-sr-wrl", name: "Dogma X Campagnolo SR WRL", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2024", collectionTag: "pinarello-dogma-x-campagnolo-sr-wrl" }
+          ]
+        },
+        {
+          id: "pinarello-f9", name: "F9", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "pinarello-f9-dura-ace-di2", name: "F9 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "pinarello-f9-dura-ace-di2" },
+            { id: "pinarello-new-f9-dura-ace-di2", name: "New F9 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "pinarello-new-f9-dura-ace-di2" }
+          ]
+        },
+        {
+          id: "pinarello-f7", name: "F7", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "pinarello-f7-ultegra-di2", name: "F7 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "pinarello-f7-ultegra-di2" },
+            { id: "pinarello-f7-sram-force-axs", name: "F7 SRAM Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "pinarello-f7-sram-force-axs" },
+            { id: "pinarello-new-f7-ultegra-di2", name: "New F7 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "pinarello-new-f7-ultegra-di2" }
+          ]
+        },
+        {
+          id: "pinarello-f5", name: "F5", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "pinarello-f5-105-di2", name: "F5 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "pinarello-f5-105-di2" },
+            { id: "pinarello-new-f5-105-di2", name: "New F5 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2026", collectionTag: "pinarello-new-f5-105-di2" }
+          ]
+        },
+        {
+          id: "pinarello-f3", name: "F3", meta: "Race", type: "Carbon",
+          variants: [
+            { id: "pinarello-f3-105-di2", name: "F3 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "pinarello-f3-105-di2" }
+          ]
+        },
+        {
+          id: "pinarello-f1", name: "F1", meta: "Race (Einstieg)", type: "Carbon",
+          variants: [
+            { id: "pinarello-f1-105-mechanisch", name: "F1 105 mechanisch", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2025", collectionTag: "pinarello-f1-105-mechanisch" }
+          ]
+        },
+        {
+          id: "pinarello-x9", name: "X9", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "pinarello-x9-dura-ace-di2", name: "X9 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "pinarello-x9-dura-ace-di2" }
+          ]
+        },
+        {
+          id: "pinarello-x7", name: "X7", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "pinarello-x7-ultegra-di2", name: "X7 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "pinarello-x7-ultegra-di2" },
+            { id: "pinarello-x7-sram-force-axs", name: "X7 SRAM Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2024", collectionTag: "pinarello-x7-sram-force-axs" }
+          ]
+        },
+        {
+          id: "pinarello-x5", name: "X5", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "pinarello-x5-105-di2", name: "X5 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "pinarello-x5-105-di2" }
+          ]
+        },
+        {
+          id: "pinarello-x3", name: "X3", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "pinarello-x3-105-di2", name: "X3 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2023", collectionTag: "pinarello-x3-105-di2" }
+          ]
+        },
+        {
+          id: "pinarello-x1", name: "X1", meta: "Endurance (Einst.)", type: "Carbon",
+          variants: [
+            { id: "pinarello-x1-105-mechanisch", name: "X1 105 mechanisch", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2023", collectionTag: "pinarello-x1-105-mechanisch" }
+          ]
+        },
+        {
+          id: "pinarello-prince", name: "Prince", meta: "Race (auslaufend)", type: "Carbon",
+          variants: [
+            { id: "pinarello-prince-ultegra-di2", name: "Prince Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2022", collectionTag: "pinarello-prince-ultegra-di2" }
+          ]
+        },
+        {
+          id: "pinarello-paris", name: "Paris", meta: "Endurance (auslf.)", type: "Carbon",
+          variants: [
+            { id: "pinarello-paris-105-di2", name: "Paris 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2022", collectionTag: "pinarello-paris-105-di2" }
           ]
         }
       ]
     },
     {
-      id: 'pinarello', name: 'Pinarello', meta: 'Treviso · IT', type: 'Carbon',
+      id: "colnago", name: "Colnago", meta: "Cambiago \u00b7 IT", type: "Carbon",
       models: [
-        { id: 'dogma-f', name: 'Dogma F', meta: 'All-Round Race', type: 'Carbon',
+        {
+          id: "colnago-v5rs", name: "V5Rs", meta: "Race / Allrounder", type: "Carbon",
           variants: [
-            { id: 'dogma-f-dura-ace-di2', name: 'Dura-Ace Di2', meta: 'Shimano Dura-Ace Di2', schaltgruppe: 'Shimano Dura-Ace Di2', modelljahre: '2022–2025', collectionTag: 'dogma-f-dura-ace-di2' },
-            { id: 'dogma-f-red-axs',      name: 'Red AXS',      meta: 'SRAM Red AXS',         schaltgruppe: 'SRAM Red AXS',         modelljahre: '2022–2025', collectionTag: 'dogma-f-red-axs' }
+            { id: "colnago-v5rs-dura-ace-di2", name: "V5Rs Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "colnago-v5rs-dura-ace-di2" },
+            { id: "colnago-v5rs-ultegra-di2", name: "V5Rs Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "colnago-v5rs-ultegra-di2" },
+            { id: "colnago-v5rs-sram-red-axs", name: "V5Rs SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "colnago-v5rs-sram-red-axs" },
+            { id: "colnago-v5rs-campagnolo-sr-wrl", name: "V5Rs Campagnolo SR WRL", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2025", collectionTag: "colnago-v5rs-campagnolo-sr-wrl" },
+            { id: "colnago-v5rs-frameset", name: "V5Rs Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "colnago-v5rs-frameset" }
           ]
         },
-        { id: 'prince-fx', name: 'Prince FX', meta: 'Endurance Race', type: 'Carbon',
+        {
+          id: "colnago-y1rs", name: "Y1Rs", meta: "Aero", type: "Carbon",
           variants: [
-            { id: 'prince-fx-105-di2', name: '105 Di2', meta: 'Shimano 105 Di2', schaltgruppe: 'Shimano 105 Di2', modelljahre: '2023–2025', collectionTag: 'prince-fx-105-di2' }
+            { id: "colnago-y1rs-dura-ace-di2", name: "Y1Rs Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "colnago-y1rs-dura-ace-di2" },
+            { id: "colnago-y1rs-sram-red-axs", name: "Y1Rs SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "colnago-y1rs-sram-red-axs" },
+            { id: "colnago-y1rs-campagnolo-sr-wrl", name: "Y1Rs Campagnolo SR WRL", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2024", collectionTag: "colnago-y1rs-campagnolo-sr-wrl" },
+            { id: "colnago-y1rs-frameset", name: "Y1Rs Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2024", collectionTag: "colnago-y1rs-frameset" }
+          ]
+        },
+        {
+          id: "colnago-v4rs", name: "V4Rs", meta: "Race / Aero", type: "Carbon",
+          variants: [
+            { id: "colnago-v4rs-dura-ace-di2", name: "V4Rs Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023\u20132026", collectionTag: "colnago-v4rs-dura-ace-di2" },
+            { id: "colnago-v4rs-ultegra-di2", name: "V4Rs Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "colnago-v4rs-ultegra-di2" },
+            { id: "colnago-v4rs-sram-red-axs", name: "V4Rs SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2023", collectionTag: "colnago-v4rs-sram-red-axs" },
+            { id: "colnago-v4rs-frameset", name: "V4Rs Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2023", collectionTag: "colnago-v4rs-frameset" }
+          ]
+        },
+        {
+          id: "colnago-c68", name: "C68", meta: "Race / Heritage", type: "Carbon",
+          variants: [
+            { id: "colnago-c68-disc-dura-ace-di2", name: "C68 Disc Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "colnago-c68-disc-dura-ace-di2" },
+            { id: "colnago-c68-disc-campagnolo-sr-wrl", name: "C68 Disc Campagnolo SR WRL", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2022", collectionTag: "colnago-c68-disc-campagnolo-sr-wrl" },
+            { id: "colnago-c68-frameset", name: "C68 Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2022", collectionTag: "colnago-c68-frameset" }
+          ]
+        },
+        {
+          id: "colnago-v4", name: "V4", meta: "Race (Mid-Range)", type: "Carbon",
+          variants: [
+            { id: "colnago-v4-ultegra-di2", name: "V4 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "colnago-v4-ultegra-di2" },
+            { id: "colnago-v4-105-di2", name: "V4 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "colnago-v4-105-di2" },
+            { id: "colnago-v4-sram-rival-axs", name: "V4 SRAM Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2024", collectionTag: "colnago-v4-sram-rival-axs" }
+          ]
+        },
+        {
+          id: "colnago-v3rs", name: "V3Rs", meta: "Race (auslaufend)", type: "Carbon",
+          variants: [
+            { id: "colnago-v3rs-dura-ace-di2", name: "V3Rs Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "colnago-v3rs-dura-ace-di2" },
+            { id: "colnago-v3rs-campagnolo-sr-eps", name: "V3Rs Campagnolo SR EPS", meta: "Campagnolo Super Record EPS 2x12", schaltgruppe: "Campagnolo Super Record EPS 2x12", modelljahre: "2022", collectionTag: "colnago-v3rs-campagnolo-sr-eps" },
+            { id: "colnago-v3rs-sram-red-axs", name: "V3Rs SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2022", collectionTag: "colnago-v3rs-sram-red-axs" }
+          ]
+        },
+        {
+          id: "colnago-steelnovo", name: "Steelnovo", meta: "Heritage / Stahl", type: "Stahl",
+          variants: [
+            { id: "colnago-steelnovo-limitiert", name: "Steelnovo (limitiert)", meta: "Custom Build", schaltgruppe: "Custom Build", modelljahre: "2024", collectionTag: "colnago-steelnovo-limitiert" }
+          ]
+        },
+        {
+          id: "colnago-master", name: "Master", meta: "Heritage / Stahl", type: "Stahl",
+          variants: [
+            { id: "colnago-master-frameset", name: "Master Frameset", meta: "Custom Build", schaltgruppe: "Custom Build", modelljahre: "2021", collectionTag: "colnago-master-frameset" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "cervelo", name: "Cerv\u00e9lo", meta: "Toronto \u00b7 CA", type: "Carbon",
+      models: [
+        {
+          id: "cervelo-s5-2025", name: "S5 (2025)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "cervelo-s5-dura-ace-di2", name: "S5 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "cervelo-s5-dura-ace-di2" },
+            { id: "cervelo-s5-red-axs", name: "S5 Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "cervelo-s5-red-axs" },
+            { id: "cervelo-s5-red-xplr-axs-1x", name: "S5 Red XPLR AXS 1x", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "cervelo-s5-red-xplr-axs-1x" },
+            { id: "cervelo-s5-force-axs", name: "S5 Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "cervelo-s5-force-axs" },
+            { id: "cervelo-s5-ultegra-di2", name: "S5 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "cervelo-s5-ultegra-di2" }
+          ]
+        },
+        {
+          id: "cervelo-s5-2022", name: "S5 (2022)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "cervelo-s5-dura-ace-di2", name: "S5 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "cervelo-s5-dura-ace-di2" },
+            { id: "cervelo-s5-force-axs", name: "S5 Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2022", collectionTag: "cervelo-s5-force-axs" }
+          ]
+        },
+        {
+          id: "cervelo-r5-2026", name: "R5 (2026)", meta: "Race / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "cervelo-r5-red-xplr-axs-1x", name: "R5 Red XPLR AXS 1x", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "cervelo-r5-red-xplr-axs-1x" },
+            { id: "cervelo-r5-red-axs", name: "R5 Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2026", collectionTag: "cervelo-r5-red-axs" },
+            { id: "cervelo-r5-dura-ace-di2", name: "R5 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "cervelo-r5-dura-ace-di2" },
+            { id: "cervelo-r5-force-axs", name: "R5 Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2026", collectionTag: "cervelo-r5-force-axs" },
+            { id: "cervelo-r5-ultegra-di2", name: "R5 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "cervelo-r5-ultegra-di2" }
+          ]
+        },
+        {
+          id: "cervelo-r5-2022", name: "R5 (2022)", meta: "Race / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "cervelo-r5-dura-ace-di2", name: "R5 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "cervelo-r5-dura-ace-di2" },
+            { id: "cervelo-r5-sram-red-axs", name: "R5 SRAM Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2022", collectionTag: "cervelo-r5-sram-red-axs" }
+          ]
+        },
+        {
+          id: "cervelo-soloist", name: "Soloist", meta: "Race Allrounder", type: "Carbon",
+          variants: [
+            { id: "cervelo-soloist-force-axs", name: "Soloist Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2023", collectionTag: "cervelo-soloist-force-axs" },
+            { id: "cervelo-soloist-rival-axs", name: "Soloist Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2023", collectionTag: "cervelo-soloist-rival-axs" },
+            { id: "cervelo-soloist-105-di2", name: "Soloist 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2023", collectionTag: "cervelo-soloist-105-di2" },
+            { id: "cervelo-soloist-ultegra-di2", name: "Soloist Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "cervelo-soloist-ultegra-di2" }
+          ]
+        },
+        {
+          id: "cervelo-caledonia-5-gen2", name: "Caledonia-5 (Gen2)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "cervelo-caledonia-5-red-axs", name: "Caledonia-5 Red AXS", meta: "SRAM Red eTap AXS E1 2x12", schaltgruppe: "SRAM Red eTap AXS E1 2x12", modelljahre: "2024", collectionTag: "cervelo-caledonia-5-red-axs" },
+            { id: "cervelo-caledonia-5-ultegra-di2", name: "Caledonia-5 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "cervelo-caledonia-5-ultegra-di2" },
+            { id: "cervelo-caledonia-5-force-axs", name: "Caledonia-5 Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2024", collectionTag: "cervelo-caledonia-5-force-axs" }
+          ]
+        },
+        {
+          id: "cervelo-caledonia-5-gen1", name: "Caledonia-5 (Gen1)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "cervelo-caledonia-5-dura-ace-di2", name: "Caledonia-5 Dura-Ace Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "cervelo-caledonia-5-dura-ace-di2" },
+            { id: "cervelo-caledonia-5-ultegra-di2", name: "Caledonia-5 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2022", collectionTag: "cervelo-caledonia-5-ultegra-di2" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "specialized", name: "Specialized", meta: "Morgan Hill \u00b7 US", type: "Carbon",
+      models: [
+        {
+          id: "specialized-tarmac-sl8", name: "Tarmac SL8", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "specialized-s-works-tarmac-sl8-da-di2", name: "S-Works Tarmac SL8 DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "specialized-s-works-tarmac-sl8-da-di2" },
+            { id: "specialized-s-works-tarmac-sl8-red-axs", name: "S-Works Tarmac SL8 Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "specialized-s-works-tarmac-sl8-red-axs" },
+            { id: "specialized-s-works-tarmac-sl8-red-etap-axs", name: "S-Works Tarmac SL8 Red eTap AXS", meta: "SRAM Red eTap AXS 2x12 (vorherige Gen)", schaltgruppe: "SRAM Red eTap AXS 2x12 (vorherige Gen)", modelljahre: "2024", collectionTag: "specialized-s-works-tarmac-sl8-red-etap-axs" },
+            { id: "specialized-tarmac-sl8-pro-ultegra-di2", name: "Tarmac SL8 Pro Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "specialized-tarmac-sl8-pro-ultegra-di2" },
+            { id: "specialized-tarmac-sl8-expert-force-axs", name: "Tarmac SL8 Expert Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "specialized-tarmac-sl8-expert-force-axs" },
+            { id: "specialized-tarmac-sl8-comp-rival-axs", name: "Tarmac SL8 Comp Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2024", collectionTag: "specialized-tarmac-sl8-comp-rival-axs" },
+            { id: "specialized-tarmac-sl8-comp-105-di2", name: "Tarmac SL8 Comp 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "specialized-tarmac-sl8-comp-105-di2" },
+            { id: "specialized-tarmac-sl8-sport-105", name: "Tarmac SL8 Sport 105", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2024", collectionTag: "specialized-tarmac-sl8-sport-105" }
+          ]
+        },
+        {
+          id: "specialized-aethos-2", name: "Aethos 2", meta: "Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "specialized-s-works-aethos-2-da-di2", name: "S-Works Aethos 2 DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "specialized-s-works-aethos-2-da-di2" },
+            { id: "specialized-s-works-aethos-2-red-axs", name: "S-Works Aethos 2 Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2026", collectionTag: "specialized-s-works-aethos-2-red-axs" },
+            { id: "specialized-aethos-2-pro-ultegra-di2", name: "Aethos 2 Pro Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "specialized-aethos-2-pro-ultegra-di2" },
+            { id: "specialized-aethos-2-expert-ultegra-di2", name: "Aethos 2 Expert Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "specialized-aethos-2-expert-ultegra-di2" }
+          ]
+        },
+        {
+          id: "specialized-aethos-gen1", name: "Aethos (Gen1)", meta: "Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "specialized-s-works-aethos-da-di2", name: "S-Works Aethos DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "specialized-s-works-aethos-da-di2" },
+            { id: "specialized-aethos-expert-ultegra-di2", name: "Aethos Expert Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2022", collectionTag: "specialized-aethos-expert-ultegra-di2" },
+            { id: "specialized-aethos-comp-rival-axs", name: "Aethos Comp Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2022", collectionTag: "specialized-aethos-comp-rival-axs" },
+            { id: "specialized-aethos-sport-105", name: "Aethos Sport 105", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2023", collectionTag: "specialized-aethos-sport-105" }
+          ]
+        },
+        {
+          id: "specialized-roubaix", name: "Roubaix", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "specialized-s-works-roubaix-da-di2", name: "S-Works Roubaix DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023", collectionTag: "specialized-s-works-roubaix-da-di2" },
+            { id: "specialized-roubaix-expert-ultegra-di2", name: "Roubaix Expert Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "specialized-roubaix-expert-ultegra-di2" },
+            { id: "specialized-roubaix-comp-rival-axs", name: "Roubaix Comp Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2023", collectionTag: "specialized-roubaix-comp-rival-axs" },
+            { id: "specialized-roubaix-sport-105", name: "Roubaix Sport 105", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2023", collectionTag: "specialized-roubaix-sport-105" }
+          ]
+        },
+        {
+          id: "specialized-allez", name: "Allez", meta: "Race (Alu)", type: "Aluminium",
+          variants: [
+            { id: "specialized-allez-sprint-comp-105", name: "Allez Sprint Comp 105", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2024", collectionTag: "specialized-allez-sprint-comp-105" },
+            { id: "specialized-allez-sport", name: "Allez Sport", meta: "Shimano Claris R2000 2x8", schaltgruppe: "Shimano Claris R2000 2x8", modelljahre: "2024", collectionTag: "specialized-allez-sport" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "trek", name: "Trek", meta: "Waterloo \u00b7 US", type: "Carbon",
+      models: [
+        {
+          id: "trek-madone-slr-gen8", name: "Madone SLR (Gen8)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "trek-madone-slr-9-red-axs", name: "Madone SLR 9 Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "trek-madone-slr-9-red-axs" },
+            { id: "trek-madone-slr-9-di2", name: "Madone SLR 9 Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "trek-madone-slr-9-di2" },
+            { id: "trek-madone-slr-7-axs", name: "Madone SLR 7 AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "trek-madone-slr-7-axs" },
+            { id: "trek-madone-slr-7-di2", name: "Madone SLR 7 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "trek-madone-slr-7-di2" },
+            { id: "trek-madone-slr-6-di2", name: "Madone SLR 6 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "trek-madone-slr-6-di2" }
+          ]
+        },
+        {
+          id: "trek-madone-sl-gen8", name: "Madone SL (Gen8)", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "trek-madone-sl-7-axs", name: "Madone SL 7 AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "trek-madone-sl-7-axs" },
+            { id: "trek-madone-sl-6-di2", name: "Madone SL 6 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "trek-madone-sl-6-di2" },
+            { id: "trek-madone-sl-5", name: "Madone SL 5", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "trek-madone-sl-5" }
+          ]
+        },
+        {
+          id: "trek-emonda-slr-auslaufend", name: "\u00c9monda SLR (auslaufend)", meta: "Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "trek-emonda-slr-9-axs", name: "\u00c9monda SLR 9 AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2022", collectionTag: "trek-emonda-slr-9-axs" },
+            { id: "trek-emonda-slr-7-di2", name: "\u00c9monda SLR 7 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2022", collectionTag: "trek-emonda-slr-7-di2" }
+          ]
+        },
+        {
+          id: "trek-domane-slr-gen4", name: "Domane SLR (Gen4)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "trek-domane-slr-9-axs", name: "Domane SLR 9 AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2023", collectionTag: "trek-domane-slr-9-axs" },
+            { id: "trek-domane-slr-7-di2", name: "Domane SLR 7 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "trek-domane-slr-7-di2" }
+          ]
+        },
+        {
+          id: "trek-domane-sl-gen4", name: "Domane SL (Gen4)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "trek-domane-sl-7-axs", name: "Domane SL 7 AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2023", collectionTag: "trek-domane-sl-7-axs" },
+            { id: "trek-domane-sl-6-di2", name: "Domane SL 6 Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "trek-domane-sl-6-di2" },
+            { id: "trek-domane-sl-5", name: "Domane SL 5", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2023", collectionTag: "trek-domane-sl-5" },
+            { id: "trek-domane-sl-5-mech", name: "Domane SL 5 mech.", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2025", collectionTag: "trek-domane-sl-5-mech" }
+          ]
+        },
+        {
+          id: "trek-domane-al", name: "Domane AL", meta: "Endurance (Alu)", type: "Aluminium",
+          variants: [
+            { id: "trek-domane-al-5", name: "Domane AL 5", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2023", collectionTag: "trek-domane-al-5" },
+            { id: "trek-domane-al-4", name: "Domane AL 4", meta: "Shimano Tiagra 4700 2x10", schaltgruppe: "Shimano Tiagra 4700 2x10", modelljahre: "2023", collectionTag: "trek-domane-al-4" },
+            { id: "trek-domane-al-2", name: "Domane AL 2", meta: "Shimano Claris R2000 2x8", schaltgruppe: "Shimano Claris R2000 2x8", modelljahre: "2023", collectionTag: "trek-domane-al-2" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "bmc", name: "BMC", meta: "Grenchen \u00b7 CH", type: "Carbon",
+      models: [
+        {
+          id: "bmc-teammachine-r-01", name: "Teammachine R 01", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "bmc-tmr-01-one-red-axs", name: "TMR 01 ONE Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "bmc-tmr-01-one-red-axs" },
+            { id: "bmc-tmr-01-two-da-di2", name: "TMR 01 TWO DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "bmc-tmr-01-two-da-di2" },
+            { id: "bmc-tmr-01-three-force-axs", name: "TMR 01 THREE Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "bmc-tmr-01-three-force-axs" },
+            { id: "bmc-tmr-01-four-ultegra-di2", name: "TMR 01 FOUR Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "bmc-tmr-01-four-ultegra-di2" },
+            { id: "bmc-tmr-01-five-105-di2", name: "TMR 01 FIVE 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "bmc-tmr-01-five-105-di2" },
+            { id: "bmc-tmr-01-frameset-mod", name: "TMR 01 Frameset (MOD)", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "bmc-tmr-01-frameset-mod" }
+          ]
+        },
+        {
+          id: "bmc-teammachine-slr-01-gen5", name: "Teammachine SLR 01 (Gen5)", meta: "Race / Kletter", type: "Carbon",
+          variants: [
+            { id: "bmc-slr-01-one-red-axs", name: "SLR 01 ONE Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "bmc-slr-01-one-red-axs" },
+            { id: "bmc-slr-01-two-da-di2", name: "SLR 01 TWO DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "bmc-slr-01-two-da-di2" },
+            { id: "bmc-slr-01-three-ultegra-di2", name: "SLR 01 THREE Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "bmc-slr-01-three-ultegra-di2" }
+          ]
+        },
+        {
+          id: "bmc-teammachine-slr-01-gen4", name: "Teammachine SLR 01 (Gen4)", meta: "Race / Kletter", type: "Carbon",
+          variants: [
+            { id: "bmc-slr-01-one-red-axs", name: "SLR 01 ONE Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "bmc-slr-01-one-red-axs" },
+            { id: "bmc-slr-01-two-da-di2", name: "SLR 01 TWO DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "bmc-slr-01-two-da-di2" },
+            { id: "bmc-slr-01-three-force-axs", name: "SLR 01 THREE Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2022", collectionTag: "bmc-slr-01-three-force-axs" }
+          ]
+        },
+        {
+          id: "bmc-roadmachine-01-gen3", name: "Roadmachine 01 (Gen3)", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "bmc-rm-01-one-red-axs", name: "RM 01 ONE Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "bmc-rm-01-one-red-axs" },
+            { id: "bmc-rm-01-two-da-di2", name: "RM 01 TWO DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2024", collectionTag: "bmc-rm-01-two-da-di2" },
+            { id: "bmc-rm-01-three-force-axs", name: "RM 01 THREE Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2024", collectionTag: "bmc-rm-01-three-force-axs" },
+            { id: "bmc-rm-01-four-ultegra-di2", name: "RM 01 FOUR Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "bmc-rm-01-four-ultegra-di2" },
+            { id: "bmc-rm-01-five-105-di2", name: "RM 01 FIVE 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "bmc-rm-01-five-105-di2" }
+          ]
+        },
+        {
+          id: "bmc-teammachine-alr", name: "Teammachine ALR", meta: "Race (Alu)", type: "Aluminium",
+          variants: [
+            { id: "bmc-teammachine-alr-one-105-di2", name: "Teammachine ALR ONE 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "bmc-teammachine-alr-one-105-di2" },
+            { id: "bmc-teammachine-alr-two-tiagra", name: "Teammachine ALR TWO Tiagra", meta: "Shimano Tiagra 4700 2x10", schaltgruppe: "Shimano Tiagra 4700 2x10", modelljahre: "2024", collectionTag: "bmc-teammachine-alr-two-tiagra" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "factor", name: "Factor", meta: "Chester \u00b7 UK", type: "Carbon",
+      models: [
+        {
+          id: "factor-ostro-vam-gen2", name: "Ostro VAM (Gen2)", meta: "Aero / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "factor-ostro-vam-da-di2-custom-build", name: "Ostro VAM DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "factor-ostro-vam-da-di2-custom-build" },
+            { id: "factor-ostro-vam-red-axs-custom-build", name: "Ostro VAM Red AXS (Custom Build)", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "factor-ostro-vam-red-axs-custom-build" },
+            { id: "factor-ostro-vam-campagnolo-sr-wrl-custom", name: "Ostro VAM Campagnolo SR WRL (Custom)", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2025", collectionTag: "factor-ostro-vam-campagnolo-sr-wrl-custom" },
+            { id: "factor-ostro-vam-frameset", name: "Ostro VAM Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "factor-ostro-vam-frameset" }
+          ]
+        },
+        {
+          id: "factor-ostro-vam-gen1", name: "Ostro VAM (Gen1)", meta: "Aero / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "factor-ostro-vam-da-di2-custom-build", name: "Ostro VAM DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "factor-ostro-vam-da-di2-custom-build" },
+            { id: "factor-ostro-vam-red-axs-custom-build", name: "Ostro VAM Red AXS (Custom Build)", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2022", collectionTag: "factor-ostro-vam-red-axs-custom-build" }
+          ]
+        },
+        {
+          id: "factor-o2-vam-gen2", name: "O2 VAM (Gen2)", meta: "Race / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "factor-o2-vam-da-di2-custom-build", name: "O2 VAM DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "factor-o2-vam-da-di2-custom-build" },
+            { id: "factor-o2-vam-red-axs-custom-build", name: "O2 VAM Red AXS (Custom Build)", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "factor-o2-vam-red-axs-custom-build" },
+            { id: "factor-o2-vam-campagnolo-sr-wrl-custom", name: "O2 VAM Campagnolo SR WRL (Custom)", meta: "Campagnolo Super Record WRL 2x12", schaltgruppe: "Campagnolo Super Record WRL 2x12", modelljahre: "2025", collectionTag: "factor-o2-vam-campagnolo-sr-wrl-custom" },
+            { id: "factor-o2-vam-frameset", name: "O2 VAM Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "factor-o2-vam-frameset" }
+          ]
+        },
+        {
+          id: "factor-o2-vam-gen1", name: "O2 VAM (Gen1)", meta: "Race / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "factor-o2-vam-da-di2-custom-build", name: "O2 VAM DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023", collectionTag: "factor-o2-vam-da-di2-custom-build" },
+            { id: "factor-o2-vam-ultegra-di2-custom-build", name: "O2 VAM Ultegra Di2 (Custom Build)", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "factor-o2-vam-ultegra-di2-custom-build" }
+          ]
+        },
+        {
+          id: "factor-vista", name: "Vista", meta: "Endurance / Allroad", type: "Carbon",
+          variants: [
+            { id: "factor-vista-da-di2-custom-build", name: "Vista DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2023", collectionTag: "factor-vista-da-di2-custom-build" },
+            { id: "factor-vista-ultegra-di2-custom-build", name: "Vista Ultegra Di2 (Custom Build)", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2023", collectionTag: "factor-vista-ultegra-di2-custom-build" },
+            { id: "factor-vista-frameset", name: "Vista Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2023", collectionTag: "factor-vista-frameset" }
+          ]
+        },
+        {
+          id: "factor-one", name: "ONE", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "factor-one-da-di2-custom-build", name: "ONE DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2022", collectionTag: "factor-one-da-di2-custom-build" }
+          ]
+        },
+        {
+          id: "factor-slick", name: "Slick", meta: "Zeitfahren / Triathlon", type: "Carbon",
+          variants: [
+            { id: "factor-slick-da-di2-custom-build", name: "Slick DA Di2 (Custom Build)", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "factor-slick-da-di2-custom-build" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "scott", name: "Scott", meta: "Givisiez \u00b7 CH", type: "Carbon",
+      models: [
+        {
+          id: "scott-foil-rc", name: "Foil RC", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "scott-foil-rc-pro-da-di2", name: "Foil RC Pro DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "scott-foil-rc-pro-da-di2" },
+            { id: "scott-foil-rc-team-force-axs", name: "Foil RC Team Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2026", collectionTag: "scott-foil-rc-team-force-axs" },
+            { id: "scott-foil-rc-10-ultegra-di2", name: "Foil RC 10 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "scott-foil-rc-10-ultegra-di2" },
+            { id: "scott-foil-rc-20-105-di2", name: "Foil RC 20 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "scott-foil-rc-20-105-di2" }
+          ]
+        },
+        {
+          id: "scott-addict-rc", name: "Addict RC", meta: "Race / Leichtgewicht", type: "Carbon",
+          variants: [
+            { id: "scott-addict-rc-team-red-axs", name: "Addict RC Team Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "scott-addict-rc-team-red-axs" },
+            { id: "scott-addict-rc-pro-da-di2", name: "Addict RC Pro DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "scott-addict-rc-pro-da-di2" },
+            { id: "scott-addict-rc-ultimate-ultegra-di2", name: "Addict RC Ultimate Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "scott-addict-rc-ultimate-ultegra-di2" },
+            { id: "scott-addict-rc-10-ultegra-di2", name: "Addict RC 10 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "scott-addict-rc-10-ultegra-di2" },
+            { id: "scott-addict-rc-20-105-di2", name: "Addict RC 20 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "scott-addict-rc-20-105-di2" }
+          ]
+        },
+        {
+          id: "scott-addict-2026", name: "Addict (2026)", meta: "Race / Allrounder", type: "Carbon",
+          variants: [
+            { id: "scott-addict-premium-red-axs", name: "Addict Premium Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2026", collectionTag: "scott-addict-premium-red-axs" },
+            { id: "scott-addict-10-da-di2", name: "Addict 10 DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2026", collectionTag: "scott-addict-10-da-di2" },
+            { id: "scott-addict-20-ultegra-di2", name: "Addict 20 Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2026", collectionTag: "scott-addict-20-ultegra-di2" },
+            { id: "scott-addict-40-105-di2", name: "Addict 40 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2026", collectionTag: "scott-addict-40-105-di2" },
+            { id: "scott-addict-50-105-mech", name: "Addict 50 105 mech.", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2026", collectionTag: "scott-addict-50-105-mech" }
+          ]
+        },
+        {
+          id: "scott-speedster", name: "Speedster", meta: "Race (Alu)", type: "Aluminium",
+          variants: [
+            { id: "scott-speedster-10-105-di2", name: "Speedster 10 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2024", collectionTag: "scott-speedster-10-105-di2" },
+            { id: "scott-speedster-20-tiagra", name: "Speedster 20 Tiagra", meta: "Shimano Tiagra 4700 2x10", schaltgruppe: "Shimano Tiagra 4700 2x10", modelljahre: "2024", collectionTag: "scott-speedster-20-tiagra" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "look", name: "Look", meta: "Nevers \u00b7 FR", type: "Carbon",
+      models: [
+        {
+          id: "look-795-blade-rs", name: "795 Blade RS", meta: "Aero Race", type: "Carbon",
+          variants: [
+            { id: "look-795-blade-rs-da-di2", name: "795 Blade RS DA Di2", meta: "Shimano Dura-Ace Di2 R9200 2x12", schaltgruppe: "Shimano Dura-Ace Di2 R9200 2x12", modelljahre: "2025", collectionTag: "look-795-blade-rs-da-di2" },
+            { id: "look-795-blade-rs-ultegra-di2", name: "795 Blade RS Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "look-795-blade-rs-ultegra-di2" },
+            { id: "look-795-blade-rs-red-axs", name: "795 Blade RS Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2025", collectionTag: "look-795-blade-rs-red-axs" },
+            { id: "look-795-blade-rs-campagnolo-sr-13s-wrl", name: "795 Blade RS Campagnolo SR 13s WRL", meta: "Campagnolo Super Record 13s Wireless 2x13", schaltgruppe: "Campagnolo Super Record 13s Wireless 2x13", modelljahre: "2025", collectionTag: "look-795-blade-rs-campagnolo-sr-13s-wrl" },
+            { id: "look-795-blade-rs-frameset", name: "795 Blade RS Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "look-795-blade-rs-frameset" }
+          ]
+        },
+        {
+          id: "look-785-huez", name: "785 Huez", meta: "Kletter-Race", type: "Carbon",
+          variants: [
+            { id: "look-785-huez-ultegra-di2-pro-team-black", name: "785 Huez Ultegra Di2 Pro Team Black", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "look-785-huez-ultegra-di2-pro-team-black" },
+            { id: "look-785-huez-105-di2", name: "785 Huez 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "look-785-huez-105-di2" },
+            { id: "look-785-huez-rival-axs-e1", name: "785 Huez Rival AXS E1", meta: "SRAM Rival eTap AXS E1 2x12", schaltgruppe: "SRAM Rival eTap AXS E1 2x12", modelljahre: "2025", collectionTag: "look-785-huez-rival-axs-e1" },
+            { id: "look-785-huez-105-mechanisch", name: "785 Huez 105 mechanisch", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2025", collectionTag: "look-785-huez-105-mechanisch" },
+            { id: "look-785-huez-frameset", name: "785 Huez Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "look-785-huez-frameset" }
+          ]
+        },
+        {
+          id: "look-785-huez-rs", name: "785 Huez RS", meta: "Kletter-Race (Premium)", type: "Carbon",
+          variants: [
+            { id: "look-785-huez-rs-disc-ultegra-di2", name: "785 Huez RS Disc Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2024", collectionTag: "look-785-huez-rs-disc-ultegra-di2" },
+            { id: "look-785-huez-rs-red-axs", name: "785 Huez RS Red AXS", meta: "SRAM Red eTap AXS 2x12", schaltgruppe: "SRAM Red eTap AXS 2x12", modelljahre: "2024", collectionTag: "look-785-huez-rs-red-axs" },
+            { id: "look-785-huez-rs-frameset", name: "785 Huez RS Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2024", collectionTag: "look-785-huez-rs-frameset" }
+          ]
+        },
+        {
+          id: "look-765-optimum", name: "765 Optimum", meta: "Endurance", type: "Carbon",
+          variants: [
+            { id: "look-765-optimum-ultegra-di2", name: "765 Optimum Ultegra Di2", meta: "Shimano Ultegra Di2 R8100 2x12", schaltgruppe: "Shimano Ultegra Di2 R8100 2x12", modelljahre: "2025", collectionTag: "look-765-optimum-ultegra-di2" },
+            { id: "look-765-optimum-105-di2", name: "765 Optimum 105 Di2", meta: "Shimano 105 Di2 R7100 2x12", schaltgruppe: "Shimano 105 Di2 R7100 2x12", modelljahre: "2025", collectionTag: "look-765-optimum-105-di2" },
+            { id: "look-765-optimum-rival-axs", name: "765 Optimum Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2025", collectionTag: "look-765-optimum-rival-axs" },
+            { id: "look-765-optimum-105-mechanisch", name: "765 Optimum 105 mechanisch", meta: "Shimano 105 R7100 2x12 mech.", schaltgruppe: "Shimano 105 R7100 2x12 mech.", modelljahre: "2025", collectionTag: "look-765-optimum-105-mechanisch" }
           ]
         }
       ]
