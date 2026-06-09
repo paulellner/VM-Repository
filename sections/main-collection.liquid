@@ -519,7 +519,7 @@
 
     <!-- Product grid -->
     {%- if collection.products.size > 0 -%}
-      {%- paginate collection.products by 30 -%}
+      {%- paginate collection.products by 250 -%}
         <div class="vm-prod-grid" id="vm-prod-grid">
           {%- for product in collection.products -%}
             {% render 'card-product', product: product, compatible: true %}
