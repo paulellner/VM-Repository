@@ -350,7 +350,7 @@
                   </a>
                 </div>
 
-                <div class="vm-cart__item-price">{{ item.line_price | money }}</div>
+                <div class="vm-cart__item-price" data-line-key="{{ item.key }}">{{ item.line_price | money }}</div>
 
               </div>
             {%- endfor -%}
@@ -363,13 +363,13 @@
             {%- for item in cart.items -%}
               <div class="vm-cart__summary-row">
                 <span>{{ item.title | truncate: 28 }}</span>
-                <span>{{ item.line_price | money }}</span>
+                <span data-summary-key="{{ item.key }}">{{ item.line_price | money }}</span>
               </div>
             {%- endfor -%}
 
             <div class="vm-cart__summary-total">
               <span>Gesamt</span>
-              <span>{{ cart.total_price | money }}</span>
+              <span id="vm-cart-total">{{ cart.total_price | money }}</span>
             </div>
 
             <button class="vm-cart__checkout" type="submit" name="checkout">Zur Kasse →</button>
@@ -399,15 +399,68 @@
   var form = document.getElementById('vm-cart-form');
   if (!form) return;
 
-  /* +/- buttons update the number input */
+  function formatMoney(cents) {
+    return (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+  }
+
+  function refreshCart() {
+    fetch('/cart.js')
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        /* Update total */
+        var totalEl = document.getElementById('vm-cart-total');
+        if (totalEl) totalEl.textContent = formatMoney(cart.total_price);
+
+        /* Update header badge */
+        var badge = document.getElementById('vm-cart-count');
+        if (badge) badge.textContent = cart.item_count > 0 ? cart.item_count : '';
+
+        /* Update each line price + summary row */
+        cart.items.forEach(function (item) {
+          var priceEl = document.querySelector('[data-line-key="' + item.key + '"]');
+          if (priceEl) priceEl.textContent = formatMoney(item.line_price);
+          var summaryEl = document.querySelector('[data-summary-key="' + item.key + '"]');
+          if (summaryEl) summaryEl.textContent = formatMoney(item.line_price);
+        });
+
+        /* If item was removed (qty = 0), reload to clean the DOM */
+        if (cart.items.length === 0) { window.location.reload(); return; }
+        var rendered = form.querySelectorAll('.vm-cart__item').length;
+        if (cart.items.length !== rendered) window.location.reload();
+      });
+  }
+
+  function changeQty(key, newQty) {
+    fetch('/cart/change.js', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ id: key, quantity: newQty })
+    })
+    .then(function (r) { return r.json(); })
+    .then(refreshCart)
+    .catch(function (err) { console.error('cart/change failed', err); });
+  }
+
+  /* +/- buttons */
   form.querySelectorAll('.vm-qty-minus, .vm-qty-plus').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var key   = this.dataset.key;
       var input = form.querySelector('input[name="updates[' + key + ']"]');
       if (!input) return;
-      var delta = this.classList.contains('vm-qty-plus') ? 1 : -1;
+      var delta  = this.classList.contains('vm-qty-plus') ? 1 : -1;
       var newVal = Math.max(0, parseInt(input.value || 0) + delta);
       input.value = newVal;
+      changeQty(key, newVal);
+    });
+  });
+
+  /* Manual input change */
+  form.querySelectorAll('.vm-cart__qty-input').forEach(function (input) {
+    input.addEventListener('change', function () {
+      var key    = this.name.replace('updates[', '').replace(']', '');
+      var newVal = Math.max(0, parseInt(this.value || 0));
+      this.value = newVal;
+      changeQty(key, newVal);
     });
   });
 })();
