@@ -1,0 +1,30 @@
+<div class="vm-page">
+  <div class="vm-page__inner">
+    <h1 class="vm-page__title">{{ page.title }}</h1>
+    <div class="vm-page__content rte">{{ page.content }}</div>
+  </div>
+</div>
+
+<style>
+.vm-page__inner {
+  max-width: 800px;
+  margin:    0 auto;
+  padding:   64px 40px;
+}
+.vm-page__title {
+  font-size:      44px;
+  margin-bottom:  32px;
+}
+.vm-page__content { line-height: 1.6; }
+
+@media (max-width: 880px) {
+  .vm-page__inner { padding: 40px 20px; }
+  .vm-page__title { font-size: 28px; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Seite"
+}
+{% endschema %}

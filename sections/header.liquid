@@ -1,0 +1,133 @@
+<style>
+.vm-header {
+  background:     var(--vm-ink);
+  color:          var(--vm-bone);
+  border-bottom:  var(--vm-stroke-2, 2.5px) solid var(--vm-ink);
+  position:       sticky;
+  top:            0;
+  z-index:        100;
+}
+
+.vm-header__inner {
+  max-width:       1200px;
+  margin:          0 auto;
+  padding:         0 40px;
+  height:          72px;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+}
+
+.vm-header__logo {
+  text-decoration: none;
+  color:           var(--vm-bone);
+  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-size:       22px;
+  letter-spacing:  -0.045em;
+  line-height:     1;
+  display:         flex;
+  align-items:     center;
+  gap:             2px;
+}
+
+.vm-header__logo-velo  { font-weight: 400; }
+.vm-header__logo-match { font-weight: 700; }
+.vm-header__logo-dot   { color: var(--vm-signal); font-weight: 700; }
+
+.vm-header__nav {
+  display:    flex;
+  align-items: center;
+  gap:         32px;
+  list-style:  none;
+  margin:      0;
+  padding:     0;
+}
+
+.vm-header__nav a {
+  text-decoration: none;
+  font-size:       13px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-sage);
+  transition:      color var(--vm-dur, 220ms) var(--vm-ease, ease);
+}
+
+.vm-header__nav a:hover,
+.vm-header__nav a[aria-current="page"] { color: var(--vm-bone); }
+
+.vm-header__cart {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  border:         none;
+  padding:        8px 16px;
+  font-family:    var(--vm-sans);
+  font-size:      13px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor:         pointer;
+  text-decoration: none;
+  display:        flex;
+  align-items:    center;
+  gap:            6px;
+  transition:     box-shadow var(--vm-dur, 220ms) var(--vm-ease, ease),
+                  transform  var(--vm-dur, 220ms) var(--vm-ease, ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-header__cart:hover {
+    transform:  translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--vm-olive);
+  }
+}
+
+@media (max-width: 880px) {
+  .vm-header__inner { padding: 0 20px; }
+  .vm-header__nav   { display: none; }
+}
+</style>
+
+<header class="vm-header" role="banner">
+  <div class="vm-header__inner">
+
+    <a class="vm-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      <span class="vm-header__logo-velo">velo</span><span class="vm-header__logo-match">match</span><span class="vm-header__logo-dot">.</span>
+    </a>
+
+    <nav aria-label="Hauptnavigation">
+      <ul class="vm-header__nav">
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a href="{{ link.url }}"
+               {% if link.active %}aria-current="page"{% endif %}>
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <a class="vm-header__cart" href="{{ routes.cart_url }}">
+      Warenkorb
+      {%- if cart.item_count > 0 -%}
+        <span class="vm-header__cart-count">({{ cart.item_count }})</span>
+      {%- endif -%}
+    </a>
+
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigationsmenü",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

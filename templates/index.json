@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "hero": {
+      "type": "main-index",
+      "settings": {
+        "label": "Bike Selector",
+        "heading": "Die richtigen Teile für dein Rad.",
+        "subheading": "Wähle dein Fahrrad in drei Schritten — wir zeigen dir nur die Teile, die wirklich passen.",
+        "cta_text": "Jetzt Fahrrad wählen"
+      }
+    },
+    "selector": {
+      "type": "bike-selector",
+      "settings": {}
+    }
+  },
+  "order": ["hero", "selector"]
+}

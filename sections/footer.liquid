@@ -1,0 +1,164 @@
+<style>
+.vm-footer {
+  background:    var(--vm-olive-deep, #2A331F);
+  color:         var(--vm-bone, #F2F0E6);
+  border-top:    2.5px solid var(--vm-ink, #14160F);
+  margin-top:    96px;
+}
+
+.vm-footer__inner {
+  max-width: 1200px;
+  margin:    0 auto;
+  padding:   48px 40px;
+  display:   grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:       48px;
+}
+
+.vm-footer__brand {}
+
+.vm-footer__logo {
+  font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-size:      20px;
+  letter-spacing: -0.045em;
+  text-decoration: none;
+  color:          var(--vm-bone, #F2F0E6);
+  display:        inline-block;
+  margin-bottom:  16px;
+}
+
+.vm-footer__logo-velo  { font-weight: 400; }
+.vm-footer__logo-match { font-weight: 700; }
+.vm-footer__logo-dot   { color: var(--vm-signal, #C9E45B); }
+
+.vm-footer__tagline {
+  font-size:   14px;
+  opacity:     0.6;
+  line-height: 1.5;
+  margin:      0;
+  max-width:   240px;
+}
+
+.vm-footer__heading {
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-signal, #C9E45B);
+  margin:         0 0 16px;
+  font-family:    'Courier New', monospace;
+}
+
+.vm-footer__links {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+  display:    flex;
+  flex-direction: column;
+  gap:        8px;
+}
+
+.vm-footer__links a {
+  text-decoration: none;
+  font-size:       14px;
+  color:           var(--vm-sage, #9CA982);
+  transition:      color 220ms ease;
+}
+
+.vm-footer__links a:hover { color: var(--vm-bone, #F2F0E6); }
+
+.vm-footer__bottom {
+  border-top: 1px solid rgba(156, 169, 130, 0.2);
+  padding:    20px 40px;
+  max-width:  1200px;
+  margin:     0 auto;
+  display:    flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size:  12px;
+  opacity:    0.5;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 880px) {
+  .vm-footer__inner  { grid-template-columns: 1fr; padding: 40px 20px; gap: 32px; }
+  .vm-footer__bottom { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+
+<footer class="vm-footer" role="contentinfo">
+  <div class="vm-footer__inner">
+
+    <div class="vm-footer__brand">
+      <a class="vm-footer__logo" href="{{ routes.root_url }}">
+        <span class="vm-footer__logo-velo">velo</span><span class="vm-footer__logo-match">match</span><span class="vm-footer__logo-dot">.</span>
+      </a>
+      <p class="vm-footer__tagline">{{ section.settings.tagline | default: 'Die richtigen Teile für dein Rennrad — in drei Schritten.' }}</p>
+    </div>
+
+    {%- if section.settings.menu_1 != blank -%}
+    <div>
+      <p class="vm-footer__heading">{{ section.settings.menu_1_heading | default: 'Shop' }}</p>
+      <ul class="vm-footer__links">
+        {%- for link in section.settings.menu_1.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+
+    {%- if section.settings.menu_2 != blank -%}
+    <div>
+      <p class="vm-footer__heading">{{ section.settings.menu_2_heading | default: 'Info' }}</p>
+      <ul class="vm-footer__links">
+        {%- for link in section.settings.menu_2.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+
+  </div>
+  <div class="vm-footer__bottom">
+    <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+    <span>Powered by Shopify</span>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Die richtigen Teile für dein Rennrad — in drei Schritten."
+    },
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menü 1",
+      "default": "footer"
+    },
+    {
+      "type": "text",
+      "id": "menu_1_heading",
+      "label": "Menü 1 Überschrift",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menü 2"
+    },
+    {
+      "type": "text",
+      "id": "menu_2_heading",
+      "label": "Menü 2 Überschrift",
+      "default": "Info"
+    }
+  ]
+}
+{% endschema %}

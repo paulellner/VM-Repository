@@ -1,0 +1,59 @@
+/* VeloMatch — Global Base Styles */
+
+/* ── Tokens ────────────────────────────────────────────────────────────── */
+:root {
+  --vm-olive:      #3D4A2F;
+  --vm-olive-deep: #2A331F;
+  --vm-moss:       #5E7142;
+  --vm-sage:       #9CA982;
+  --vm-signal:     #C9E45B;
+  --vm-ink:        #14160F;
+  --vm-bone:       #F2F0E6;
+  --vm-paper:      #FBFAF3;
+  --vm-stroke:     1.5px;
+  --vm-stroke-2:   2.5px;
+  --vm-dur:        220ms;
+  --vm-ease:       cubic-bezier(0.2, 0.7, 0.2, 1);
+  --vm-mono:       'Courier New', 'Lucida Console', monospace;
+  --vm-sans:       'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin:      0;
+  background:  var(--vm-bone);
+  color:       var(--vm-ink);
+  font-family: var(--vm-sans);
+  font-size:   16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+img, video { max-width: 100%; display: block; }
+
+/* ── Typography ─────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family:    var(--vm-sans);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.05;
+  margin:         0 0 0.5em;
+}
+
+/* ── Skip link ──────────────────────────────────────────────────────────── */
+.skip-to-content-link {
+  position:   absolute;
+  top:        -100%;
+  left:       0;
+  background: var(--vm-signal);
+  color:      var(--vm-ink);
+  padding:    8px 16px;
+  font-weight: 700;
+  z-index:    9999;
+}
+.skip-to-content-link:focus { top: 0; }

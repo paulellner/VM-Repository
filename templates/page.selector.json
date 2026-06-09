@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "selector": {
+      "type": "bike-selector",
+      "settings": {}
+    }
+  },
+  "order": ["selector"]
+}

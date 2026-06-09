@@ -1,0 +1,12 @@
+{
+  "general": {
+    "meta": {
+      "page": "Seite {{ page }}"
+    }
+  },
+  "sections": {
+    "header": {
+      "cart": "Warenkorb"
+    }
+  }
+}
