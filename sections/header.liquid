@@ -57,22 +57,22 @@
 .vm-header__nav a[aria-current="page"] { color: var(--vm-bone); }
 
 .vm-header__cart {
-  background:     var(--vm-signal);
-  color:          var(--vm-ink);
-  border:         none;
-  padding:        8px 16px;
-  font-family:    var(--vm-sans);
-  font-size:      13px;
-  font-weight:    800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor:         pointer;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  border:          none;
+  padding:         8px 16px;
+  font-family:     var(--vm-sans);
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  0.05em;
+  cursor:          pointer;
   text-decoration: none;
-  display:        flex;
-  align-items:    center;
-  gap:            6px;
-  transition:     box-shadow var(--vm-dur, 220ms) var(--vm-ease, ease),
-                  transform  var(--vm-dur, 220ms) var(--vm-ease, ease);
+  display:         flex;
+  align-items:     center;
+  gap:             8px;
+  transition:      box-shadow var(--vm-dur, 220ms) var(--vm-ease, ease),
+                   transform  var(--vm-dur, 220ms) var(--vm-ease, ease);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -82,9 +82,38 @@
   }
 }
 
+/* Cart icon wrapper + count badge */
+.vm-header__cart-icon {
+  position: relative;
+  display:  inline-flex;
+  flex-shrink: 0;
+}
+
+.vm-header__cart-badge {
+  position:        absolute;
+  top:             -8px;
+  right:           -9px;
+  min-width:       17px;
+  height:          17px;
+  background:      var(--vm-ink);
+  color:           var(--vm-signal);
+  font-size:       10px;
+  font-weight:     800;
+  font-family:     'Courier New', monospace;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         0 3px;
+  line-height:     1;
+  border-radius:   0;
+}
+.vm-header__cart-badge:empty { display: none; }
+
 @media (max-width: 880px) {
-  .vm-header__inner { padding: 0 20px; }
-  .vm-header__nav   { display: none; }
+  .vm-header__inner    { padding: 0 20px; }
+  .vm-header__nav      { display: none; }
+  .vm-header__cart-text { display: none; }
+  .vm-header__cart     { padding: 8px 12px; }
 }
 </style>
 
@@ -108,11 +137,20 @@
       </ul>
     </nav>
 
-    <a class="vm-header__cart" href="{{ routes.cart_url }}">
-      Warenkorb
-      <span class="vm-header__cart-count" id="vm-cart-count">
-        {%- if cart.item_count > 0 -%}({{ cart.item_count }}){%- endif -%}
+    <a class="vm-header__cart" href="{{ routes.cart_url }}" aria-label="Warenkorb">
+      <span class="vm-header__cart-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="square" stroke-linejoin="miter">
+          <path d="M6 2H3L1 8v13h22V8L21 2h-3"/>
+          <rect x="6" y="2" width="12" height="6"/>
+          <path d="M9 14a3 3 0 006 0"/>
+        </svg>
+        <span class="vm-header__cart-badge" id="vm-cart-count">
+          {%- if cart.item_count > 0 -%}{{ cart.item_count }}{%- endif -%}
+        </span>
       </span>
+      <span class="vm-header__cart-text">Warenkorb</span>
     </a>
 
   </div>
