@@ -145,7 +145,8 @@
   border:       var(--vm-stroke) solid var(--vm-ink);
   border-radius: 0;
   padding:      24px;
-  min-height:   180px;
+  height:       160px;
+  overflow:     hidden;
   display:      flex;
   flex-direction: column;
   cursor:       pointer;
@@ -447,7 +448,9 @@
   border-width:   2px;
   background:     var(--vm-ink);
   color:          var(--vm-bone);
-  min-height:     180px;
+  height:         auto;
+  min-height:     160px;
+  overflow:       visible;
 }
 
 .vm-pick--custom .vm-pick__name { color: var(--vm-signal); }
