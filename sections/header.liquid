@@ -120,7 +120,7 @@
 <header class="vm-header" role="banner">
   <div class="vm-header__inner">
 
-    <a class="vm-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+    <a class="vm-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}" onclick="try{localStorage.removeItem('vm_selection')}catch(e){}">
       <span class="vm-header__logo-velo">velo</span><span class="vm-header__logo-match">match</span><span class="vm-header__logo-dot">.</span>
     </a>
 

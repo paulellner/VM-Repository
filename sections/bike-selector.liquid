@@ -707,8 +707,9 @@
           <label class="vm-custom-field">
             <span class="vm-custom-field__lbl">Schaltungstyp</span>
             <select class="vm-custom-select" id="vm-cfg-antrieb">
-              <option value="">Elektronisch &amp; Mechanisch</option>
-              <option value="elektronisch">Elektronisch (Di2 / eTap AXS)</option>
+              <option value="">Alle Typen</option>
+              <option value="di2">Di2 — Shimano elektronisch</option>
+              <option value="axs">AXS — SRAM eTap</option>
               <option value="mechanisch">Mechanisch</option>
             </select>
           </label>
@@ -1797,8 +1798,9 @@
           if (niveau === 'performance' && !sg.match(/ultegra|force etap|force axs/)) return;
           if (niveau === 'sport'       && !sg.match(/\b105\b|rival/)) return;
           if (niveau === 'einsteiger'  && !sg.match(/tiagra|claris|cues/)) return;
-          if (antrieb === 'elektronisch' && !sg.match(/di2|etap|eps|wrl/)) return;
-          if (antrieb === 'mechanisch'   &&  sg.match(/di2|etap|eps|wrl/)) return;
+          if (antrieb === 'di2'        && !sg.match(/di2/)) return;
+          if (antrieb === 'axs'        && !sg.match(/etap|axs/)) return;
+          if (antrieb === 'mechanisch' &&  sg.match(/di2|etap|eps|wrl/)) return;
           if (gaenge === '12' && sg.indexOf('2x12') < 0) return;
           if (gaenge === '11' && sg.indexOf('2x11') < 0 && sg.indexOf('11-fach') < 0) return;
           if (gaenge === '10' && sg.indexOf('2x10') < 0) return;
@@ -1933,8 +1935,8 @@
   /* ── INIT ───────────────────────────────────────────────────────────────── */
   $back.addEventListener('click', back);
   $reset.addEventListener('click', reset);
+  clearSave();
   renderCards($gBrands, BIKES, null, pickBrand);
-  loadSaved();
 
 })();
 </script>
