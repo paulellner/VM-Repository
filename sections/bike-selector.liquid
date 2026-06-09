@@ -736,17 +736,12 @@
           </label>
 
         </div>
-        <button class="vm-custom-btn" type="button" id="vm-custom-search">
-          Passende Bikes suchen →
-        </button>
-      </div>
-
-      <!-- Results appear here after search -->
-      <div class="vm-custom-results" id="vm-custom-results" hidden>
-        <div class="vm-custom-results__hd">
-          <span class="vm-custom-results__title" id="vm-custom-count"></span>
+        <div id="vm-custom-error" style="display:none;color:var(--vm-signal);font-size:13px;margin-bottom:12px;font-family:var(--vm-mono);letter-spacing:0.06em">
+          Bitte wähle mindestens einen Schaltgruppen-Hersteller.
         </div>
-        <div class="vm-grid vm-grid--3" data-grid="custom-results" role="list"></div>
+        <button class="vm-custom-btn" type="button" id="vm-custom-search">
+          Passende Teile anzeigen →
+        </button>
       </div>
     </div>
 
@@ -1762,108 +1757,83 @@
   }
 
   /* ── CUSTOM CONFIG ─────────────────────────────────────────────────────── */
-  var $customSearch  = document.getElementById('vm-custom-search');
-  var $customResults = document.getElementById('vm-custom-results');
-  var $customCount   = document.getElementById('vm-custom-count');
-  var $customGrid    = root.querySelector('[data-grid="custom-results"]');
+  var $customSearch = document.getElementById('vm-custom-search');
+  var $customError  = document.getElementById('vm-custom-error');
 
   function goToCustom() {
     S.step = 'custom';
     showStep('custom');
     updateStepper();
     updateBreadcrumb();
-    // reset results
-    if ($customResults) { $customResults.hidden = true; }
   }
 
-  function filterCustom() {
-    var material   = document.getElementById('vm-cfg-material').value;
-    var hersteller = document.getElementById('vm-cfg-hersteller').value;
-    var niveau     = document.getElementById('vm-cfg-niveau').value;
-    var antrieb    = document.getElementById('vm-cfg-antrieb').value;
-    var bremsen    = document.getElementById('vm-cfg-bremsen').value;
-    var gaenge     = document.getElementById('vm-cfg-gaenge').value;
-
-    var results = [];
-    BIKES.forEach(function (brand) {
-      if (brand.id === 'selbst-zusammenstellen') return;
-      brand.models.forEach(function (model) {
-        if (material && model.type !== material) return;
-        model.variants.forEach(function (v) {
-          var sg = (v.schaltgruppe || '').toLowerCase();
-          if (hersteller === 'shimano'    && sg.indexOf('shimano') < 0) return;
-          if (hersteller === 'sram'       && sg.indexOf('sram') < 0) return;
-          if (hersteller === 'campagnolo' && sg.indexOf('campagnolo') < 0) return;
-          if (niveau === 'race'        && !sg.match(/dura.ace|(?:^|\s)red\s|super record/)) return;
-          if (niveau === 'performance' && !sg.match(/ultegra|force etap|force axs/)) return;
-          if (niveau === 'sport'       && !sg.match(/\b105\b|rival/)) return;
-          if (niveau === 'einsteiger'  && !sg.match(/tiagra|claris|cues/)) return;
-          if (antrieb === 'di2'        && !sg.match(/di2/)) return;
-          if (antrieb === 'axs'        && !sg.match(/etap|axs/)) return;
-          if (antrieb === 'mechanisch' &&  sg.match(/di2|etap|eps|wrl/)) return;
-          if (gaenge === '12' && sg.indexOf('2x12') < 0) return;
-          if (gaenge === '11' && sg.indexOf('2x11') < 0 && sg.indexOf('11-fach') < 0) return;
-          if (gaenge === '10' && sg.indexOf('2x10') < 0) return;
-          if (gaenge === '1x' && sg.indexOf('1x') < 0) return;
-          /* Bremsen — all DB entries are hydraulic disc; extend if needed */
-          if (bremsen === 'felge' || bremsen === 'mechanisch-scheibe') return; /* none in DB */
-          results.push({ brand: brand, model: model, variant: v });
-        });
-      });
-    });
-    return results;
-  }
-
-  function renderCustomResults(results) {
-    if (!$customGrid || !$customResults || !$customCount) return;
-    $customResults.hidden = false;
-
-    if (results.length === 0) {
-      $customCount.textContent = 'Keine Treffer — Filter anpassen';
-      $customGrid.innerHTML = '<div class="vm-custom-results__none">Keine Bikes gefunden. Bitte die Filter anpassen.</div>';
-      return;
+  /* Maps form values → a single custom collectionTag stored in vm_selection */
+  function buildCustomTag(hersteller, niveau, antrieb) {
+    if (!hersteller) return null;
+    var tier = '';
+    if (hersteller === 'shimano') {
+      if (niveau === 'race')             tier = 'dura-ace-';
+      else if (niveau === 'performance') tier = 'ultegra-';
+      else if (niveau === 'sport')       tier = '105-';
+      else if (niveau === 'einsteiger')  tier = 'tiagra-';
+      if (antrieb === 'mechanisch') return 'custom-shimano-' + tier + 'mech';
+      return 'custom-shimano-' + tier + 'di2';
     }
-
-    var shown = results.slice(0, 12);
-    $customCount.textContent = shown.length + (results.length > 12 ? ' von ' + results.length : '') + ' passende Variante' + (shown.length !== 1 ? 'n' : '');
-
-    $customGrid.innerHTML = '';
-    shown.forEach(function (r, i) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'vm-pick vm-pick--result';
-      btn.setAttribute('role', 'listitem');
-      btn.setAttribute('aria-pressed', 'false');
-      btn.innerHTML =
-        '<span class="vm-pick__idx">' + pad(i + 1, shown.length) + '</span>' +
-        '<span class="vm-pick__brand">' + esc(r.brand.name) + '</span>' +
-        '<span class="vm-pick__name">' + esc(r.model.name) + '</span>' +
-        '<div class="vm-pick__meta">' +
-          '<span>' + esc(r.variant.name) + '</span>' +
-        '</div>' +
-        '<span class="vm-pick__sub">' + esc(r.variant.schaltgruppe) + ' · ' + esc(r.variant.modelljahre) + '</span>' +
-        '<span class="vm-pick__go" aria-hidden="true">→</span>';
-      btn.addEventListener('click', function () { pickCustomResult(r.brand.id, r.model.id, r.variant.id); });
-      $customGrid.appendChild(btn);
-    });
+    if (hersteller === 'sram') {
+      if (niveau === 'race')             tier = 'red-';
+      else if (niveau === 'performance') tier = 'force-';
+      else if (niveau === 'sport')       tier = 'rival-';
+      if (antrieb === 'mechanisch') return 'custom-sram-' + tier + 'mech';
+      return 'custom-sram-' + tier + 'axs';
+    }
+    if (hersteller === 'campagnolo') {
+      return 'custom-campagnolo-super-record';
+    }
+    return null;
   }
 
-  function pickCustomResult(brandId, modelId, variantId) {
-    S.brand = brandId;
-    S.model = modelId;
-    S.variant = variantId;
-    S.fromCustom = true;
-    /* highlight picked card */
-    var cards = $customGrid.querySelectorAll('.vm-pick');
-    cards.forEach(function(c) { c.setAttribute('aria-pressed', 'false'); });
-    /* show result */
-    setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
+  function buildCustomLabel(hersteller, niveau, antrieb) {
+    var parts = [];
+    if      (hersteller === 'shimano')    parts.push('Shimano');
+    else if (hersteller === 'sram')       parts.push('SRAM');
+    else if (hersteller === 'campagnolo') parts.push('Campagnolo');
+    if      (niveau === 'race')        parts.push('Dura-Ace / Red');
+    else if (niveau === 'performance') parts.push('Ultegra / Force');
+    else if (niveau === 'sport')       parts.push('105 / Rival');
+    else if (niveau === 'einsteiger')  parts.push('Tiagra / Claris');
+    if      (antrieb === 'di2')        parts.push('Di2');
+    else if (antrieb === 'axs')        parts.push('AXS');
+    else if (antrieb === 'mechanisch') parts.push('Mechanisch');
+    return parts.join(' ');
   }
 
   if ($customSearch) {
     $customSearch.addEventListener('click', function () {
-      var results = filterCustom();
-      renderCustomResults(results);
+      var hersteller = document.getElementById('vm-cfg-hersteller').value;
+      var niveau     = document.getElementById('vm-cfg-niveau').value;
+      var antrieb    = document.getElementById('vm-cfg-antrieb').value;
+
+      if (!hersteller) {
+        if ($customError) $customError.style.display = '';
+        return;
+      }
+      if ($customError) $customError.style.display = 'none';
+
+      var customTag = buildCustomTag(hersteller, niveau, antrieb);
+      var label     = buildCustomLabel(hersteller, niveau, antrieb);
+      if (!customTag) return;
+
+      try {
+        localStorage.setItem('vm_selection', JSON.stringify({
+          brand:   'custom',
+          model:   'Konfiguriertes Rad',
+          variant: customTag,
+          label:   label
+        }));
+      } catch(e) {}
+
+      var collUrl = '{{ section.settings.parts_collection_url | default: "/collections/all" }}';
+      window.location.href = collUrl;
     });
   }
 

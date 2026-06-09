@@ -624,7 +624,10 @@
     var hasSelection = sel && (sel.brand || sel.variant);
     var displayName  = '';
 
-    if (sel && sel.brand) {
+    if (sel && sel.brand === 'custom') {
+      displayName  = sel.label || 'Konfiguriertes Rad';
+      hasSelection = true;
+    } else if (sel && sel.brand) {
       var parts = [];
       if (sel.brand)   parts.push(capitalize(sel.brand));
       if (sel.model)   parts.push(deSlug(sel.model));
