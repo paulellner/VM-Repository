@@ -73,6 +73,16 @@
       </div>
     {%- endif -%}
 
+    <!-- Price -->
+    <div class="vm-product__price">
+      {%- if product.compare_at_price > product.price -%}
+        <span class="vm-product__price-sale">{{ product.price | money }}</span>
+        <span class="vm-product__price-was">{{ product.compare_at_price | money }}</span>
+      {%- else -%}
+        <span class="vm-product__price-regular">{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+
     <!-- Footer: CTA + Add to Cart (shown when bike is selected) -->
     <div class="vm-product__footer">
       <form class="vm-product__cart-form" action="/cart/add" method="post">

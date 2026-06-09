@@ -458,6 +458,28 @@
   .vm-prod-grid { grid-template-columns: 1fr; }
 }
 
+/* Price */
+.vm-product__price {
+  display:     flex;
+  align-items: baseline;
+  gap:         8px;
+  margin-top:  4px;
+}
+.vm-product__price-regular,
+.vm-product__price-sale {
+  font-family: var(--vm-mono);
+  font-size:   18px;
+  font-weight: 700;
+  color:       var(--vm-ink);
+}
+.vm-product__price-sale { color: var(--vm-signal); }
+.vm-product__price-was {
+  font-family:     var(--vm-mono);
+  font-size:       13px;
+  color:           var(--vm-sage);
+  text-decoration: line-through;
+}
+
 /* Filter: hidden cards */
 .vm-product[data-hidden="true"] { display: none; }
 </style>
