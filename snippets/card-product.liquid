@@ -7,7 +7,9 @@
 
 {%- assign show_compatible = compatible | default: true -%}
 
-<article class="vm-product" data-product-type="{{ product.type | handleize }}">
+<article class="vm-product"
+  data-product-type="{{ product.type | handleize }}"
+  data-tags="{% for t in product.tags %}{{ t | handleize }} {% endfor %}">
   <a class="vm-product__link" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
 
     <!-- Media (4:3) -->
@@ -51,10 +53,11 @@
     <!-- Spec chips: show tags that are NOT collection-filter handles -->
     {%- assign spec_tags = '' -%}
     {%- for tag in product.tags -%}
-      {%- unless tag contains 'canyon-' or tag contains 'cube-' or tag contains 'trek-'
-               or tag contains 'specialized-' or tag contains 'bmc-' or tag contains 'cervelo-'
-               or tag contains 'colnago-' or tag contains 'pinarello-' or tag contains 'rose-'
-               or tag contains 'scott-' or tag contains 'factor-' or tag contains 'look-' -%}
+      {%- unless tag contains 'vm-' or tag contains 'canyon-' or tag contains 'cube-'
+               or tag contains 'trek-' or tag contains 'specialized-' or tag contains 'bmc-'
+               or tag contains 'cervelo-' or tag contains 'colnago-' or tag contains 'pinarello-'
+               or tag contains 'rose-' or tag contains 'scott-' or tag contains 'factor-'
+               or tag contains 'look-' -%}
         {%- assign spec_tags = spec_tags | append: tag | append: '|' -%}
       {%- endunless -%}
     {%- endfor -%}

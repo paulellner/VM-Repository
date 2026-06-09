@@ -464,16 +464,25 @@
 
     <!-- Category filter chips -->
     <div class="vm-cat-bar" role="toolbar" aria-label="Kategorie filtern" id="vm-cat-bar">
-      <button class="vm-cat-chip" aria-pressed="true" data-cat="" type="button">Alle</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="bremsanlage" type="button">01 Bremsanlage</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="innenlager" type="button">02 Innenlager</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="kurbelgarnitur" type="button">03 Kurbelgarnitur</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="kassette" type="button">04 Kassette</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="laufradsatz" type="button">05 Laufradsatz</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="reifen" type="button">06 Reifen</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattel" type="button">07 Sattel</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattelstutze" type="button">08 Sattelstütze</button>
-      <button class="vm-cat-chip" aria-pressed="false" data-cat="cockpit" type="button">09 Cockpit</button>
+      <button class="vm-cat-chip" aria-pressed="true"  data-cat="" type="button">Alle</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="kette"          type="button">Kette</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="kassette"       type="button">Kassette</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="kettenschloss"  type="button">Kettenschloss</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="innenlager"     type="button">Innenlager</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="bremsbelag"     type="button">Bremsbelag</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="bremsscheibe"   type="button">Bremsscheibe</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="reifen"         type="button">Reifen</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="schlauch"       type="button">Schlauch</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="lenkerband"     type="button">Lenkerband</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattel"         type="button">Sattel</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="sattelstutze"   type="button">Sattelstütze</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="reinigung"      type="button">Reinigung</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="schmiermittel"  type="button">Schmiermittel</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="werkzeug"       type="button">Werkzeug</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="flaschenhalter" type="button">Flaschenhalter</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="satteltasche"   type="button">Satteltasche</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="tubeless"       type="button">Tubeless</button>
+      <button class="vm-cat-chip" aria-pressed="false" data-cat="ventil"         type="button">Ventil</button>
     </div>
 
     <!-- Product grid -->
@@ -599,33 +608,45 @@
     });
   }
 
-  /* ── Category filter chips ───────────────────────────────────────────── */
-  if (catBar && grid) {
-    var chips    = catBar.querySelectorAll('.vm-cat-chip');
-    var products = grid.querySelectorAll('.vm-product');
+  /* ── Compatibility check (brand-level) ──────────────────────────────── */
+  function isCompatible(productEl, sel) {
+    if (!sel || !sel.brand) return true;
+    var tags = (productEl.dataset.tags || '');
+    // Products tagged vm-bike-* are brand-specific; show only if brand matches
+    if (tags.indexOf('vm-bike-') === -1) return true;
+    return tags.indexOf('vm-bike-' + sel.brand) !== -1;
+  }
 
+  /* ── Category + compatibility filter ────────────────────────────────── */
+  var activeCat = '';
+  var sel       = loadSelection();
+
+  function applyFilters() {
+    var products = grid ? grid.querySelectorAll('.vm-product') : [];
+    var visible  = 0;
+    products.forEach(function (p) {
+      var catOk   = activeCat === '' || (p.dataset.productType || '') === activeCat;
+      var compatOk = isCompatible(p, sel);
+      var show    = catOk && compatOk;
+      p.dataset.hidden = show ? 'false' : 'true';
+      if (show) visible++;
+    });
+    if (countEl) countEl.textContent = visible + ' Produkte';
+  }
+
+  if (catBar && grid) {
+    var chips = catBar.querySelectorAll('.vm-cat-chip');
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () {
-        var cat = this.dataset.cat;
-
+        activeCat = this.dataset.cat;
         chips.forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
         this.setAttribute('aria-pressed', 'true');
-
-        var visible = 0;
-        products.forEach(function (p) {
-          var type = p.dataset.productType || '';
-          var show = cat === '' || type === cat;
-          p.dataset.hidden = show ? 'false' : 'true';
-          if (show) visible++;
-        });
-
-        if (countEl) {
-          countEl.textContent = visible + ' Produkte';
-        }
+        applyFilters();
       });
     });
   }
 
+  applyFilters();
   updateBanner();
 })();
 </script>
