@@ -305,6 +305,19 @@
           </div>
         {%- endif -%}
 
+        <!-- Description — filters auto-generated compat paragraph + spec list -->
+        {%- assign desc_parts = product.description | split: '</p>' -%}
+        {%- assign desc_out = '' -%}
+        {%- for chunk in desc_parts -%}
+          {%- assign c = chunk | strip -%}
+          {%- unless c == '' or c contains 'Kompatibilität' or c contains '<ul>' -%}
+            {%- assign desc_out = desc_out | append: c | append: '</p>' -%}
+          {%- endunless -%}
+        {%- endfor -%}
+        {%- if desc_out != blank -%}
+          <div class="vm-pdp__desc">{{ desc_out }}</div>
+        {%- endif -%}
+
         <!-- Add to cart -->
         {%- if product.available -%}
           <form action="/cart/add" method="post" id="vm-pdp-form">
