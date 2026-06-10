@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "vm-pro",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

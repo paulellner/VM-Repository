@@ -109,11 +109,35 @@
 }
 .vm-header__cart-badge:empty { display: none; }
 
+/* Account / VM Pro icon */
+.vm-header__account {
+  position:    relative;
+  display:     flex;
+  align-items: center;
+  color:       var(--vm-sage, #9CA982);
+  text-decoration: none;
+  padding:     8px;
+  transition:  color 220ms ease;
+}
+.vm-header__account:hover          { color: var(--vm-bone, #F2F0E6); }
+.vm-header__account--pro           { color: var(--vm-signal, #C9E45B); }
+.vm-header__pro-badge {
+  position:    absolute;
+  top:         2px;
+  right:       2px;
+  font-size:   7px;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  color:       var(--vm-ink, #14160F);
+  background:  var(--vm-signal, #C9E45B);
+  padding:     1px 3px;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
 @media (max-width: 880px) {
-  .vm-header__inner     { padding: 0 20px; }
-  .vm-header__nav       { display: none; }
-  .vm-header__cart-text { display: none; }
-  .vm-header__cart      { padding: 10px 14px; min-width: 44px; justify-content: center; }
+  .vm-header__account { padding: 8px 6px; }
 }
 </style>
 
@@ -136,6 +160,34 @@
         {%- endfor -%}
       </ul>
     </nav>
+
+    <!-- VM Pro account icon -->
+    {%- if customer -%}
+      <a class="vm-header__account{% if customer.tags contains 'vm-pro' %} vm-header__account--pro{% endif %}"
+         href="{{ routes.account_url }}"
+         aria-label="Mein VM Pro Konto">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        {%- if customer.tags contains 'vm-pro' -%}
+          <span class="vm-header__pro-badge">PRO</span>
+        {%- endif -%}
+      </a>
+    {%- else -%}
+      <a class="vm-header__account"
+         href="{{ routes.account_login_url }}"
+         aria-label="Anmelden / VM Pro">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+    {%- endif -%}
 
     <a class="vm-header__cart" href="{{ routes.cart_url }}" aria-label="Warenkorb">
       <span class="vm-header__cart-icon" aria-hidden="true">

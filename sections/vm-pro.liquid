@@ -1,0 +1,556 @@
+<style>
+/* ── VeloMatch Pro — Landing Page Section ──────────────────────────────── */
+
+.vm-pro-page__ /* namespace anchor — all rules below use this prefix */ {
+  /* (empty rule — tokens defined per-element below) */
+}
+
+.vm-pro-page__section {
+  --vm-olive:  #3D4A2F;
+  --vm-ink:    #14160F;
+  --vm-bone:   #F2F0E6;
+  --vm-paper:  #FBFAF3;
+  --vm-signal: #C9E45B;
+  --vm-sage:   #9CA982;
+  --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+  --vm-mono:   'Courier New', 'Lucida Console', monospace;
+  --vm-stroke: 1.5px;
+
+  background:  var(--vm-bone);
+  font-family: var(--vm-sans);
+  color:       var(--vm-ink);
+  box-sizing:  border-box;
+}
+
+.vm-pro-page__section *,
+.vm-pro-page__section *::before,
+.vm-pro-page__section *::after {
+  box-sizing: inherit;
+}
+
+.vm-pro-page__inner {
+  max-width: 1100px;
+  margin:    0 auto;
+  padding:   72px 40px 96px;
+}
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+
+.vm-pro-page__hero {
+  text-align:    center;
+  margin-bottom: 72px;
+  padding-bottom: 64px;
+  border-bottom: var(--vm-stroke) solid var(--vm-olive);
+}
+
+.vm-pro-page__hero-eyebrow {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-signal);
+  margin-bottom:  24px;
+  display:        block;
+}
+
+.vm-pro-page__hero-heading {
+  font-size:      clamp(48px, 8vw, 96px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height:    0.95;
+  margin:         0 0 28px;
+  color:          var(--vm-ink);
+}
+
+.vm-pro-page__hero-star {
+  color: var(--vm-signal);
+}
+
+.vm-pro-page__hero-tagline {
+  font-size:   20px;
+  font-weight: 400;
+  color:       var(--vm-sage);
+  line-height: 1.5;
+  margin:      0 auto;
+  max-width:   560px;
+  letter-spacing: 0;
+}
+
+.vm-pro-page__hero-accent {
+  color:          var(--vm-signal);
+  font-weight:    700;
+}
+
+/* ── FEATURE CARDS ───────────────────────────────────────────────────────── */
+
+.vm-pro-page__features {
+  margin-bottom: 72px;
+}
+
+.vm-pro-page__features-heading {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  margin-bottom:  28px;
+}
+
+.vm-pro-page__cards {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   0;
+  border:                var(--vm-stroke) solid var(--vm-ink);
+}
+
+.vm-pro-page__card {
+  background:     var(--vm-paper);
+  padding:        36px 32px;
+  border-right:   var(--vm-stroke) solid var(--vm-ink);
+  position:       relative;
+  display:        flex;
+  flex-direction: column;
+  min-height:     220px;
+}
+
+.vm-pro-page__card:last-child {
+  border-right: none;
+}
+
+.vm-pro-page__card--muted {
+  opacity: 0.55;
+}
+
+.vm-pro-page__card-num {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  letter-spacing: 0.08em;
+  color:          var(--vm-sage);
+  margin-bottom:  20px;
+}
+
+.vm-pro-page__card-icon {
+  font-size:     28px;
+  line-height:   1;
+  margin-bottom: 16px;
+}
+
+.vm-pro-page__card-title {
+  font-size:      22px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.0;
+  margin:         0 0 12px;
+}
+
+.vm-pro-page__card-desc {
+  font-size:   14px;
+  line-height: 1.6;
+  color:       var(--vm-sage);
+  margin:      0;
+  flex:        1;
+}
+
+.vm-pro-page__card-badge {
+  display:        inline-block;
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background:     var(--vm-ink);
+  color:          var(--vm-bone);
+  padding:        3px 8px;
+  margin-top:     16px;
+  align-self:     flex-start;
+}
+
+/* ── PRICING BOX ─────────────────────────────────────────────────────────── */
+
+.vm-pro-page__pricing {
+  margin-bottom: 72px;
+}
+
+.vm-pro-page__pricing-box {
+  background:  var(--vm-olive);
+  color:       var(--vm-bone);
+  border:      2px solid var(--vm-ink);
+  padding:     48px 56px;
+  display:     flex;
+  align-items: center;
+  gap:         64px;
+  flex-wrap:   wrap;
+}
+
+.vm-pro-page__pricing-left {
+  flex: 0 0 auto;
+}
+
+.vm-pro-page__pricing-amount {
+  font-family:    var(--vm-mono);
+  font-size:      72px;
+  font-weight:    400;
+  letter-spacing: -0.03em;
+  line-height:    1;
+  color:          var(--vm-signal);
+}
+
+.vm-pro-page__pricing-period {
+  font-family:    var(--vm-mono);
+  font-size:      13px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-sage);
+  margin-top:     8px;
+}
+
+.vm-pro-page__pricing-note {
+  font-size:   13px;
+  color:       var(--vm-sage);
+  margin-top:  8px;
+  line-height: 1.4;
+}
+
+.vm-pro-page__pricing-right {
+  flex: 1;
+  min-width: 240px;
+}
+
+.vm-pro-page__pricing-desc {
+  font-size:     17px;
+  line-height:   1.55;
+  color:         var(--vm-bone);
+  margin-bottom: 32px;
+  opacity:       0.85;
+}
+
+.vm-pro-page__cta-btn {
+  display:        inline-block;
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  text-decoration: none;
+  font-family:    var(--vm-sans);
+  font-size:      15px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  padding:        16px 36px;
+  border:         none;
+  cursor:         pointer;
+  transition:     transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+                  box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-pro-page__cta-btn:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-bone);
+  }
+}
+
+.vm-pro-page__already-pro {
+  display:     flex;
+  align-items: center;
+  gap:         16px;
+}
+
+.vm-pro-page__pro-check {
+  font-size:      20px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-signal);
+}
+
+.vm-pro-page__pro-detail {
+  font-size:   14px;
+  color:       var(--vm-sage);
+  line-height: 1.5;
+}
+
+/* ── FAQ ─────────────────────────────────────────────────────────────────── */
+
+.vm-pro-page__faq {
+  border-top: var(--vm-stroke) solid var(--vm-olive);
+  padding-top: 56px;
+}
+
+.vm-pro-page__faq-heading {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  margin-bottom:  40px;
+}
+
+.vm-pro-page__faq-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: var(--vm-stroke) solid var(--vm-ink);
+}
+
+.vm-pro-page__faq-item {
+  padding:      36px 32px;
+  border-right: var(--vm-stroke) solid var(--vm-ink);
+  background:   var(--vm-paper);
+}
+
+.vm-pro-page__faq-item:last-child {
+  border-right: none;
+}
+
+.vm-pro-page__faq-q {
+  font-size:      15px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height:    1.1;
+  margin:         0 0 14px;
+  color:          var(--vm-ink);
+}
+
+.vm-pro-page__faq-a {
+  font-size:   14px;
+  line-height: 1.65;
+  color:       var(--vm-sage);
+  margin:      0;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .vm-pro-page__inner {
+    padding: 48px 20px 64px;
+  }
+
+  .vm-pro-page__cards {
+    grid-template-columns: 1fr;
+  }
+
+  .vm-pro-page__card {
+    border-right:  none;
+    border-bottom: var(--vm-stroke) solid var(--vm-ink);
+    min-height:    auto;
+  }
+
+  .vm-pro-page__card:last-child {
+    border-bottom: none;
+  }
+
+  .vm-pro-page__pricing-box {
+    padding:        36px 28px;
+    flex-direction: column;
+    gap:            32px;
+  }
+
+  .vm-pro-page__pricing-amount {
+    font-size: 56px;
+  }
+
+  .vm-pro-page__faq-list {
+    grid-template-columns: 1fr;
+  }
+
+  .vm-pro-page__faq-item {
+    border-right:  none;
+    border-bottom: var(--vm-stroke) solid var(--vm-ink);
+  }
+
+  .vm-pro-page__faq-item:last-child {
+    border-bottom: none;
+  }
+}
+</style>
+
+<section class="vm-pro-page__section" aria-label="VeloMatch Pro">
+  <div class="vm-pro-page__inner">
+
+    <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+    <div class="vm-pro-page__hero">
+      <span class="vm-pro-page__hero-eyebrow">Premium Mitgliedschaft</span>
+      <h1 class="vm-pro-page__hero-heading">
+        <span class="vm-pro-page__hero-star">★</span>&nbsp;VeloMatch Pro
+      </h1>
+      <p class="vm-pro-page__hero-tagline">
+        Dein Rad. <span class="vm-pro-page__hero-accent">Dauerhaft gespeichert.</span>
+      </p>
+    </div>
+
+    <!-- ── FEATURE CARDS ─────────────────────────────────────────────── -->
+    <div class="vm-pro-page__features">
+      <p class="vm-pro-page__features-heading">Was du bekommst</p>
+      <div class="vm-pro-page__cards" role="list">
+
+        <!-- Card 1: Rad speichern -->
+        <div class="vm-pro-page__card" role="listitem">
+          <span class="vm-pro-page__card-num">01</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">🚴</div>
+          <h2 class="vm-pro-page__card-title">Rad speichern</h2>
+          <p class="vm-pro-page__card-desc">
+            Dein Fahrrad wird dauerhaft in deinem Konto gespeichert —
+            Marke, Modell, Variante und Schaltgruppe. Kein erneutes Auswählen,
+            jederzeit abrufbar.
+          </p>
+        </div>
+
+        <!-- Card 2: Strava verknüpfen (coming soon) -->
+        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem" aria-label="Strava verknüpfen — demnächst">
+          <span class="vm-pro-page__card-num">02</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">🔗</div>
+          <h2 class="vm-pro-page__card-title">Strava verknüpfen</h2>
+          <p class="vm-pro-page__card-desc">
+            Verbinde deinen Strava-Account um deine Ausrüstung automatisch
+            zu tracken und maßgeschneiderte Empfehlungen zu erhalten.
+          </p>
+          <span class="vm-pro-page__card-badge" aria-label="Demnächst verfügbar">Demnächst</span>
+        </div>
+
+        <!-- Card 3: Kaufhistorie -->
+        <div class="vm-pro-page__card" role="listitem">
+          <span class="vm-pro-page__card-num">03</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">📋</div>
+          <h2 class="vm-pro-page__card-title">Kaufhistorie</h2>
+          <p class="vm-pro-page__card-desc">
+            Verfolge deine Bestellungen und sieh auf einen Blick, welche
+            Teile du für dein gespeichertes Rad bereits gekauft hast.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── PRICING ───────────────────────────────────────────────────── -->
+    <div class="vm-pro-page__pricing">
+
+      {%- if customer -%}
+        {%- if customer.tags contains 'vm-pro' -%}
+
+          <!-- Already Pro -->
+          <div class="vm-pro-page__pricing-box">
+            <div class="vm-pro-page__pricing-left">
+              <div class="vm-pro-page__pricing-amount">★</div>
+              <p class="vm-pro-page__pricing-period">Pro-Mitglied</p>
+            </div>
+            <div class="vm-pro-page__pricing-right">
+              <div class="vm-pro-page__already-pro">
+                <span class="vm-pro-page__pro-check">Du bist bereits Pro ✓</span>
+              </div>
+              <p class="vm-pro-page__pro-detail">
+                Dein Pro-Zugang ist aktiv. Alle Funktionen stehen dir zur Verfügung.<br>
+                <a href="/account" style="color:var(--vm-signal);text-decoration:none;font-weight:700;">
+                  Zum Konto →
+                </a>
+              </p>
+            </div>
+          </div>
+
+        {%- else -%}
+
+          <!-- Logged in but not Pro — upgrade prompt -->
+          <div class="vm-pro-page__pricing-box">
+            <div class="vm-pro-page__pricing-left">
+              <div class="vm-pro-page__pricing-amount">5.99€</div>
+              <p class="vm-pro-page__pricing-period">pro Monat</p>
+              <p class="vm-pro-page__pricing-note">Jederzeit kündbar.</p>
+            </div>
+            <div class="vm-pro-page__pricing-right">
+              <p class="vm-pro-page__pricing-desc">
+                Upgrade auf Pro und speichere dein Rad dauerhaft — damit du
+                jederzeit die passenden Teile findest, ohne von vorne anzufangen.
+              </p>
+              <a class="vm-pro-page__cta-btn"
+                 href="{{ section.settings.pro_product_url | default: '/products/velomatch-pro' }}">
+                Jetzt upgraden →
+              </a>
+            </div>
+          </div>
+
+        {%- endif -%}
+      {%- else -%}
+
+        <!-- Not logged in — standard pricing -->
+        <div class="vm-pro-page__pricing-box">
+          <div class="vm-pro-page__pricing-left">
+            <div class="vm-pro-page__pricing-amount">5.99€</div>
+            <p class="vm-pro-page__pricing-period">pro Monat</p>
+            <p class="vm-pro-page__pricing-note">Jederzeit kündbar.</p>
+          </div>
+          <div class="vm-pro-page__pricing-right">
+            <p class="vm-pro-page__pricing-desc">
+              Speichere dein Fahrrad dauerhaft in deinem Konto und finde
+              jederzeit die passenden Komponenten — schnell, präzise, ohne Umwege.
+            </p>
+            <a class="vm-pro-page__cta-btn"
+               href="{{ section.settings.pro_product_url | default: '/products/velomatch-pro' }}">
+              Jetzt starten →
+            </a>
+          </div>
+        </div>
+
+      {%- endif -%}
+    </div>
+
+    <!-- ── FAQ ───────────────────────────────────────────────────────── -->
+    <div class="vm-pro-page__faq">
+      <p class="vm-pro-page__faq-heading">Häufige Fragen</p>
+      <div class="vm-pro-page__faq-list" role="list">
+
+        <div class="vm-pro-page__faq-item" role="listitem">
+          <h3 class="vm-pro-page__faq-q">Was ist VM Pro?</h3>
+          <p class="vm-pro-page__faq-a">
+            VeloMatch Pro ist eine monatliche Mitgliedschaft, die dein Fahrrad
+            dauerhaft in deinem Konto speichert. Kein erneutes Auswählen — deine
+            Ausstattung ist immer hinterlegt und du findest sofort passende Teile.
+          </p>
+        </div>
+
+        <div class="vm-pro-page__faq-item" role="listitem">
+          <h3 class="vm-pro-page__faq-q">Kann ich kündigen?</h3>
+          <p class="vm-pro-page__faq-a">
+            Ja, jederzeit und ohne Mindestlaufzeit. Kündige direkt in deinem
+            Shopify-Kundenkonto unter „Abonnements". Dein Zugang läuft bis
+            zum Ende des bezahlten Monats weiter.
+          </p>
+        </div>
+
+        <div class="vm-pro-page__faq-item" role="listitem">
+          <h3 class="vm-pro-page__faq-q">Ist meine Zahlung sicher?</h3>
+          <p class="vm-pro-page__faq-a">
+            Alle Zahlungen laufen über Shopify Payments — PCI-DSS-zertifiziert
+            und SSL-verschlüsselt. Wir speichern keine Kreditkartendaten auf
+            unseren Servern.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "VM Pro Seite",
+  "settings": [
+    {
+      "type": "url",
+      "id": "pro_product_url",
+      "label": "Pro-Produkt URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "VM Pro Seite",
+      "category": "VeloMatch"
+    }
+  ]
+}
+{% endschema %}

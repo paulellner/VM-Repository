@@ -372,6 +372,82 @@
   .vm-grid--3        { grid-template-columns: repeat(2, 1fr); }
   .vm-result__sum    { padding: 28px 20px; gap: 24px; }
 }
+/* ── VM Pro teaser strip ─────────────────────────────────────────────────── */
+.vm-pro-teaser {
+  display:         flex;
+  align-items:     center;
+  gap:             16px;
+  padding:         10px 16px;
+  border:          1.5px solid var(--vm-signal);
+  background:      rgba(201, 228, 91, 0.06);
+  margin-bottom:   24px;
+  flex-wrap:       wrap;
+}
+.vm-pro-teaser__badge {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-ink);
+  background:     var(--vm-signal);
+  padding:        3px 8px;
+  flex-shrink:    0;
+}
+.vm-pro-teaser__text {
+  font-size: 14px;
+  color:     var(--vm-sage);
+  flex:      1;
+  min-width: 180px;
+}
+.vm-pro-teaser__cta {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-signal);
+  text-decoration: none;
+  white-space:    nowrap;
+  padding:        6px 14px;
+  border:         1.5px solid var(--vm-signal);
+  flex-shrink:    0;
+  transition:     background 200ms ease, color 200ms ease;
+}
+.vm-pro-teaser__cta:hover { background: var(--vm-signal); color: var(--vm-ink); }
+
+/* ── VM Pro section in result panel ─────────────────────────────────────── */
+.vm-result__pro {
+  display:      flex;
+  align-items:  center;
+  gap:          16px;
+  padding:      16px 24px;
+  border-top:   1px solid rgba(201, 228, 91, 0.2);
+  background:   rgba(201, 228, 91, 0.04);
+  flex-wrap:    wrap;
+}
+.vm-result__pro-btn {
+  font-family:    var(--vm-sans);
+  font-size:      12px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding:        10px 20px;
+  border:         1.5px solid var(--vm-signal);
+  background:     none;
+  color:          var(--vm-signal);
+  cursor:         pointer;
+  text-decoration: none;
+  display:        inline-block;
+  transition:     background 200ms ease, color 200ms ease;
+}
+.vm-result__pro-btn:hover { background: var(--vm-signal); color: var(--vm-ink); }
+.vm-result__pro-hint {
+  font-size:  12px;
+  color:      var(--vm-sage);
+  font-family: var(--vm-mono);
+}
+
 /* ── Selbst zusammenstellen — special brand card ────────────────────────── */
 .vm-pick--custom {
   border-color:   var(--vm-signal);
@@ -543,6 +619,15 @@
 <section class="vm-s" id="vm-s-{{ section.id }}">
   <div class="vm-s__inner">
 
+    <!-- VM Pro teaser -->
+    {%- unless customer and customer.tags contains 'vm-pro' -%}
+    <div class="vm-pro-teaser">
+      <span class="vm-pro-teaser__badge">★ Pro</span>
+      <span class="vm-pro-teaser__text">Rad dauerhaft speichern &middot; Strava verknüpfen &middot; Kaufhistorie</span>
+      <a class="vm-pro-teaser__cta" href="/pages/velomatch-pro">5.99€/Monat →</a>
+    </div>
+    {%- endunless -%}
+
     <!-- STEPPER -->
     <div class="vm-stepper" role="list" aria-label="Auswahlschritte">
       <div class="vm-step-seg" data-seg="1" data-state="active" role="listitem">
@@ -708,6 +793,27 @@
          data-cta>
         {{ section.settings.cta_text | default: 'Passende Teile anzeigen' }}&ensp;<span class="vm-cta__arr" aria-hidden="true">→</span>
       </a>
+
+      <!-- VM Pro save / upgrade strip -->
+      {%- if customer and customer.tags contains 'vm-pro' -%}
+        <div class="vm-result__pro">
+          <form action="/account" method="post" id="vm-pro-save-form">
+            <input type="hidden" name="customer[note]" id="vm-pro-bike-note" value="">
+            <button type="submit" class="vm-result__pro-btn">✓ Rad in VM Pro speichern</button>
+          </form>
+          <span class="vm-result__pro-hint">{{ customer.email }}</span>
+        </div>
+      {%- elsif customer -%}
+        <div class="vm-result__pro">
+          <a href="/pages/velomatch-pro" class="vm-result__pro-btn">★ Upgrade zu VM Pro — 5.99€/Monat</a>
+          <span class="vm-result__pro-hint">Rad dauerhaft speichern &amp; mehr</span>
+        </div>
+      {%- else -%}
+        <div class="vm-result__pro">
+          <a href="/pages/velomatch-pro" class="vm-result__pro-btn">★ VeloMatch Pro — Rad dauerhaft speichern</a>
+          <span class="vm-result__pro-hint">Anmelden &middot; 5.99€/Monat</span>
+        </div>
+      {%- endif -%}
     </div>
 
   </div>
@@ -1772,6 +1878,16 @@
     if ($cta) {
       var base = $cta.getAttribute('href').split('?')[0];
       $cta.setAttribute('href', base + '?filter.p.tag=' + encodeURIComponent(v.collectionTag));
+    }
+
+    /* Populate VM Pro save form */
+    var proNote = document.getElementById('vm-pro-bike-note');
+    if (proNote) {
+      proNote.value = JSON.stringify({
+        brand: b.name, model: m.name, variant: v.name,
+        schaltgruppe: v.schaltgruppe, modelljahre: v.modelljahre,
+        collectionTag: v.collectionTag, savedAt: new Date().toISOString()
+      });
     }
   }
 

@@ -1,0 +1,699 @@
+<style>
+/* ── VeloMatch — Customer Account Dashboard ───────────────────────────────── */
+
+.vm-account__section {
+  --vm-olive:  #3D4A2F;
+  --vm-ink:    #14160F;
+  --vm-bone:   #F2F0E6;
+  --vm-paper:  #FBFAF3;
+  --vm-signal: #C9E45B;
+  --vm-sage:   #9CA982;
+  --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+  --vm-mono:   'Courier New', 'Lucida Console', monospace;
+  --vm-stroke: 1.5px;
+
+  background:  var(--vm-bone);
+  font-family: var(--vm-sans);
+  color:       var(--vm-ink);
+  box-sizing:  border-box;
+  min-height:  60vh;
+}
+
+.vm-account__section *,
+.vm-account__section *::before,
+.vm-account__section *::after {
+  box-sizing: inherit;
+}
+
+.vm-account__inner {
+  max-width: 1100px;
+  margin:    0 auto;
+  padding:   56px 40px 96px;
+}
+
+/* ── NOT-LOGGED-IN NOTICE ────────────────────────────────────────────────── */
+
+.vm-account__login-notice {
+  border:      var(--vm-stroke) solid var(--vm-ink);
+  background:  var(--vm-paper);
+  padding:     48px 40px;
+  text-align:  center;
+  max-width:   480px;
+  margin:      0 auto;
+}
+
+.vm-account__login-notice-heading {
+  font-size:      22px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin:         0 0 16px;
+}
+
+.vm-account__login-notice-text {
+  font-size:   14px;
+  line-height: 1.6;
+  color:       var(--vm-sage);
+  margin:      0 0 28px;
+}
+
+.vm-account__login-btn {
+  display:         inline-block;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  text-decoration: none;
+  font-family:     var(--vm-sans);
+  font-size:       14px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+  padding:         14px 32px;
+  transition:      transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+                   box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-account__login-btn:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 6px 6px 0 var(--vm-ink);
+  }
+}
+
+/* ── HEADER BAR ──────────────────────────────────────────────────────────── */
+
+.vm-account__header {
+  display:       flex;
+  align-items:   center;
+  gap:           20px;
+  flex-wrap:     wrap;
+  padding-bottom: 32px;
+  border-bottom: var(--vm-stroke) solid var(--vm-olive);
+  margin-bottom: 48px;
+}
+
+.vm-account__header-heading {
+  font-size:      clamp(28px, 4vw, 42px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height:    1;
+  margin:         0;
+  color:          var(--vm-ink);
+}
+
+.vm-account__header-email {
+  font-family:  var(--vm-mono);
+  font-size:    13px;
+  color:        var(--vm-sage);
+  margin-left:  auto;
+  word-break:   break-all;
+}
+
+.vm-account__pro-badge {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            6px;
+  background:     var(--vm-olive);
+  color:          var(--vm-signal);
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding:        5px 12px;
+  flex-shrink:    0;
+}
+
+/* ── LAYOUT: SIDEBAR + MAIN ──────────────────────────────────────────────── */
+
+.vm-account__layout {
+  display:               grid;
+  grid-template-columns: 220px 1fr;
+  gap:                   48px;
+  align-items:           start;
+}
+
+/* ── SIDEBAR NAV ─────────────────────────────────────────────────────────── */
+
+.vm-account__sidebar {
+  border: var(--vm-stroke) solid var(--vm-ink);
+}
+
+.vm-account__nav {
+  list-style: none;
+  margin:     0;
+  padding:    0;
+}
+
+.vm-account__nav-item {
+  border-bottom: var(--vm-stroke) solid var(--vm-ink);
+}
+
+.vm-account__nav-item:last-child {
+  border-bottom: none;
+}
+
+.vm-account__nav-link {
+  display:         block;
+  padding:         16px 20px;
+  text-decoration: none;
+  font-size:       13px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-ink);
+  background:      var(--vm-paper);
+  transition:      background 180ms ease, color 180ms ease;
+}
+
+.vm-account__nav-link:hover,
+.vm-account__nav-link--active {
+  background: var(--vm-olive);
+  color:      var(--vm-bone);
+}
+
+.vm-account__nav-link--pro {
+  color:      var(--vm-signal);
+  background: var(--vm-ink);
+}
+
+.vm-account__nav-link--pro:hover {
+  background: var(--vm-olive);
+  color:      var(--vm-signal);
+}
+
+/* ── MAIN CONTENT ────────────────────────────────────────────────────────── */
+
+.vm-account__main {
+  display:        flex;
+  flex-direction: column;
+  gap:            48px;
+}
+
+/* ── SECTION PANEL (shared) ──────────────────────────────────────────────── */
+
+.vm-account__panel {
+  border:     var(--vm-stroke) solid var(--vm-ink);
+  background: var(--vm-paper);
+}
+
+.vm-account__panel-header {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       20px 28px;
+  border-bottom: var(--vm-stroke) solid var(--vm-ink);
+  background:    var(--vm-bone);
+}
+
+.vm-account__panel-eyebrow {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  margin-right:   auto;
+}
+
+.vm-account__panel-title {
+  font-size:      18px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.1;
+  margin:         0;
+  color:          var(--vm-ink);
+}
+
+.vm-account__panel-body {
+  padding: 32px 28px;
+}
+
+/* ── SAVED BIKE CARD ─────────────────────────────────────────────────────── */
+
+.vm-account__bike-card {
+  border:     var(--vm-stroke) solid var(--vm-olive);
+  background: var(--vm-bone);
+  padding:    28px 28px 24px;
+  display:    flex;
+  flex-direction: column;
+  gap:        20px;
+}
+
+.vm-account__bike-grid {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   0;
+  border:                var(--vm-stroke) solid rgba(61,74,47,0.25);
+}
+
+.vm-account__bike-field {
+  padding:       14px 16px;
+  border-right:  var(--vm-stroke) solid rgba(61,74,47,0.25);
+  border-bottom: var(--vm-stroke) solid rgba(61,74,47,0.25);
+}
+
+.vm-account__bike-field:nth-child(2n) {
+  border-right: none;
+}
+
+.vm-account__bike-field:nth-last-child(-n+2) {
+  border-bottom: none;
+}
+
+.vm-account__bike-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-sage);
+  margin-bottom:  6px;
+  display:        block;
+}
+
+.vm-account__bike-value {
+  font-size:   16px;
+  font-weight: 700;
+  color:       var(--vm-ink);
+  line-height: 1.2;
+}
+
+.vm-account__bike-actions {
+  display:    flex;
+  align-items: center;
+  gap:         16px;
+  flex-wrap:   wrap;
+}
+
+.vm-account__parts-btn {
+  display:         inline-block;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  text-decoration: none;
+  font-family:     var(--vm-sans);
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+  padding:         12px 24px;
+  transition:      transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+                   box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-account__parts-btn:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--vm-olive);
+  }
+}
+
+/* ── NO BIKE EMPTY STATE ─────────────────────────────────────────────────── */
+
+.vm-account__empty {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            16px;
+}
+
+.vm-account__empty-icon {
+  font-size:   36px;
+  line-height: 1;
+  opacity:     0.4;
+}
+
+.vm-account__empty-text {
+  font-size:   15px;
+  color:       var(--vm-sage);
+  line-height: 1.6;
+  margin:      0;
+}
+
+.vm-account__empty-link {
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  0.08em;
+  color:           var(--vm-olive);
+  text-decoration: none;
+  border-bottom:   var(--vm-stroke) solid var(--vm-olive);
+  padding-bottom:  2px;
+  transition:      color 180ms ease, border-color 180ms ease;
+}
+
+.vm-account__empty-link:hover {
+  color:        var(--vm-signal);
+  border-color: var(--vm-signal);
+}
+
+/* ── STRAVA SECTION ──────────────────────────────────────────────────────── */
+
+.vm-account__strava-body {
+  display:     flex;
+  align-items: flex-start;
+  gap:         28px;
+  flex-wrap:   wrap;
+}
+
+.vm-account__strava-logo {
+  width:            56px;
+  height:           56px;
+  border-radius:    50%;
+  background:       #FC4C02;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-family:      var(--vm-sans);
+  font-size:        22px;
+  font-weight:      900;
+  color:            #fff;
+  flex-shrink:      0;
+  letter-spacing:   -0.05em;
+  user-select:      none;
+}
+
+.vm-account__strava-content {
+  flex: 1;
+  min-width: 200px;
+}
+
+.vm-account__strava-heading {
+  font-size:      17px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin:         0 0 8px;
+  color:          var(--vm-ink);
+}
+
+.vm-account__strava-badge {
+  display:        inline-block;
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  background:     var(--vm-ink);
+  color:          var(--vm-bone);
+  padding:        3px 10px;
+  margin-bottom:  14px;
+  opacity:        0.6;
+}
+
+.vm-account__strava-desc {
+  font-size:     14px;
+  line-height:   1.65;
+  color:         var(--vm-sage);
+  margin:        0 0 20px;
+}
+
+.vm-account__strava-btn {
+  display:         inline-block;
+  background:      rgba(20, 22, 15, 0.12);
+  color:           var(--vm-sage);
+  text-decoration: none;
+  font-family:     var(--vm-sans);
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  -0.01em;
+  padding:         12px 24px;
+  border:          var(--vm-stroke) solid rgba(20,22,15,0.2);
+  cursor:          not-allowed;
+  pointer-events:  none;
+  opacity:         0.55;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 820px) {
+  .vm-account__inner {
+    padding: 40px 20px 64px;
+  }
+
+  .vm-account__layout {
+    grid-template-columns: 1fr;
+    gap:                   32px;
+  }
+
+  .vm-account__sidebar {
+    border: var(--vm-stroke) solid var(--vm-ink);
+  }
+
+  .vm-account__nav {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vm-account__nav-item {
+    border-bottom: none;
+    border-right:  var(--vm-stroke) solid var(--vm-ink);
+    flex-shrink:   0;
+  }
+
+  .vm-account__nav-item:last-child {
+    border-right: none;
+  }
+
+  .vm-account__nav-link {
+    white-space: nowrap;
+  }
+
+  .vm-account__bike-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vm-account__bike-field {
+    border-right: none;
+  }
+
+  .vm-account__bike-field:nth-child(2n) {
+    border-bottom: var(--vm-stroke) solid rgba(61,74,47,0.25);
+  }
+
+  .vm-account__bike-field:last-child {
+    border-bottom: none;
+  }
+
+  .vm-account__header-email {
+    margin-left: 0;
+    width:       100%;
+    order:       3;
+  }
+}
+</style>
+
+<section class="vm-account__section" aria-label="Mein Konto">
+  <div class="vm-account__inner">
+
+    {%- unless customer -%}
+      {%- comment -%}
+        Shopify handles the redirect to /account/login for protected pages.
+        This message is shown as a fallback in case JS-free rendering occurs.
+      {%- endcomment -%}
+      <div class="vm-account__login-notice" role="alert">
+        <h1 class="vm-account__login-notice-heading">Bitte einloggen</h1>
+        <p class="vm-account__login-notice-text">
+          Du musst eingeloggt sein, um auf dein Konto zuzugreifen.
+          Bitte melde dich an, um fortzufahren.
+        </p>
+        <a class="vm-account__login-btn" href="/account/login">Einloggen →</a>
+      </div>
+    {%- else -%}
+
+      <!-- ── HEADER BAR ──────────────────────────────────────────────────── -->
+      <header class="vm-account__header">
+        <h1 class="vm-account__header-heading">Mein Konto</h1>
+
+        {%- if customer.tags contains 'vm-pro' -%}
+          <span class="vm-account__pro-badge" aria-label="VeloMatch Pro Mitglied">
+            ★&nbsp;Pro
+          </span>
+        {%- endif -%}
+
+        <span class="vm-account__header-email" aria-label="Angemeldete E-Mail-Adresse">
+          {{ customer.email }}
+        </span>
+      </header>
+
+      <!-- ── TWO-COLUMN LAYOUT ───────────────────────────────────────────── -->
+      <div class="vm-account__layout">
+
+        <!-- ── SIDEBAR NAV ───────────────────────────────────────────────── -->
+        <aside class="vm-account__sidebar" aria-label="Konto-Navigation">
+          <nav>
+            <ul class="vm-account__nav" role="list">
+              <li class="vm-account__nav-item" role="listitem">
+                <a class="vm-account__nav-link vm-account__nav-link--active"
+                   href="/account"
+                   aria-current="page">
+                  Mein Konto
+                </a>
+              </li>
+              <li class="vm-account__nav-item" role="listitem">
+                <a class="vm-account__nav-link" href="/account/orders">
+                  Bestellungen
+                </a>
+              </li>
+              <li class="vm-account__nav-item" role="listitem">
+                <a class="vm-account__nav-link" href="/account/addresses">
+                  Adressbuch
+                </a>
+              </li>
+              <li class="vm-account__nav-item" role="listitem">
+                <a class="vm-account__nav-link vm-account__nav-link--pro"
+                   href="/pages/vm-pro"
+                   aria-label="VeloMatch Pro">
+                  ★&nbsp;VM Pro
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+
+        <!-- ── MAIN CONTENT ─────────────────────────────────────────────── -->
+        <main class="vm-account__main" id="account-main">
+
+          <!-- ── SECTION A: Gespeichertes Rad ─────────────────────────── -->
+          <section class="vm-account__panel" aria-labelledby="saved-bike-heading">
+            <div class="vm-account__panel-header">
+              <span class="vm-account__panel-eyebrow">01</span>
+              <h2 class="vm-account__panel-title" id="saved-bike-heading">
+                Gespeichertes Rad
+              </h2>
+            </div>
+            <div class="vm-account__panel-body">
+
+              {%- if customer.note != blank -%}
+                {%- assign saved_bike = customer.note | parse_json -%}
+
+                {%- if saved_bike.collectionTag -%}
+
+                  <div class="vm-account__bike-card" role="region" aria-label="Gespeichertes Fahrrad">
+                    <div class="vm-account__bike-grid">
+
+                      {%- if saved_bike.brand != blank -%}
+                        <div class="vm-account__bike-field">
+                          <span class="vm-account__bike-label">Marke</span>
+                          <span class="vm-account__bike-value">{{ saved_bike.brand }}</span>
+                        </div>
+                      {%- endif -%}
+
+                      {%- if saved_bike.model != blank -%}
+                        <div class="vm-account__bike-field">
+                          <span class="vm-account__bike-label">Modell</span>
+                          <span class="vm-account__bike-value">{{ saved_bike.model }}</span>
+                        </div>
+                      {%- endif -%}
+
+                      {%- if saved_bike.variant != blank -%}
+                        <div class="vm-account__bike-field">
+                          <span class="vm-account__bike-label">Variante</span>
+                          <span class="vm-account__bike-value">{{ saved_bike.variant }}</span>
+                        </div>
+                      {%- endif -%}
+
+                      {%- if saved_bike.schaltgruppe != blank -%}
+                        <div class="vm-account__bike-field">
+                          <span class="vm-account__bike-label">Schaltgruppe</span>
+                          <span class="vm-account__bike-value">{{ saved_bike.schaltgruppe }}</span>
+                        </div>
+                      {%- endif -%}
+
+                    </div>
+
+                    <div class="vm-account__bike-actions">
+                      <a class="vm-account__parts-btn"
+                         href="/collections/all?filter.p.tag={{ saved_bike.collectionTag | url_encode }}"
+                         aria-label="Passende Teile für dein gespeichertes Rad finden">
+                        Passende Teile finden →
+                      </a>
+                    </div>
+                  </div>
+
+                {%- else -%}
+                  {%- comment -%}Note exists but is not valid bike JSON{%- endcomment -%}
+                  <div class="vm-account__empty" role="status">
+                    <div class="vm-account__empty-icon" aria-hidden="true">🚴</div>
+                    <p class="vm-account__empty-text">
+                      Kein Rad gespeichert. Wähle dein Fahrrad auf der Startseite aus
+                      und speichere es in deinem Konto.
+                    </p>
+                    <a class="vm-account__empty-link" href="/">Zur Startseite →</a>
+                  </div>
+                {%- endif -%}
+
+              {%- else -%}
+
+                <div class="vm-account__empty" role="status">
+                  <div class="vm-account__empty-icon" aria-hidden="true">🚴</div>
+                  <p class="vm-account__empty-text">
+                    Kein Rad gespeichert. Wähle dein Fahrrad auf der Startseite aus
+                    und speichere es in deinem Konto.
+                  </p>
+                  <a class="vm-account__empty-link" href="/">Zur Startseite →</a>
+                </div>
+
+              {%- endif -%}
+
+            </div>
+          </section>
+
+          <!-- ── SECTION B: Strava (coming soon) ──────────────────────── -->
+          <section class="vm-account__panel" aria-labelledby="strava-heading">
+            <div class="vm-account__panel-header">
+              <span class="vm-account__panel-eyebrow">02</span>
+              <h2 class="vm-account__panel-title" id="strava-heading">
+                Strava
+              </h2>
+            </div>
+            <div class="vm-account__panel-body">
+              <div class="vm-account__strava-body">
+
+                <!-- Strava logo placeholder -->
+                <div class="vm-account__strava-logo" aria-hidden="true" role="img" aria-label="Strava">
+                  S
+                </div>
+
+                <div class="vm-account__strava-content">
+                  <h3 class="vm-account__strava-heading">Strava verknüpfen</h3>
+                  <span class="vm-account__strava-badge" aria-label="Demnächst verfügbar">
+                    Demnächst verfügbar
+                  </span>
+                  <p class="vm-account__strava-desc">
+                    Verbinde deinen Strava-Account um deine Ausrüstung automatisch
+                    zu tracken und maßgeschneiderte Empfehlungen für dein Fahrrad
+                    zu erhalten.
+                  </p>
+                  <span class="vm-account__strava-btn"
+                        role="button"
+                        aria-disabled="true"
+                        aria-label="Strava verknüpfen — demnächst verfügbar">
+                    Verbinden (demnächst)
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+        </main>
+        <!-- /account-main -->
+
+      </div>
+      <!-- /vm-account__layout -->
+
+    {%- endunless -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Kunden-Konto",
+  "settings": []
+}
+{% endschema %}
