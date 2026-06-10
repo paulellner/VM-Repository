@@ -240,21 +240,15 @@
 .vm-result                    { display: none; flex-direction: column; border: var(--vm-stroke-2) solid var(--vm-signal); margin-top: 48px; }
 .vm-result[aria-hidden="false"] { display: flex; }
 
-.vm-result__body {
-  display: flex;
-  flex:    1;
-}
-
-/* Left column — summary */
 .vm-result__sum {
-  width:          340px;
-  flex-shrink:    0;
   background:     var(--vm-olive);
   color:          var(--vm-bone);
-  padding:        48px 32px;
+  padding:        40px 48px;
   display:        flex;
-  flex-direction: column;
-  gap:            20px;
+  flex-direction: row;
+  align-items:    center;
+  gap:            48px;
+  flex-wrap:      wrap;
 }
 
 .vm-result__sum-lbl {
@@ -331,68 +325,6 @@
 }
 .vm-result__reset:hover { color: var(--vm-bone); }
 
-/* Right column — components */
-.vm-result__comps {
-  flex:       1;
-  background: var(--vm-bone);
-  padding:    32px;
-}
-
-.vm-result__comps-hd {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  margin-bottom:   20px;
-  padding-bottom:  16px;
-  border-bottom:   var(--vm-stroke) solid var(--vm-ink);
-}
-
-.vm-result__comps-title {
-  font-size:      16px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-}
-
-.vm-result__comps-chip {
-  background:     var(--vm-signal);
-  color:          var(--vm-ink);
-  font-family:    var(--vm-mono);
-  font-size:      11px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding:        3px 8px;
-}
-
-.vm-comp-grid {
-  display:               grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:                   12px;
-}
-
-.vm-comp-card {
-  background:     var(--vm-paper);
-  border:         var(--vm-stroke) solid var(--vm-ink);
-  padding:        16px;
-  display:        flex;
-  flex-direction: column;
-  gap:            8px;
-}
-
-.vm-comp-card__idx {
-  font-family: var(--vm-mono);
-  font-size:   11px;
-  opacity:     0.5;
-}
-
-.vm-comp-card__lbl {
-  font-size:      14px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-}
-
 /* Full-width CTA */
 .vm-result__cta {
   display:         flex;
@@ -438,9 +370,7 @@
   .vm-step-seg__label { display: none; }
   .vm-grid           { grid-template-columns: repeat(2, 1fr); }
   .vm-grid--3        { grid-template-columns: repeat(2, 1fr); }
-  .vm-result__body   { flex-direction: column; }
-  .vm-result__sum    { width: 100%; }
-  .vm-comp-grid      { grid-template-columns: repeat(2, 1fr); }
+  .vm-result__sum    { padding: 28px 20px; gap: 24px; }
 }
 /* ── Selbst zusammenstellen — special brand card ────────────────────────── */
 .vm-pick--custom {
@@ -747,41 +677,29 @@
 
     <!-- RESULT PANEL -->
     <div class="vm-result" aria-hidden="true" aria-live="polite" aria-label="Deine Auswahl">
-      <div class="vm-result__body">
 
-        <!-- Left: summary -->
-        <div class="vm-result__sum">
+      <!-- Summary bar -->
+      <div class="vm-result__sum">
+        <div>
           <span class="vm-result__sum-lbl">Deine Auswahl</span>
-          <div>
-            <p class="vm-result__sum-brand" data-r-brand></p>
-            <p class="vm-result__sum-model" data-r-model></p>
-          </div>
-          <ul class="vm-result__specs">
-            <li class="vm-result__spec">
-              <span class="vm-result__spec-k">Variante</span>
-              <span class="vm-result__spec-v" data-r-variant></span>
-            </li>
-            <li class="vm-result__spec">
-              <span class="vm-result__spec-k">Schaltgruppe</span>
-              <span class="vm-result__spec-v" data-r-schalt></span>
-            </li>
-            <li class="vm-result__spec">
-              <span class="vm-result__spec-k">Modelljahre</span>
-              <span class="vm-result__spec-v" data-r-jahre></span>
-            </li>
-          </ul>
-          <button class="vm-result__reset" type="button" data-reset>Andere Auswahl treffen</button>
+          <p class="vm-result__sum-brand" data-r-brand></p>
+          <p class="vm-result__sum-model" data-r-model></p>
         </div>
-
-        <!-- Right: components -->
-        <div class="vm-result__comps">
-          <div class="vm-result__comps-hd">
-            <span class="vm-result__comps-title">Passende Komponenten&thinsp;&middot;&thinsp;9</span>
-            <span class="vm-result__comps-chip">Alle kompatibel</span>
-          </div>
-          <div class="vm-comp-grid" data-comp-grid></div>
-        </div>
-
+        <ul class="vm-result__specs">
+          <li class="vm-result__spec">
+            <span class="vm-result__spec-k">Variante</span>
+            <span class="vm-result__spec-v" data-r-variant></span>
+          </li>
+          <li class="vm-result__spec">
+            <span class="vm-result__spec-k">Schaltgruppe</span>
+            <span class="vm-result__spec-v" data-r-schalt></span>
+          </li>
+          <li class="vm-result__spec">
+            <span class="vm-result__spec-k">Modelljahre</span>
+            <span class="vm-result__spec-v" data-r-jahre></span>
+          </li>
+        </ul>
+        <button class="vm-result__reset" type="button" data-reset>← Andere Auswahl</button>
       </div>
 
       <!-- Full-width CTA -->
@@ -1619,7 +1537,7 @@
   }
 
   /* ── CARD RENDERER ──────────────────────────────────────────────────────── */
-  function renderCards(container, items, selId, onClick) {
+  function renderCards(container, items, selId, onClick, showType) {
     container.innerHTML = '';
     var realItems = items.filter(function(it) { return it.id !== 'selbst-zusammenstellen'; });
     items.forEach(function (item) {
@@ -1641,7 +1559,7 @@
           '<span class="vm-pick__name">' + esc(item.name) + '</span>' +
           '<div class="vm-pick__meta">' +
             '<span>' + esc(item.meta) + '</span>' +
-            (item.type ? '<span class="vm-pick__chip">' + esc(item.type) + '</span>' : '') +
+            (item.type && showType ? '<span class="vm-pick__chip">' + esc(item.type) + '</span>' : '') +
           '</div>' +
           '<span class="vm-pick__go" aria-hidden="true">→</span>';
       }
@@ -1708,8 +1626,8 @@
     updateStepper();
     updateBreadcrumb();
     save();
-    if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel);
-    if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant);
+    if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel, true);
+    if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
     if (n === 4) renderResult();
   }
 
@@ -1728,7 +1646,7 @@
     showStep(1);
     updateStepper();
     updateBreadcrumb();
-    renderCards($gBrands, BIKES, null, pickBrand);
+    renderCards($gBrands, BIKES, null, pickBrand, false);
     clearSave();
     scrollToSelector();
   }
@@ -1736,7 +1654,7 @@
   /* ── PICKERS ────────────────────────────────────────────────────────────── */
   function pickBrand(id) {
     S.brand = id; S.model = null; S.variant = null; S.fromCustom = false;
-    renderCards($gBrands, BIKES, id, pickBrand);
+    renderCards($gBrands, BIKES, id, pickBrand, false);
     if (id === 'selbst-zusammenstellen') {
       setTimeout(function () { goToCustom(); scrollToSelector(); }, 160);
     } else {
@@ -1746,13 +1664,13 @@
 
   function pickModel(id) {
     S.model = id; S.variant = null;
-    renderCards($gModels, findBrand(S.brand).models, id, pickModel);
+    renderCards($gModels, findBrand(S.brand).models, id, pickModel, true);
     setTimeout(function () { goTo(3); scrollToSelector(); }, 160);
   }
 
   function pickVariant(id) {
     S.variant = id;
-    renderCards($gVars, findModel(S.brand, S.model).variants, id, pickVariant);
+    renderCards($gVars, findModel(S.brand, S.model).variants, id, pickVariant, true);
     setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
   }
 
@@ -1849,14 +1767,6 @@
     root.querySelector('[data-r-variant]').textContent = v.name;
     root.querySelector('[data-r-schalt]').textContent  = v.schaltgruppe;
     root.querySelector('[data-r-jahre]').textContent   = v.modelljahre;
-
-    var grid = root.querySelector('[data-comp-grid]');
-    grid.innerHTML = COMPS.map(function (c) {
-      return '<div class="vm-comp-card">' +
-        '<span class="vm-comp-card__idx">' + c.n + '</span>' +
-        '<span class="vm-comp-card__lbl">' + esc(c.label) + '</span>' +
-      '</div>';
-    }).join('');
 
     /* Update CTA href with collection filter tag */
     if ($cta) {

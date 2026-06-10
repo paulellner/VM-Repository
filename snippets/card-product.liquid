@@ -53,7 +53,8 @@
     <!-- Spec chips: show tags that are NOT collection-filter handles -->
     {%- assign spec_tags = '' -%}
     {%- for tag in product.tags -%}
-      {%- unless tag contains 'vm-' or tag contains 'canyon-' or tag contains 'cube-'
+      {%- unless tag contains 'vm-' or tag contains 'custom-'
+               or tag contains 'canyon-' or tag contains 'cube-'
                or tag contains 'trek-' or tag contains 'specialized-' or tag contains 'bmc-'
                or tag contains 'cervelo-' or tag contains 'colnago-' or tag contains 'pinarello-'
                or tag contains 'rose-' or tag contains 'scott-' or tag contains 'factor-'
