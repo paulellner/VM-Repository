@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="{{ locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, height=device-height, viewport-fit=cover">
+  <meta name="theme-color" content="#14160F">
+
+  <title>
+    {%- if page_title -%}{{ page_title }} — {%- endif -%}{{ shop.name }}
+  </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+  {{ content_for_header }}
+
+  <style>
+  /* ── VeloMatch Design Tokens ─────────────────────────────────────────── */
+  :root {
+    --vm-olive:      #3D4A2F;
+    --vm-olive-deep: #2A331F;
+    --vm-moss:       #5E7142;
+    --vm-sage:       #9CA982;
+    --vm-signal:     #C9E45B;
+    --vm-ink:        #14160F;
+    --vm-bone:       #F2F0E6;
+    --vm-paper:      #FBFAF3;
+    --vm-mono:       'Courier New', 'Lucida Console', monospace;
+    --vm-sans:       'Helvetica Neue', Arial, sans-serif;
+
+    /* Shopify Checkout CSS variables (new extensible checkout) */
+    --color-body:        #F2F0E6;
+    --color-accent:      #3D4A2F;
+    --color-button:      #C9E45B;
+    --color-button-text: #14160F;
+    --color-foreground:  #14160F;
+    --color-background:  #FBFAF3;
+  }
+
+  /* ── Global ──────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    background:  var(--vm-bone);
+    color:       var(--vm-ink);
+    font-family: var(--vm-sans);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+  }
+
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .main__header,
+  .banner,
+  header[role="banner"],
+  .page__header {
+    background:    var(--vm-ink) !important;
+    border-bottom: 2.5px solid var(--vm-ink) !important;
+    padding:       0 !important;
+  }
+
+  /* Logo area — inject wordmark via JS below; base styles */
+  .logo,
+  .logo-image__link,
+  .main__header .logo a {
+    display:         flex !important;
+    align-items:     center !important;
+    gap:             2px !important;
+    text-decoration: none !important;
+    font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif !important;
+    font-size:       22px !important;
+    letter-spacing:  -0.045em !important;
+    color:           var(--vm-bone) !important;
+    line-height:     1 !important;
+  }
+
+  /* Breadcrumb nav (Information / Shipping / Payment) */
+  .breadcrumb,
+  .step-list {
+    display:   flex !important;
+    gap:       0 !important;
+    padding:   0 !important;
+    margin:    0 !important;
+    list-style: none !important;
+  }
+
+  .breadcrumb__item,
+  .step-list__item {
+    font-family:    var(--vm-mono) !important;
+    font-size:      11px !important;
+    font-weight:    700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    color:          var(--vm-sage) !important;
+  }
+
+  .breadcrumb__item--current,
+  .step-list__item--active,
+  .breadcrumb__item[aria-current] {
+    color: var(--vm-signal) !important;
+  }
+
+  .breadcrumb__chevron svg,
+  .breadcrumb__separator {
+    color: var(--vm-sage) !important;
+    opacity: 0.5;
+  }
+
+  /* ── Main content area ───────────────────────────────────────────────── */
+  .main,
+  .main__content,
+  [data-main-content] {
+    background: var(--vm-paper) !important;
+  }
+
+  /* Step section wrapper */
+  .section,
+  .step {
+    border-bottom: 1px solid rgba(61,74,47,0.15) !important;
+  }
+
+  /* Section heading */
+  .section__title,
+  .step__heading,
+  fieldset > legend {
+    font-family:    var(--vm-sans) !important;
+    font-size:      18px !important;
+    font-weight:    800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.02em !important;
+    color:          var(--vm-ink) !important;
+    border-bottom:  1.5px solid var(--vm-ink) !important;
+    padding-bottom: 14px !important;
+    margin-bottom:  24px !important;
+  }
+
+  /* ── Form fields ─────────────────────────────────────────────────────── */
+  .field__input,
+  .select__select,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="password"],
+  input[type="zip"],
+  select,
+  textarea {
+    background:    var(--vm-paper) !important;
+    border:        1.5px solid var(--vm-ink) !important;
+    border-radius: 0 !important;
+    color:         var(--vm-ink) !important;
+    font-family:   var(--vm-sans) !important;
+    font-size:     15px !important;
+    padding:       12px 14px !important;
+    transition:    box-shadow 200ms ease, border-color 200ms ease !important;
+    outline:       none !important;
+  }
+
+  .field__input:focus,
+  .select__select:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--vm-olive) !important;
+    box-shadow:   0 0 0 3px rgba(201,228,91,0.2) !important;
+  }
+
+  .field__label,
+  label {
+    font-family:    var(--vm-mono) !important;
+    font-size:      11px !important;
+    font-weight:    700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    color:          var(--vm-moss) !important;
+  }
+
+  /* Floating label (rises to top on focus/fill) */
+  .field--show-floating-label .field__label {
+    font-size: 10px !important;
+    top:        6px !important;
+  }
+
+  /* Field error */
+  .field__message--error,
+  .notice--error {
+    font-family:  var(--vm-mono) !important;
+    font-size:    11px !important;
+    color:        #D94F3A !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  /* ── Radio buttons (shipping methods) ───────────────────────────────── */
+  .radio-wrapper,
+  [data-shipping-method] {
+    border:        1.5px solid rgba(61,74,47,0.25) !important;
+    border-radius: 0 !important;
+    transition:    border-color 200ms ease !important;
+  }
+
+  .radio-wrapper:hover,
+  [data-shipping-method]:hover {
+    border-color: var(--vm-olive) !important;
+  }
+
+  .radio-wrapper.radio-wrapper--selected,
+  .radio-wrapper--checked {
+    border-color: var(--vm-olive) !important;
+    background:   rgba(61,74,47,0.05) !important;
+  }
+
+  /* Custom radio indicator */
+  .radio__input + .radio__label::before,
+  input[type="radio"] + label::before {
+    border-color:  rgba(61,74,47,0.4) !important;
+    border-radius: 0 !important;
+  }
+
+  input[type="radio"]:checked + label::before,
+  .radio__input:checked + .radio__label::before {
+    background:   var(--vm-signal) !important;
+    border-color: var(--vm-olive) !important;
+  }
+
+  /* Shipping price */
+  .radio__label__accessory {
+    font-family: var(--vm-mono) !important;
+    color:       var(--vm-ink) !important;
+  }
+
+  /* ── Checkboxes ──────────────────────────────────────────────────────── */
+  input[type="checkbox"]:checked + label::before,
+  .checkbox__input:checked + .checkbox__label::before {
+    background:   var(--vm-signal) !important;
+    border-color: var(--vm-signal) !important;
+  }
+
+  /* ── Primary CTA button ──────────────────────────────────────────────── */
+  .btn,
+  .btn--primary,
+  button[type="submit"],
+  .step__footer .btn {
+    background:     var(--vm-signal) !important;
+    color:          var(--vm-ink) !important;
+    border:         none !important;
+    border-radius:  0 !important;
+    font-family:    var(--vm-sans) !important;
+    font-size:      14px !important;
+    font-weight:    800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    padding:        17px 28px !important;
+    cursor:         pointer !important;
+    transition:     transform 220ms ease, box-shadow 220ms ease !important;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn:hover,
+    .btn--primary:hover,
+    button[type="submit"]:hover {
+      transform:  translate(-2px, -2px) !important;
+      box-shadow: 4px 4px 0 var(--vm-olive) !important;
+    }
+  }
+
+  .btn:disabled,
+  .btn--primary:disabled,
+  button[type="submit"]:disabled {
+    opacity:    0.6 !important;
+    transform:  none !important;
+    box-shadow: none !important;
+    cursor:     default !important;
+  }
+
+  /* Secondary / back links */
+  .btn--secondary,
+  .previous-link,
+  .step__footer .step__footer__previous-link {
+    background:      transparent !important;
+    color:           var(--vm-sage) !important;
+    font-family:     var(--vm-sans) !important;
+    font-size:       13px !important;
+    font-weight:     700 !important;
+    text-transform:  uppercase !important;
+    letter-spacing:  0.08em !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+    padding:         0 !important;
+    border:          none !important;
+  }
+
+  .btn--secondary:hover,
+  .previous-link:hover {
+    color: var(--vm-ink) !important;
+  }
+
+  /* ── Step footer bar ─────────────────────────────────────────────────── */
+  .step__footer {
+    border-top:  1.5px solid rgba(61,74,47,0.2) !important;
+    padding-top: 24px !important;
+    margin-top:  32px !important;
+  }
+
+  /* ── Order summary sidebar ───────────────────────────────────────────── */
+  .sidebar,
+  .order-summary,
+  [data-order-summary],
+  .sidebar__content {
+    background: var(--vm-olive) !important;
+    color:      var(--vm-bone) !important;
+  }
+
+  /* Sidebar section headings */
+  .sidebar .section__title,
+  .order-summary__title,
+  .sidebar .section__header {
+    color:          var(--vm-signal) !important;
+    border-color:   rgba(201,228,91,0.2) !important;
+    font-family:    var(--vm-mono) !important;
+    font-size:      11px !important;
+    font-weight:    700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  /* Product list rows */
+  .product-table,
+  .order-summary__section {
+    border-color: rgba(201,228,91,0.15) !important;
+  }
+
+  .product__image,
+  .order-summary__product-image {
+    border:     1.5px solid rgba(201,228,91,0.2) !important;
+    background: var(--vm-olive-deep) !important;
+  }
+
+  .product__image__wrapper::after {
+    border-color: transparent !important;
+  }
+
+  /* Quantity badge on product thumbnail */
+  .product-thumbnail__quantity,
+  .item__badge,
+  .badge {
+    background:    var(--vm-signal) !important;
+    color:         var(--vm-ink) !important;
+    font-family:   var(--vm-mono) !important;
+    font-weight:   800 !important;
+    border-radius: 0 !important;
+    font-size:     10px !important;
+    min-width:     18px !important;
+    height:        18px !important;
+  }
+
+  .product__description__name,
+  .order-summary__emphasis {
+    color:       var(--vm-bone) !important;
+    font-weight: 700 !important;
+  }
+
+  .product__description__variant,
+  .order-summary__small-text,
+  .product__description__property {
+    color:   var(--vm-sage) !important;
+    opacity: 1 !important;
+    font-size: 12px !important;
+  }
+
+  .product__description__price,
+  .order-summary__product-description .order-summary__emphasis {
+    font-family: var(--vm-mono) !important;
+    color:       var(--vm-bone) !important;
+  }
+
+  /* Price breakdown lines */
+  .total-line,
+  .order-summary__total-line {
+    border-color: rgba(156,169,130,0.2) !important;
+  }
+
+  .total-line__name,
+  .order-summary__label {
+    font-family: var(--vm-sans) !important;
+    font-size:   14px !important;
+    color:       rgba(242,240,230,0.75) !important;
+  }
+
+  .total-line__price,
+  .order-summary__value {
+    font-family: var(--vm-mono) !important;
+    font-size:   14px !important;
+    color:       var(--vm-bone) !important;
+  }
+
+  /* Grand total */
+  .payment-due,
+  .total-line--grand-total,
+  .order-summary__total-recap {
+    border-top: 2px solid rgba(201,228,91,0.25) !important;
+  }
+
+  .payment-due__price,
+  .payment-due__currency,
+  .total-line--grand-total .total-line__price,
+  .order-summary__total-recap__financial-price {
+    font-family: var(--vm-mono) !important;
+    font-size:   28px !important;
+    font-weight: 400 !important;
+    color:       var(--vm-signal) !important;
+  }
+
+  .total-line--grand-total .total-line__name,
+  .payment-due__label {
+    color:          var(--vm-signal) !important;
+    font-size:      11px !important;
+    font-weight:    700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.14em !important;
+    font-family:    var(--vm-mono) !important;
+    opacity:        1 !important;
+  }
+
+  /* Discount line */
+  .total-line--reduction .total-line__price {
+    color: var(--vm-signal) !important;
+  }
+
+  /* Discount code input in sidebar */
+  .sidebar .field__input,
+  .reduction-code .field__input {
+    background:   rgba(0,0,0,0.15) !important;
+    border-color: rgba(201,228,91,0.25) !important;
+    color:        var(--vm-bone) !important;
+  }
+
+  .sidebar .field__label,
+  .reduction-code .field__label {
+    color: var(--vm-sage) !important;
+  }
+
+  .sidebar .btn,
+  .reduction-code .btn {
+    background:   rgba(201,228,91,0.15) !important;
+    color:        var(--vm-signal) !important;
+    border:       1px solid rgba(201,228,91,0.3) !important;
+    font-size:    12px !important;
+  }
+
+  .sidebar .btn:hover,
+  .reduction-code .btn:hover {
+    background: rgba(201,228,91,0.25) !important;
+    transform:  none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── Mobile order summary toggle ─────────────────────────────────────── */
+  .order-summary-toggle,
+  [data-order-summary-toggle] {
+    background:  var(--vm-olive) !important;
+    color:       var(--vm-bone) !important;
+    border-color: transparent !important;
+  }
+
+  .order-summary-toggle__total-recap,
+  .order-summary-toggle__button-inner {
+    color: var(--vm-bone) !important;
+  }
+
+  .order-summary-toggle__price {
+    font-family: var(--vm-mono) !important;
+    color:       var(--vm-signal) !important;
+  }
+
+  .order-summary-toggle__icon {
+    color: var(--vm-signal) !important;
+  }
+
+  /* ── Payment method section ──────────────────────────────────────────── */
+  .section--payment-method,
+  [data-payment-subform-container] {
+    border-top: 1.5px solid rgba(61,74,47,0.2) !important;
+  }
+
+  /* Card input frames */
+  .card-fields-container,
+  .hosted-field--card-number,
+  .hosted-field--expiry,
+  .hosted-field--verification-value {
+    border:        1.5px solid var(--vm-ink) !important;
+    border-radius: 0 !important;
+    background:    var(--vm-paper) !important;
+  }
+
+  /* ── Thank you / Confirmation page ──────────────────────────────────── */
+  .os-header,
+  .confirmation-callout {
+    background:    var(--vm-olive) !important;
+    border-bottom: 2.5px solid var(--vm-signal) !important;
+    color:         var(--vm-bone) !important;
+  }
+
+  .os-header__heading,
+  .confirmation-callout__title {
+    color:          var(--vm-bone) !important;
+    font-family:    var(--vm-sans) !important;
+    font-weight:    800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .os-order-number,
+  .os-order-number .emphasis {
+    font-family: var(--vm-mono) !important;
+    color:       var(--vm-signal) !important;
+  }
+
+  .os-header__hanging-icon {
+    background:   var(--vm-signal) !important;
+    border-radius: 0 !important;
+  }
+
+  .os-header__hanging-icon svg path { fill: var(--vm-ink) !important; }
+  .os-header__hanging-icon svg polyline { stroke: var(--vm-ink) !important; }
+
+  .os-timeline-item__icon {
+    background:   var(--vm-olive) !important;
+    border-color: rgba(201,228,91,0.35) !important;
+  }
+
+  .os-timeline-item__icon svg { color: var(--vm-signal) !important; }
+
+  /* Map / estimated delivery */
+  .os-delivery-summary {
+    border:     1.5px solid rgba(61,74,47,0.2) !important;
+    background: var(--vm-paper) !important;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────────────── */
+  .main__footer,
+  .footer-info {
+    border-top: 1px solid rgba(61,74,47,0.15) !important;
+    margin-top: 48px !important;
+  }
+
+  .footer-info,
+  .footer-info__list {
+    display:     flex !important;
+    gap:         24px !important;
+    flex-wrap:   wrap !important;
+    align-items: center !important;
+    padding:     20px 0 !important;
+  }
+
+  .footer-info__item,
+  .footer-info__link {
+    color:          var(--vm-sage) !important;
+    font-size:      12px !important;
+    font-family:    var(--vm-mono) !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    opacity:        0.7 !important;
+  }
+
+  .footer-info__item:hover,
+  .footer-info__link:hover { opacity: 1 !important; }
+
+  /* ── Links ───────────────────────────────────────────────────────────── */
+  a {
+    color:                 var(--vm-moss) !important;
+    text-underline-offset: 2px !important;
+  }
+
+  a:hover { color: var(--vm-olive) !important; }
+
+  .sidebar a,
+  .order-summary a { color: var(--vm-sage) !important; }
+  .sidebar a:hover,
+  .order-summary a:hover { color: var(--vm-bone) !important; }
+
+  /* ── Dividers ────────────────────────────────────────────────────────── */
+  hr, .section__separator {
+    border-color: rgba(61,74,47,0.18) !important;
+  }
+
+  /* ── Loading spinner ─────────────────────────────────────────────────── */
+  .loading-overlay__spinner,
+  .spinner {
+    border-color: var(--vm-signal) transparent transparent transparent !important;
+  }
+
+  /* ── Alert / notice boxes ────────────────────────────────────────────── */
+  .notice,
+  .notice--warning,
+  .alert-box {
+    border-radius: 0 !important;
+    border-left:   3px solid var(--vm-moss) !important;
+  }
+
+  .notice--error, .alert-box--error {
+    background:   rgba(217,79,58,0.08) !important;
+    border-color: #D94F3A !important;
+  }
+
+  .notice--success, .alert-box--success {
+    background:   rgba(201,228,91,0.1) !important;
+    border-color: var(--vm-signal) !important;
+  }
+
+  /* ── Tooltip / helper text ───────────────────────────────────────────── */
+  .tooltip,
+  .popover {
+    background:    var(--vm-ink) !important;
+    color:         var(--vm-bone) !important;
+    border-radius: 0 !important;
+    font-family:   var(--vm-mono) !important;
+    font-size:     12px !important;
+  }
+
+  /* ── Scroll behaviour ────────────────────────────────────────────────── */
+  html { scroll-behavior: smooth; }
+  </style>
+</head>
+
+<body>
+  {{ content_for_layout }}
+
+  <script>
+  /* Inject VeloMatch wordmark into checkout header */
+  (function () {
+    function injectLogo() {
+      /* Selectors Shopify uses for the logo link across checkout versions */
+      var candidates = [
+        document.querySelector('.logo__text'),
+        document.querySelector('.main__header .logo a'),
+        document.querySelector('.banner .logo a'),
+        document.querySelector('.logo-image__link'),
+        document.querySelector('[data-logo]'),
+        document.querySelector('.page__header .logo')
+      ];
+
+      for (var i = 0; i < candidates.length; i++) {
+        var el = candidates[i];
+        if (!el) continue;
+
+        /* Already patched */
+        if (el.querySelector('.vm-wm')) return;
+
+        el.style.cssText = [
+          'font-family:"Space Grotesk","Helvetica Neue",Arial,sans-serif',
+          'font-size:22px',
+          'letter-spacing:-0.045em',
+          'text-decoration:none',
+          'color:#F2F0E6',
+          'display:inline-flex',
+          'align-items:center',
+          'gap:2px',
+          'line-height:1'
+        ].join(';');
+
+        el.innerHTML =
+          '<span class="vm-wm" style="font-weight:400">velo</span>' +
+          '<span style="font-weight:700">match</span>' +
+          '<span style="color:#C9E45B;font-weight:700">.</span>';
+
+        return;
+      }
+    }
+
+    /* Run once DOM is ready; also observe for lazy-rendered headers */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectLogo);
+    } else {
+      injectLogo();
+    }
+
+    var obs = new MutationObserver(injectLogo);
+    obs.observe(document.body, { childList: true, subtree: true });
+    /* Stop observing once injected */
+    var stopObs = setInterval(function () {
+      if (document.querySelector('.vm-wm')) { obs.disconnect(); clearInterval(stopObs); }
+    }, 500);
+  })();
+  </script>
+</body>
+</html>
