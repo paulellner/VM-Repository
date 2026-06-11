@@ -136,8 +136,19 @@
   pointer-events: none;
 }
 
+.vm-header__actions {
+  display:    flex;
+  align-items: center;
+  gap:        4px;
+  flex-shrink: 0;
+}
+
 @media (max-width: 880px) {
-  .vm-header__account { padding: 8px 6px; }
+  .vm-header__inner     { padding: 0 20px; }
+  .vm-header__nav       { display: none; }
+  .vm-header__cart-text { display: none; }
+  .vm-header__cart      { padding: 10px 14px; min-width: 44px; justify-content: center; }
+  .vm-header__account   { padding: 8px 6px; }
 }
 </style>
 
@@ -160,6 +171,8 @@
         {%- endfor -%}
       </ul>
     </nav>
+
+    <div class="vm-header__actions">
 
     <!-- VM Pro account icon -->
     {%- if customer -%}
@@ -204,6 +217,8 @@
       </span>
       <span class="vm-header__cart-text">Warenkorb</span>
     </a>
+
+    </div><!-- /.vm-header__actions -->
 
   </div>
 </header>
