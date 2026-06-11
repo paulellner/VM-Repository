@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "vm-pro-dashboard",
-      "settings": {}
-    }
-  },
-  "order": ["main"]
-}
