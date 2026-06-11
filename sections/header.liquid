@@ -174,12 +174,165 @@
   flex-shrink: 0;
 }
 
+/* ── MOBILE HAMBURGER ─────────────────────────────────────────────────── */
+
+.vm-header__burger {
+  display:         none;
+  align-items:     center;
+  justify-content: center;
+  width:           44px;
+  height:          44px;
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  color:           var(--vm-bone);
+  padding:         0;
+  flex-shrink:     0;
+}
+
+/* ── MOBILE NAV DRAWER ───────────────────────────────────────────────── */
+
+.vm-mobile-nav {
+  display:    none;
+  position:   fixed;
+  inset:      0;
+  background: var(--vm-ink);
+  z-index:    200;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.vm-mobile-nav.is-open { display: flex; }
+
+.vm-mobile-nav__top {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 20px;
+  height:          72px;
+  border-bottom:   1px solid rgba(156, 169, 130, 0.2);
+  flex-shrink:     0;
+}
+
+.vm-mobile-nav__logo {
+  text-decoration: none;
+  color:           var(--vm-bone);
+  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-size:       22px;
+  letter-spacing:  -0.045em;
+  line-height:     1;
+}
+.vm-mobile-nav__logo-velo  { font-weight: 400; }
+.vm-mobile-nav__logo-match { font-weight: 700; }
+.vm-mobile-nav__logo-dot   { color: var(--vm-signal); font-weight: 700; }
+
+.vm-mobile-nav__close {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           44px;
+  height:          44px;
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  color:           var(--vm-bone);
+  padding:         0;
+}
+
+.vm-mobile-nav__links {
+  list-style: none;
+  margin:     0;
+  padding:    32px 0;
+  flex:       1;
+}
+
+.vm-mobile-nav__links li {
+  border-bottom: 1px solid rgba(156, 169, 130, 0.12);
+}
+
+.vm-mobile-nav__links a {
+  display:         block;
+  padding:         20px 28px;
+  text-decoration: none;
+  font-size:       17px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.06em;
+  color:           var(--vm-sage);
+  transition:      color 180ms ease, background 180ms ease;
+}
+
+.vm-mobile-nav__links a:hover,
+.vm-mobile-nav__links a[aria-current="page"] {
+  color:      var(--vm-bone);
+  background: rgba(156, 169, 130, 0.06);
+}
+
+.vm-mobile-nav__pro-link {
+  display:         flex !important;
+  align-items:     center !important;
+  gap:             0 !important;
+  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif !important;
+  letter-spacing:  -0.045em !important;
+  text-transform:  none !important;
+  font-size:       20px !important;
+  padding:         20px 28px !important;
+}
+
+.vm-mobile-nav__pro-link-velo  { font-weight: 400; color: var(--vm-sage); }
+.vm-mobile-nav__pro-link-match { font-weight: 700; color: var(--vm-sage); }
+.vm-mobile-nav__pro-link-tag {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  font-family:    'Helvetica Neue', Arial, sans-serif;
+  font-size:      10px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        3px 7px;
+  line-height:    1.5;
+  margin-left:    8px;
+}
+
+.vm-mobile-nav__links li:has(.vm-mobile-nav__pro-link) {
+  border-bottom: none;
+  margin-top:    auto;
+}
+
+.vm-mobile-nav__bottom {
+  padding:    24px 28px;
+  border-top: 1px solid rgba(156, 169, 130, 0.12);
+  flex-shrink: 0;
+}
+
+.vm-mobile-nav__account-row {
+  display:    flex;
+  align-items: center;
+  gap:        16px;
+}
+
+.vm-mobile-nav__account-link {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  text-decoration: none;
+  font-size:   13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color:       var(--vm-sage);
+  transition:  color 180ms ease;
+}
+
+.vm-mobile-nav__account-link:hover { color: var(--vm-bone); }
+
 @media (max-width: 880px) {
   .vm-header__inner     { padding: 0 20px; }
   .vm-header__nav       { display: none; }
   .vm-header__cart-text { display: none; }
   .vm-header__cart      { padding: 10px 14px; min-width: 44px; justify-content: center; }
   .vm-header__account   { padding: 8px 6px; }
+  .vm-header__burger    { display: flex; }
 }
 </style>
 
@@ -214,6 +367,20 @@
     </nav>
 
     <div class="vm-header__actions">
+
+    <!-- Hamburger (mobile only) -->
+    <button class="vm-header__burger"
+            aria-label="Navigation öffnen"
+            aria-expanded="false"
+            aria-controls="vm-mobile-nav"
+            onclick="document.getElementById('vm-mobile-nav').classList.add('is-open'); this.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden';">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
 
     <!-- VM Pro account icon -->
     {%- if customer -%}
@@ -263,6 +430,95 @@
 
   </div>
 </header>
+
+<!-- ── MOBILE NAV DRAWER ──────────────────────────────────────────────────── -->
+<nav id="vm-mobile-nav" class="vm-mobile-nav" aria-label="Mobile Navigation" aria-hidden="true">
+
+  <div class="vm-mobile-nav__top">
+    <a class="vm-mobile-nav__logo" href="{{ routes.root_url }}" onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
+      <span class="vm-mobile-nav__logo-velo">velo</span><span class="vm-mobile-nav__logo-match">match</span><span class="vm-mobile-nav__logo-dot">.</span>
+    </a>
+    <button class="vm-mobile-nav__close"
+            aria-label="Navigation schließen"
+            onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.querySelector('.vm-header__burger').setAttribute('aria-expanded','false'); document.body.style.overflow='';">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <ul class="vm-mobile-nav__links">
+    {%- for link in section.settings.menu.links -%}
+      {%- unless link.title == 'Katalog' or link.title == 'katalog' -%}
+        <li>
+          <a href="{{ link.url }}"
+             {% if link.active %}aria-current="page"{% endif %}
+             onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
+            {{ link.title }}
+          </a>
+        </li>
+      {%- endunless -%}
+    {%- endfor -%}
+    <li>
+      <a class="vm-mobile-nav__pro-link" href="/pages/velomatch-pro"
+         onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
+        <span class="vm-mobile-nav__pro-link-velo">velo</span><span class="vm-mobile-nav__pro-link-match">match</span>
+        <span class="vm-mobile-nav__pro-link-tag">PRO</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="vm-mobile-nav__bottom">
+    <div class="vm-mobile-nav__account-row">
+      {%- if customer -%}
+        <a class="vm-mobile-nav__account-link"
+           href="{{ routes.account_url }}"
+           onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Mein Konto
+        </a>
+      {%- else -%}
+        <a class="vm-mobile-nav__account-link"
+           href="{{ routes.account_login_url }}"
+           onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Anmelden
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+</nav>
+<script>
+(function () {
+  var nav = document.getElementById('vm-mobile-nav');
+  if (!nav) return;
+  /* Close on Escape key */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+      nav.classList.remove('is-open');
+      document.body.style.overflow = '';
+      var burger = document.querySelector('.vm-header__burger');
+      if (burger) burger.setAttribute('aria-expanded', 'false');
+    }
+  });
+  /* Sync aria-hidden with open state */
+  var observer = new MutationObserver(function () {
+    nav.setAttribute('aria-hidden', nav.classList.contains('is-open') ? 'false' : 'true');
+  });
+  observer.observe(nav, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
 
 {% schema %}
 {
