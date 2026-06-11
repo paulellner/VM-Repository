@@ -277,12 +277,17 @@
 
 .vm-contact__info-company {
   font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  font-size:      15px;
-  font-weight:    700;
-  letter-spacing: -0.03em;
-  color:          var(--vm-signal);
+  font-size:      18px;
+  letter-spacing: -0.045em;
+  line-height:    1;
+  display:        flex;
+  align-items:    center;
+  gap:            0;
   margin:         0 0 20px;
 }
+.vm-contact__info-company-velo  { font-weight: 400; color: var(--vm-bone); }
+.vm-contact__info-company-match { font-weight: 700; color: var(--vm-bone); }
+.vm-contact__info-company-dot   { font-weight: 700; color: var(--vm-signal); }
 
 .vm-contact__info-address {
   font-size:      13px;
@@ -466,7 +471,9 @@
       <div class="vm-contact__info-card">
         <span class="vm-contact__info-label">Kontakt</span>
         <p class="vm-contact__info-name">Paul Ellner</p>
-        <p class="vm-contact__info-company">velomatch.</p>
+        <p class="vm-contact__info-company">
+          <span class="vm-contact__info-company-velo">velo</span><span class="vm-contact__info-company-match">match</span><span class="vm-contact__info-company-dot">.</span>
+        </p>
         <address class="vm-contact__info-address">
           Schneckenhofstr 17<br>
           60596 Frankfurt am Main<br>
