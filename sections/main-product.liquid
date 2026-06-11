@@ -322,6 +322,9 @@
         {%- if product.available -%}
           <form action="/cart/add" method="post" id="vm-pdp-form">
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            {%- if product.selling_plan_groups.size > 0 -%}
+              <input type="hidden" name="selling_plan" value="{{ product.selling_plan_groups.first.selling_plans.first.id }}">
+            {%- endif -%}
             {%- unless product.handle == 'velomatch-pro' -%}
             <div class="vm-pdp__qty-wrap">
               <span class="vm-pdp__qty-label">Menge</span>
@@ -356,14 +359,21 @@
     btn.disabled = true;
     btn.textContent = '…';
     var id  = form.querySelector('[name="id"]').value;
-    var qty = parseInt(form.querySelector('[name="quantity"]').value) || 1;
+    var qtyEl = form.querySelector('[name="quantity"]');
+    var qty = qtyEl ? (parseInt(qtyEl.value) || 1) : 1;
+    var payload = { id: parseInt(id), quantity: qty };
+    var spEl = form.querySelector('[name="selling_plan"]');
+    if (spEl && spEl.value) payload.selling_plan = parseInt(spEl.value);
 
     fetch('/cart/add.js', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ id: parseInt(id), quantity: qty })
+      body:    JSON.stringify(payload)
     })
-    .then(function (r) { return r.json(); })
+    .then(function (r) {
+      if (!r.ok) return r.json().then(function (e) { throw new Error(e.description || 'error'); });
+      return r.json();
+    })
     .then(function () {
       btn.textContent = '✓ Im Warenkorb';
       refreshCartCount();
