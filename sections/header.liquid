@@ -27,7 +27,7 @@
   line-height:     1;
   display:         flex;
   align-items:     center;
-  gap:             2px;
+  gap:             0;
 }
 
 .vm-header__logo-velo  { font-weight: 400; }
@@ -193,12 +193,14 @@
     <nav aria-label="Hauptnavigation">
       <ul class="vm-header__nav">
         {%- for link in section.settings.menu.links -%}
+          {%- unless link.title == 'Katalog' or link.title == 'katalog' -%}
           <li>
             <a href="{{ link.url }}"
                {% if link.active %}aria-current="page"{% endif %}>
               {{ link.title }}
             </a>
           </li>
+          {%- endunless -%}
           {%- if forloop.index == 1 -%}
             <li>
               <a class="vm-header__nav-pro" href="/pages/velomatch-pro" aria-label="velomatch Pro">
