@@ -1939,39 +1939,54 @@
 </script>
 
 <script>
-window.vmProAddToCart = window.vmProAddToCart || function(btn) {
+function vmProAddToCart(btn) {
   btn.disabled = true;
   var orig = btn.textContent;
   btn.textContent = '...';
-  fetch('/products/velomatch-pro.json')
-    .then(function(r) {
-      if (!r.ok) throw new Error('not-found');
-      return r.json();
-    })
-    .then(function(d) {
-      var variant = d.product.variants[0];
-      var payload = { id: variant.id, quantity: 1 };
-      var spg = d.product.selling_plan_groups;
-      if (spg && spg.length > 0 && spg[0].selling_plans && spg[0].selling_plans.length > 0) {
-        payload.selling_plan = spg[0].selling_plans[0].id;
-      }
-      return fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+
+  function addByHandle(handle) {
+    return fetch('/products/' + handle + '.json')
+      .then(function(r) {
+        if (!r.ok) throw new Error('404');
+        return r.json();
+      })
+      .then(function(d) {
+        var variant = d.product.variants[0];
+        var payload = { id: variant.id, quantity: 1 };
+        var spg = d.product.selling_plan_groups;
+        if (spg && spg.length > 0 && spg[0].selling_plans && spg[0].selling_plans.length > 0) {
+          payload.selling_plan = spg[0].selling_plans[0].id;
+        }
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      })
+      .then(function(r) {
+        if (!r.ok) return r.json().then(function(e) { throw new Error(e.description || 'cart'); });
+        return r.json();
       });
-    })
-    .then(function(r) {
-      if (!r.ok) return r.json().then(function(e) { throw new Error(e.description || 'error'); });
-      return r.json();
+  }
+
+  addByHandle('velomatch-pro')
+    .catch(function() {
+      return fetch('/search/suggest.json?q=velomatch+pro&resources[type]=product&resources[limit]=1')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var prods = data.resources && data.resources.results && data.resources.results.products;
+          if (!prods || prods.length === 0) throw new Error('not-found');
+          return addByHandle(prods[0].handle);
+        });
     })
     .then(function() { window.location.href = '/cart'; })
-    .catch(function(err) {
+    .catch(function() {
       btn.disabled = false;
       btn.textContent = orig;
-      if (err.message === 'not-found') window.location.href = '/pages/velomatch-pro';
+      window.location.href = '/pages/velomatch-pro';
     });
-};
+}
+window.vmProAddToCart = vmProAddToCart;
 </script>
 
 {% schema %}
