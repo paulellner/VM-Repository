@@ -101,9 +101,16 @@
 
 .vm-pro-page__cards {
   display:               grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap:                   0;
   border:                var(--vm-stroke) solid var(--vm-ink);
+}
+@media (max-width: 900px) {
+  .vm-pro-page__cards { grid-template-columns: 1fr 1fr; }
+  .vm-pro-page__card  { border-right: var(--vm-stroke) solid var(--vm-ink); }
+  .vm-pro-page__card:nth-child(2n) { border-right: none; }
+  .vm-pro-page__card  { border-bottom: var(--vm-stroke) solid var(--vm-ink); }
+  .vm-pro-page__card:last-child, .vm-pro-page__card:nth-last-child(2):nth-child(odd) { border-bottom: none; }
 }
 
 .vm-pro-page__card {
@@ -133,9 +140,72 @@
 }
 
 .vm-pro-page__card-icon {
-  font-size:     28px;
-  line-height:   1;
-  margin-bottom: 16px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           44px;
+  height:          44px;
+  border:          1.5px solid rgba(61,74,47,0.4);
+  color:           var(--vm-olive);
+  margin-bottom:   20px;
+  flex-shrink:     0;
+}
+.vm-pro-page__card-icon svg {
+  width:  22px;
+  height: 22px;
+}
+.vm-pro-page__card--active .vm-pro-page__card-icon {
+  border-color: rgba(201,228,91,0.4);
+  color:        var(--vm-signal);
+  background:   var(--vm-ink);
+}
+
+/* ── BENEFITS STRIP ─────────────────────────────────────────────────────────── */
+.vm-pro-page__benefits {
+  background:    var(--vm-ink);
+  color:         var(--vm-bone);
+  padding:       28px 40px;
+  margin-bottom: 56px;
+  border:        var(--vm-stroke) solid var(--vm-ink);
+}
+.vm-pro-page__benefits-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  margin-bottom:  20px;
+  display:        block;
+}
+.vm-pro-page__benefits-list {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+  display:    grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:        12px 32px;
+}
+.vm-pro-page__benefits-list li {
+  font-size:   13px;
+  font-weight: 600;
+  color:       rgba(242,240,230,0.85);
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+}
+.vm-pro-page__benefits-list li::before {
+  content:     '✓';
+  color:       var(--vm-signal);
+  font-family: var(--vm-mono);
+  font-weight: 700;
+  font-size:   12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .vm-pro-page__benefits      { padding: 24px 20px; }
+  .vm-pro-page__benefits-list { grid-template-columns: 1fr 1fr; }
 }
 
 .vm-pro-page__card-title {
@@ -331,19 +401,7 @@
     padding: 48px 20px 64px;
   }
 
-  .vm-pro-page__cards {
-    grid-template-columns: 1fr;
-  }
-
-  .vm-pro-page__card {
-    border-right:  none;
-    border-bottom: var(--vm-stroke) solid var(--vm-ink);
-    min-height:    auto;
-  }
-
-  .vm-pro-page__card:last-child {
-    border-bottom: none;
-  }
+  /* cards responsive override handled in the cards block above */
 
   .vm-pro-page__pricing-box {
     padding:        36px 28px;
@@ -390,41 +448,83 @@
       <div class="vm-pro-page__cards" role="list">
 
         <!-- Card 1: Rad speichern -->
-        <div class="vm-pro-page__card" role="listitem">
+        <div class="vm-pro-page__card vm-pro-page__card--active" role="listitem">
           <span class="vm-pro-page__card-num">01</span>
-          <div class="vm-pro-page__card-icon" aria-hidden="true">🚴</div>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
           <h2 class="vm-pro-page__card-title">Rad speichern</h2>
           <p class="vm-pro-page__card-desc">
-            Dein Fahrrad wird dauerhaft in deinem Konto gespeichert —
-            Marke, Modell, Variante und Schaltgruppe. Kein erneutes Auswählen,
-            jederzeit abrufbar.
+            Marke, Modell, Variante und Schaltgruppe dauerhaft in deinem Konto hinterlegt.
+            Kein erneutes Auswählen — sofort loslegen.
           </p>
         </div>
 
-        <!-- Card 2: Strava verknüpfen (coming soon) -->
-        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem" aria-label="Strava verknüpfen — demnächst">
-          <span class="vm-pro-page__card-num">02</span>
-          <div class="vm-pro-page__card-icon" aria-hidden="true">🔗</div>
-          <h2 class="vm-pro-page__card-title">Strava verknüpfen</h2>
-          <p class="vm-pro-page__card-desc">
-            Verbinde deinen Strava-Account um deine Ausrüstung automatisch
-            zu tracken und maßgeschneiderte Empfehlungen zu erhalten.
-          </p>
-          <span class="vm-pro-page__card-badge" aria-label="Demnächst verfügbar">Demnächst</span>
-        </div>
-
-        <!-- Card 3: Kaufhistorie -->
+        <!-- Card 2: Kaufhistorie -->
         <div class="vm-pro-page__card" role="listitem">
-          <span class="vm-pro-page__card-num">03</span>
-          <div class="vm-pro-page__card-icon" aria-hidden="true">📋</div>
+          <span class="vm-pro-page__card-num">02</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
           <h2 class="vm-pro-page__card-title">Kaufhistorie</h2>
           <p class="vm-pro-page__card-desc">
-            Verfolge deine Bestellungen und sieh auf einen Blick, welche
-            Teile du für dein gespeichertes Rad bereits gekauft hast.
+            Alle Ersatzteile und Upgrades für dein Rad auf einen Blick —
+            nachvollziehbar, sortiert, jederzeit abrufbar.
           </p>
+        </div>
+
+        <!-- Card 3: Strava verknüpfen (coming soon) -->
+        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem">
+          <span class="vm-pro-page__card-num">03</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h2 class="vm-pro-page__card-title">Strava verknüpfen</h2>
+          <p class="vm-pro-page__card-desc">
+            Aktivitätsdaten direkt mit deiner Ausrüstung verbinden —
+            maßgeschneiderte Empfehlungen auf Basis deiner Kilometer.
+          </p>
+          <span class="vm-pro-page__card-badge">Demnächst</span>
+        </div>
+
+        <!-- Card 4: Benachrichtigungen (coming soon) -->
+        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem">
+          <span class="vm-pro-page__card-num">04</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </div>
+          <h2 class="vm-pro-page__card-title">Neue Teile zuerst</h2>
+          <p class="vm-pro-page__card-desc">
+            Sobald neue Komponenten für dein gespeichertes Rad verfügbar sind,
+            wirst du als Erster informiert.
+          </p>
+          <span class="vm-pro-page__card-badge">Demnächst</span>
         </div>
 
       </div>
+    </div>
+
+    <!-- ── BENEFITS STRIP ───────────────────────────────────────────────── -->
+    <div class="vm-pro-page__benefits">
+      <span class="vm-pro-page__benefits-label">Inklusive in deiner Mitgliedschaft</span>
+      <ul class="vm-pro-page__benefits-list">
+        <li>Kein erneutes Konfigurieren</li>
+        <li>Geräteübergreifend verfügbar</li>
+        <li>Kompatibilitäts-Garantie</li>
+        <li>Jederzeit kündbar</li>
+        <li>Sichere Zahlung via Shopify</li>
+        <li>Zugang zu neuen Features zuerst</li>
+      </ul>
     </div>
 
     <!-- ── PRICING ───────────────────────────────────────────────────── -->

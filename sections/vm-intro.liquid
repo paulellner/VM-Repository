@@ -160,13 +160,13 @@
   padding-top:   36px;
 }
 .vm-intro__pro-eyebrow {
-  font-family:    var(--vm-mono);
-  font-size:      10px;
-  font-weight:    700;
+  font-family:    var(--vm-sans);
+  font-size:      18px;
+  font-weight:    800;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: -0.01em;
   color:          var(--vm-signal);
-  margin-bottom:  20px;
+  margin-bottom:  28px;
   display:        block;
 }
 .vm-intro__pro-features {
@@ -371,7 +371,6 @@
         </div>
       </div>
       <div class="vm-intro__pro-cta">
-        <span class="vm-intro__pro-price">5.99€ / Monat · jederzeit kündbar</span>
         {%- if customer and customer.tags contains 'vm-pro' -%}
           <button class="vm-intro__pro-btn" disabled>★ Du bist bereits Pro</button>
         {%- else -%}
