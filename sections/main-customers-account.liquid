@@ -548,7 +548,7 @@
                   <a class="vm-account__nav-link vm-account__nav-link--pro"
                      href="/pages/velomatch-pro-dashboard"
                      aria-label="VM Pro Dashboard">
-                    ★&nbsp;Pro Dashboard
+                    Pro Dashboard
                   </a>
                 </li>
               {%- else -%}
@@ -556,7 +556,7 @@
                   <a class="vm-account__nav-link vm-account__nav-link--pro"
                      href="/pages/velomatch-pro"
                      aria-label="VeloMatch Pro abonnieren">
-                    ★&nbsp;VM Pro
+                    VM Pro
                   </a>
                 </li>
               {%- endif -%}
@@ -578,7 +578,8 @@
             <div class="vm-account__panel-body">
 
               {%- if customer.note != blank -%}
-                {%- assign saved_bike = customer.note | parse_json -%}
+                {%- assign _acct_note = customer.note | parse_json -%}
+                {%- assign saved_bike = _acct_note.vm_bike -%}
 
                 {%- if saved_bike.collectionTag -%}
 

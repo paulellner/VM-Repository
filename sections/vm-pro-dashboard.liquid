@@ -747,13 +747,13 @@
 {%- elsif customer_is_pro -%}
   {%- comment -%} ── AUTHENTICATED VM PRO DASHBOARD ─────────────────────── {%- endcomment -%}
 
-  {%- comment -%} Parse saved bike from customer.note {%- endcomment -%}
+  {%- comment -%} Parse saved bike from customer.note (stored as {vm_bike:{...}}) {%- endcomment -%}
   {%- assign bike = nil -%}
   {%- if customer.note != blank -%}
-    {%- assign bike = customer.note | parse_json -%}
-    {%- unless bike.collectionTag -%}
-      {%- assign bike = nil -%}
-    {%- endunless -%}
+    {%- assign _note = customer.note | parse_json -%}
+    {%- if _note.vm_bike.collectionTag -%}
+      {%- assign bike = _note.vm_bike -%}
+    {%- endif -%}
   {%- endif -%}
 
   <div class="vmpd">
