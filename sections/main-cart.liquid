@@ -157,6 +157,22 @@
 }
 .vm-cart__qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
+.vm-cart__qty-locked {
+  font-family:    'Courier New', monospace;
+  font-size:      14px;
+  color:          var(--vm-sage);
+  letter-spacing: 0.06em;
+  padding:        4px 0;
+  display:        inline-block;
+}
+.vm-cart__item-sub {
+  font-size:   0.8em;
+  font-weight: 400;
+  opacity:     0.65;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .vm-cart__remove {
   display:        block;
   margin-top:     8px;
@@ -330,7 +346,13 @@
 
                 <div>
                   <div class="vm-cart__item-vendor">{{ item.vendor }}</div>
-                  <a class="vm-cart__item-title" href="{{ item.url }}">{{ item.title }}</a>
+                  <a class="vm-cart__item-title" href="{{ item.url }}">
+                    {{ item.title }}{%- if item.product.handle == 'velomatch-pro' -%}&thinsp;<span class="vm-cart__item-sub">(mtl.)</span>{%- endif -%}
+                  </a>
+                  {%- if item.product.handle == 'velomatch-pro' -%}
+                    <span class="vm-cart__qty-locked" aria-label="Menge: 1">1×</span>
+                    <input type="hidden" name="updates[{{ item.key }}]" value="1">
+                  {%- else -%}
                   <div class="vm-cart__qty-row">
                     <button type="button" class="vm-cart__qty-btn vm-qty-minus"
                       data-key="{{ item.key }}" aria-label="Weniger">−</button>
@@ -344,6 +366,7 @@
                     <button type="button" class="vm-cart__qty-btn vm-qty-plus"
                       data-key="{{ item.key }}" aria-label="Mehr">+</button>
                   </div>
+                  {%- endif -%}
                   <a class="vm-cart__remove"
                     href="{{ routes.cart_change_url }}?id={{ item.key }}&quantity=0">
                     Entfernen
@@ -362,7 +385,11 @@
 
             {%- for item in cart.items -%}
               <div class="vm-cart__summary-row">
-                <span>{{ item.title | truncate: 28 }}</span>
+                {%- if item.product.handle == 'velomatch-pro' -%}
+                  <span>{{ item.title | truncate: 20 }}&thinsp;(mtl.)</span>
+                {%- else -%}
+                  <span>{{ item.title | truncate: 28 }}</span>
+                {%- endif -%}
                 <span data-summary-key="{{ item.key }}">{{ item.line_price | money }}</span>
               </div>
             {%- endfor -%}

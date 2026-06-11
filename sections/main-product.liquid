@@ -353,39 +353,63 @@
   var form = document.getElementById('vm-pdp-form');
   if (!form) return;
   var btn = form.querySelector('.vm-pdp__add');
+  var isVmPro = {{ product.handle | json }} === 'velomatch-pro';
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     btn.disabled = true;
     btn.textContent = '…';
-    var id  = form.querySelector('[name="id"]').value;
-    var qtyEl = form.querySelector('[name="quantity"]');
-    var qty = qtyEl ? (parseInt(qtyEl.value) || 1) : 1;
-    var payload = { id: parseInt(id), quantity: qty };
-    var spEl = form.querySelector('[name="selling_plan"]');
-    if (spEl && spEl.value) payload.selling_plan = parseInt(spEl.value);
 
-    fetch('/cart/add.js', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload)
-    })
-    .then(function (r) {
-      if (!r.ok) return r.json().then(function (e) { throw new Error(e.description || 'error'); });
-      return r.json();
-    })
-    .then(function () {
-      btn.textContent = '✓ Im Warenkorb';
-      refreshCartCount();
-      setTimeout(function () {
-        btn.textContent = btn.dataset.defaultText;
-        btn.disabled = false;
-      }, 2500);
-    })
-    .catch(function () {
-      btn.textContent = btn.dataset.defaultText;
-      btn.disabled = false;
-    });
+    var id    = form.querySelector('[name="id"]').value;
+    var qtyEl = form.querySelector('[name="quantity"]');
+    var qty   = qtyEl ? (parseInt(qtyEl.value) || 1) : 1;
+    var spEl  = form.querySelector('[name="selling_plan"]');
+
+    function doAdd() {
+      var payload = { id: parseInt(id), quantity: qty };
+      if (spEl && spEl.value) payload.selling_plan = parseInt(spEl.value);
+      return fetch('/cart/add.js', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload)
+      })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (e) { throw new Error(e.description || 'error'); });
+        return r.json();
+      });
+    }
+
+    if (isVmPro) {
+      fetch('/cart.js')
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          if (cart.items.some(function (i) { return i.handle === 'velomatch-pro'; })) {
+            window.location.href = '/cart';
+            return Promise.reject('skip');
+          }
+          return doAdd();
+        })
+        .then(function () { window.location.href = '/cart'; })
+        .catch(function (err) {
+          if (err === 'skip') return;
+          btn.textContent = btn.dataset.defaultText;
+          btn.disabled = false;
+        });
+    } else {
+      doAdd()
+        .then(function () {
+          btn.textContent = '✓ Im Warenkorb';
+          refreshCartCount();
+          setTimeout(function () {
+            btn.textContent = btn.dataset.defaultText;
+            btn.disabled = false;
+          }, 2500);
+        })
+        .catch(function () {
+          btn.textContent = btn.dataset.defaultText;
+          btn.disabled = false;
+        });
+    }
   });
 
   function refreshCartCount() {

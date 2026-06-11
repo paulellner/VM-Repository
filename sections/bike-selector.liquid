@@ -1996,18 +1996,27 @@ function vmProAddToCart(btn) {
       });
   }
 
-  addByHandle('velomatch-pro')
-    .catch(function() {
-      return fetch('/search/suggest.json?q=velomatch+pro&resources[type]=product&resources[limit]=1')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          var prods = data.resources && data.resources.results && data.resources.results.products;
-          if (!prods || prods.length === 0) throw new Error('not-found');
-          return addByHandle(prods[0].handle);
+  fetch('/cart.js')
+    .then(function(r) { return r.json(); })
+    .then(function(cart) {
+      if (cart.items.some(function(i) { return i.handle === 'velomatch-pro'; })) {
+        window.location.href = '/cart';
+        return Promise.reject('skip');
+      }
+      return addByHandle('velomatch-pro')
+        .catch(function() {
+          return fetch('/search/suggest.json?q=velomatch+pro&resources[type]=product&resources[limit]=1')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              var prods = data.resources && data.resources.results && data.resources.results.products;
+              if (!prods || prods.length === 0) throw new Error('not-found');
+              return addByHandle(prods[0].handle);
+            });
         });
     })
     .then(function() { window.location.href = '/cart'; })
-    .catch(function() {
+    .catch(function(err) {
+      if (err === 'skip') return;
       btn.disabled = false;
       btn.textContent = orig;
       window.location.href = '/pages/velomatch-pro';
