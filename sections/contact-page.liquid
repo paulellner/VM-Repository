@@ -1,0 +1,522 @@
+<style>
+/* ── VeloMatch Kontakt ───────────────────────────────────────────────────── */
+.vm-contact {
+  --vm-olive:  #3D4A2F;
+  --vm-moss:   #5E7142;
+  --vm-sage:   #9CA982;
+  --vm-signal: #C9E45B;
+  --vm-ink:    #14160F;
+  --vm-bone:   #F2F0E6;
+  --vm-paper:  #FBFAF3;
+  --vm-stroke: 1.5px;
+  --vm-dur:    220ms;
+  --vm-ease:   cubic-bezier(0.2, 0.7, 0.2, 1);
+  --vm-mono:   'Courier New', 'Lucida Console', monospace;
+  --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+
+  background:  var(--vm-bone);
+  font-family: var(--vm-sans);
+  color:       var(--vm-ink);
+  box-sizing:  border-box;
+}
+.vm-contact *, .vm-contact *::before, .vm-contact *::after { box-sizing: inherit; }
+
+/* ── PAGE HEADER ─────────────────────────────────────────────────────────── */
+
+.vm-contact__header {
+  background:    var(--vm-ink);
+  padding:       56px 40px 48px;
+  border-bottom: 2.5px solid var(--vm-signal);
+}
+
+.vm-contact__header-inner {
+  max-width: 1100px;
+  margin:    0 auto;
+}
+
+.vm-contact__eyebrow {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  16px;
+}
+
+.vm-contact__heading {
+  font-size:      clamp(32px, 5vw, 56px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height:    1;
+  color:          var(--vm-bone);
+  margin:         0 0 16px;
+}
+
+.vm-contact__subtext {
+  font-size:   16px;
+  line-height: 1.6;
+  color:       var(--vm-sage);
+  margin:      0;
+  max-width:   480px;
+}
+
+/* ── MAIN LAYOUT ─────────────────────────────────────────────────────────── */
+
+.vm-contact__inner {
+  max-width: 1100px;
+  margin:    0 auto;
+  padding:   64px 40px 96px;
+  display:   grid;
+  grid-template-columns: 1fr 320px;
+  gap:       64px;
+  align-items: start;
+}
+
+/* ── FORM ────────────────────────────────────────────────────────────────── */
+
+.vm-contact__form-wrap {}
+
+/* Success state */
+.vm-contact__success {
+  background:   var(--vm-paper);
+  border:       1.5px solid var(--vm-signal);
+  border-left:  4px solid var(--vm-signal);
+  padding:      32px 28px;
+  margin-bottom: 32px;
+}
+
+.vm-contact__success-heading {
+  font-size:      17px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-ink);
+  margin:         0 0 8px;
+}
+
+.vm-contact__success-text {
+  font-size:   14px;
+  color:       var(--vm-sage);
+  line-height: 1.6;
+  margin:      0;
+}
+
+/* Error list */
+.vm-contact__errors {
+  background:   var(--vm-paper);
+  border:       1.5px solid #D94F3A;
+  border-left:  4px solid #D94F3A;
+  padding:      20px 24px;
+  margin-bottom: 28px;
+  list-style:   none;
+}
+
+.vm-contact__errors li {
+  font-size:   13px;
+  color:       #D94F3A;
+  font-family: var(--vm-mono);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.vm-contact__errors li:last-child { margin-bottom: 0; }
+
+/* Field rows */
+.vm-contact__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap:     20px;
+  margin-bottom: 20px;
+}
+
+.vm-contact__row--full {
+  grid-template-columns: 1fr;
+}
+
+.vm-contact__field {
+  display:        flex;
+  flex-direction: column;
+  gap:            8px;
+}
+
+.vm-contact__label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-moss);
+}
+
+.vm-contact__label span {
+  color:       #D94F3A;
+  margin-left: 2px;
+}
+
+.vm-contact__input,
+.vm-contact__textarea {
+  background:    var(--vm-paper);
+  border:        1.5px solid var(--vm-ink);
+  border-radius: 0;
+  color:         var(--vm-ink);
+  font-family:   var(--vm-sans);
+  font-size:     15px;
+  padding:       13px 16px;
+  width:         100%;
+  transition:    border-color var(--vm-dur) ease,
+                 box-shadow   var(--vm-dur) ease;
+  outline:       none;
+  -webkit-appearance: none;
+}
+
+.vm-contact__input::placeholder,
+.vm-contact__textarea::placeholder {
+  color:   var(--vm-sage);
+  opacity: 0.7;
+}
+
+.vm-contact__input:focus,
+.vm-contact__textarea:focus {
+  border-color: var(--vm-olive);
+  box-shadow:   0 0 0 3px rgba(201,228,91,0.2);
+}
+
+.vm-contact__input--error,
+.vm-contact__textarea--error {
+  border-color: #D94F3A;
+}
+
+.vm-contact__textarea {
+  resize:     vertical;
+  min-height: 160px;
+  line-height: 1.6;
+}
+
+/* Submit */
+.vm-contact__submit {
+  margin-top: 28px;
+}
+
+.vm-contact__btn {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            10px;
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  border:         none;
+  padding:        16px 36px;
+  font-family:    var(--vm-sans);
+  font-size:      14px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor:         pointer;
+  transition:     transform var(--vm-dur) var(--vm-ease),
+                  box-shadow var(--vm-dur) var(--vm-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vm-contact__btn:hover {
+    transform:  translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--vm-olive);
+  }
+}
+
+.vm-contact__btn:disabled {
+  opacity:    0.6;
+  cursor:     default;
+  transform:  none;
+  box-shadow: none;
+}
+
+.vm-contact__required-note {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  color:          var(--vm-sage);
+  letter-spacing: 0.05em;
+  margin-top:     16px;
+  display:        block;
+}
+
+/* ── SIDEBAR: Kontaktdaten ───────────────────────────────────────────────── */
+
+.vm-contact__aside {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+}
+
+.vm-contact__info-card {
+  background:  var(--vm-ink);
+  color:       var(--vm-bone);
+  padding:     32px 28px;
+  border:      1.5px solid var(--vm-ink);
+}
+
+.vm-contact__info-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  20px;
+}
+
+.vm-contact__info-name {
+  font-size:      17px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-bone);
+  margin:         0 0 4px;
+}
+
+.vm-contact__info-company {
+  font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-size:      15px;
+  font-weight:    700;
+  letter-spacing: -0.03em;
+  color:          var(--vm-signal);
+  margin:         0 0 20px;
+}
+
+.vm-contact__info-address {
+  font-size:      13px;
+  line-height:    1.8;
+  color:          rgba(242,240,230,0.65);
+  font-style:     normal;
+  font-family:    var(--vm-mono);
+  letter-spacing: 0.02em;
+  border-top:     1px solid rgba(156,169,130,0.2);
+  padding-top:    18px;
+  margin:         0;
+}
+
+.vm-contact__response-note {
+  background:  var(--vm-paper);
+  border:      1.5px solid rgba(61,74,47,0.2);
+  padding:     20px 24px;
+}
+
+.vm-contact__response-icon {
+  color:       var(--vm-moss);
+  margin-bottom: 10px;
+}
+
+.vm-contact__response-text {
+  font-size:   13px;
+  line-height: 1.65;
+  color:       var(--vm-sage);
+  margin:      0;
+  font-family: var(--vm-mono);
+  letter-spacing: 0.02em;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .vm-contact__header { padding: 40px 20px 36px; }
+  .vm-contact__inner  {
+    grid-template-columns: 1fr;
+    gap:     40px;
+    padding: 48px 20px 64px;
+  }
+  .vm-contact__aside { order: -1; }
+}
+
+@media (max-width: 600px) {
+  .vm-contact__row { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- ── PAGE HEADER ──────────────────────────────────────────────────────── -->
+<div class="vm-contact">
+
+  <div class="vm-contact__header">
+    <div class="vm-contact__header-inner">
+      <span class="vm-contact__eyebrow">Kontakt</span>
+      <h1 class="vm-contact__heading">{{ section.settings.heading | default: 'Schreib uns.' }}</h1>
+      <p class="vm-contact__subtext">
+        {{ section.settings.subtext | default: 'Fragen zu deiner Bestellung, Kompatibilität oder VeloMatch Pro? Wir antworten so schnell wie möglich.' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- ── MAIN: Form + Sidebar ──────────────────────────────────────────── -->
+  <div class="vm-contact__inner">
+
+    <!-- FORM -->
+    <div class="vm-contact__form-wrap">
+
+      {%- form 'contact', id: 'vm-contact-form' -%}
+
+        {%- if form.posted_successfully? -%}
+          <div class="vm-contact__success" role="alert" aria-live="polite">
+            <h2 class="vm-contact__success-heading">Nachricht gesendet</h2>
+            <p class="vm-contact__success-text">
+              Vielen Dank! Wir haben deine Nachricht erhalten und melden uns in Kürze bei dir.
+            </p>
+          </div>
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          <ul class="vm-contact__errors" role="alert" aria-live="polite">
+            {%- for field in form.errors -%}
+              <li>
+                {%- if field == 'form' -%}
+                  {{ form.errors.messages[field] }}
+                {%- else -%}
+                  {{ field | capitalize }}: {{ form.errors.messages[field] }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <!-- Name + E-Mail -->
+        <div class="vm-contact__row">
+          <div class="vm-contact__field">
+            <label class="vm-contact__label" for="vm-contact-name">
+              Name <span aria-hidden="true">*</span>
+            </label>
+            <input
+              class="vm-contact__input{% if form.errors contains 'name' %} vm-contact__input--error{% endif %}"
+              type="text"
+              id="vm-contact-name"
+              name="contact[name]"
+              value="{{ form.name }}"
+              placeholder="Dein Name"
+              required
+              autocomplete="name">
+          </div>
+          <div class="vm-contact__field">
+            <label class="vm-contact__label" for="vm-contact-email">
+              E-Mail <span aria-hidden="true">*</span>
+            </label>
+            <input
+              class="vm-contact__input{% if form.errors contains 'email' %} vm-contact__input--error{% endif %}"
+              type="email"
+              id="vm-contact-email"
+              name="contact[email]"
+              value="{{ form.email }}"
+              placeholder="deine@email.de"
+              required
+              autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Telefon -->
+        <div class="vm-contact__row vm-contact__row--full">
+          <div class="vm-contact__field">
+            <label class="vm-contact__label" for="vm-contact-phone">
+              Telefonnummer
+            </label>
+            <input
+              class="vm-contact__input"
+              type="tel"
+              id="vm-contact-phone"
+              name="contact[phone]"
+              placeholder="+49 69 ..."
+              autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Nachricht -->
+        <div class="vm-contact__row vm-contact__row--full">
+          <div class="vm-contact__field">
+            <label class="vm-contact__label" for="vm-contact-message">
+              Nachricht <span aria-hidden="true">*</span>
+            </label>
+            <textarea
+              class="vm-contact__textarea{% if form.errors contains 'body' %} vm-contact__textarea--error{% endif %}"
+              id="vm-contact-message"
+              name="contact[body]"
+              placeholder="Deine Nachricht an uns …"
+              required>{{ form.body }}</textarea>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="vm-contact__submit">
+          <button class="vm-contact__btn" type="submit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Jetzt senden
+          </button>
+          <span class="vm-contact__required-note">* Pflichtfelder</span>
+        </div>
+
+      {%- endform -%}
+
+    </div>
+    <!-- /form -->
+
+    <!-- SIDEBAR: Kontaktdaten -->
+    <aside class="vm-contact__aside" aria-label="Kontaktinformationen">
+
+      <div class="vm-contact__info-card">
+        <span class="vm-contact__info-label">Kontakt</span>
+        <p class="vm-contact__info-name">Paul Ellner</p>
+        <p class="vm-contact__info-company">velomatch.</p>
+        <address class="vm-contact__info-address">
+          Schneckenhofstr 17<br>
+          60596 Frankfurt am Main<br>
+          Deutschland
+        </address>
+      </div>
+
+      <div class="vm-contact__response-note">
+        <div class="vm-contact__response-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <p class="vm-contact__response-text">
+          Wir antworten in der Regel<br>innerhalb von 24 Stunden.
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+  <!-- /inner -->
+
+</div>
+
+{% schema %}
+{
+  "name": "Kontaktseite",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "Schreib uns."
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Untertext",
+      "default": "Fragen zu deiner Bestellung, Kompatibilität oder VeloMatch Pro? Wir antworten so schnell wie möglich."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kontaktseite",
+      "category": "VeloMatch"
+    }
+  ]
+}
+{% endschema %}
