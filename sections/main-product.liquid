@@ -322,11 +322,13 @@
         {%- if product.available -%}
           <form action="/cart/add" method="post" id="vm-pdp-form">
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            {%- unless product.handle == 'velomatch-pro' -%}
             <div class="vm-pdp__qty-wrap">
               <span class="vm-pdp__qty-label">Menge</span>
               <input class="vm-pdp__qty" type="number" name="quantity"
                 value="1" min="1" max="10" aria-label="Menge">
             </div>
+            {%- endunless -%}
             <button class="vm-pdp__add" type="submit" name="add"
               data-default-text="Zum Warenkorb hinzufügen +">
               Zum Warenkorb hinzufügen +

@@ -458,50 +458,6 @@
   .vm-result__sum-pro     { border-left: none; border-top: 1px solid rgba(201,228,91,0.18); padding: 28px 20px; }
   .vm-result__sum-info    { padding: 28px 20px; }
 }
-/* ── VM Pro teaser strip ─────────────────────────────────────────────────── */
-.vm-pro-teaser {
-  display:         flex;
-  align-items:     center;
-  gap:             16px;
-  padding:         10px 16px;
-  border:          1.5px solid var(--vm-signal);
-  background:      rgba(201, 228, 91, 0.06);
-  margin-bottom:   24px;
-  flex-wrap:       wrap;
-}
-.vm-pro-teaser__badge {
-  font-family:    var(--vm-mono);
-  font-size:      10px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color:          var(--vm-ink);
-  background:     var(--vm-signal);
-  padding:        3px 8px;
-  flex-shrink:    0;
-}
-.vm-pro-teaser__text {
-  font-size: 14px;
-  color:     var(--vm-sage);
-  flex:      1;
-  min-width: 180px;
-}
-.vm-pro-teaser__cta {
-  font-family:    var(--vm-mono);
-  font-size:      11px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color:          var(--vm-signal);
-  text-decoration: none;
-  white-space:    nowrap;
-  padding:        6px 14px;
-  border:         1.5px solid var(--vm-signal);
-  flex-shrink:    0;
-  transition:     background 200ms ease, color 200ms ease;
-}
-.vm-pro-teaser__cta:hover { background: var(--vm-signal); color: var(--vm-ink); }
-
 
 /* ── Selbst zusammenstellen — special brand card ────────────────────────── */
 .vm-pick--custom {
@@ -673,15 +629,6 @@
 <!-- ── SECTION MARKUP ──────────────────────────────────────────────────── -->
 <section class="vm-s" id="vm-s-{{ section.id }}">
   <div class="vm-s__inner">
-
-    <!-- VM Pro teaser -->
-    {%- unless customer and customer.tags contains 'vm-pro' -%}
-    <div class="vm-pro-teaser">
-      <span class="vm-pro-teaser__badge">★ Pro</span>
-      <span class="vm-pro-teaser__text">Rad dauerhaft speichern &middot; Strava verknüpfen &middot; Kaufhistorie</span>
-      <a class="vm-pro-teaser__cta" href="/pages/velomatch-pro">5.99€/Monat →</a>
-    </div>
-    {%- endunless -%}
 
     <!-- STEPPER -->
     <div class="vm-stepper" role="list" aria-label="Auswahlschritte">
@@ -1997,17 +1944,33 @@ window.vmProAddToCart = window.vmProAddToCart || function(btn) {
   var orig = btn.textContent;
   btn.textContent = '...';
   fetch('/products/velomatch-pro.json')
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('not-found');
+      return r.json();
+    })
     .then(function(d) {
-      var vid = d.product.variants[0].id;
+      var variant = d.product.variants[0];
+      var payload = { id: variant.id, quantity: 1 };
+      var spg = d.product.selling_plan_groups;
+      if (spg && spg.length > 0 && spg[0].selling_plans && spg[0].selling_plans.length > 0) {
+        payload.selling_plan = spg[0].selling_plans[0].id;
+      }
       return fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: vid, quantity: 1 })
+        body: JSON.stringify(payload)
       });
     })
+    .then(function(r) {
+      if (!r.ok) return r.json().then(function(e) { throw new Error(e.description || 'error'); });
+      return r.json();
+    })
     .then(function() { window.location.href = '/cart'; })
-    .catch(function() { btn.disabled = false; btn.textContent = orig; });
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = orig;
+      if (err.message === 'not-found') window.location.href = '/pages/velomatch-pro';
+    });
 };
 </script>
 
