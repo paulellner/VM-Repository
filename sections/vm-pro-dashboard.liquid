@@ -657,8 +657,6 @@
 </style>
 
 {%- comment -%} ── AUTH GATE ─────────────────────────────────────────────── {%- endcomment -%}
-{%- assign customer_is_pro = false -%}
-{%- if customer.tags contains 'vm-pro' -%}{%- assign customer_is_pro = true -%}{%- endif -%}
 
 {%- if customer == nil -%}
   {%- comment -%} Not logged in → redirect to login with return URL {%- endcomment -%}
@@ -687,64 +685,7 @@
     </div>
   </div>
 
-{%- elsif customer_is_pro == false -%}
-  <div class="vmpd">
-    <div class="vmpd__inner" style="padding-top: 64px;">
-      <div class="vmpd__gate">
-        <div class="vmpd__gate-icon" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="0" ry="0"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
-        </div>
-        <h1 class="vmpd__gate-heading">Exklusiv für<br>VM Pro Mitglieder</h1>
-        <p class="vmpd__gate-text">
-          Dieses Dashboard ist nur für aktive VeloMatch Pro Abonnenten zugänglich.
-          Werde jetzt Mitglied und speichere dein Rad dauerhaft.
-        </p>
-
-        <div class="vmpd__upgrade-features" role="list">
-          <div class="vmpd__upgrade-feature" role="listitem">
-            <div class="vmpd__upgrade-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-              </svg>
-            </div>
-            <p class="vmpd__upgrade-feature-name">Rad speichern</p>
-            <p class="vmpd__upgrade-feature-text">Dein Fahrrad dauerhaft im Konto hinterlegt</p>
-          </div>
-          <div class="vmpd__upgrade-feature" role="listitem">
-            <div class="vmpd__upgrade-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-              </svg>
-            </div>
-            <p class="vmpd__upgrade-feature-name">Strava</p>
-            <p class="vmpd__upgrade-feature-text">Verknüpfung mit deinem Strava-Konto</p>
-          </div>
-          <div class="vmpd__upgrade-feature" role="listitem">
-            <div class="vmpd__upgrade-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-            </div>
-            <p class="vmpd__upgrade-feature-name">Kaufhistorie</p>
-            <p class="vmpd__upgrade-feature-text">Alle Bestellungen im Überblick</p>
-          </div>
-        </div>
-
-        <a class="vmpd__gate-btn" href="/pages/velomatch-pro">VM Pro abonnieren — 5,99 €/Monat</a>
-        <a class="vmpd__gate-btn vmpd__gate-btn--secondary" href="/account">Zurück zum Konto</a>
-      </div>
-    </div>
-  </div>
-
-{%- elsif customer_is_pro -%}
+{%- elsif customer.tags contains 'vm-pro' -%}
   {%- comment -%} ── AUTHENTICATED VM PRO DASHBOARD ─────────────────────── {%- endcomment -%}
 
   {%- comment -%} Parse saved bike from customer.note (stored as {vm_bike:{...}}) {%- endcomment -%}
@@ -1066,6 +1007,63 @@
       </div>
       <!-- /vmpd__grid -->
 
+    </div>
+  </div>
+
+{%- else -%}
+  <div class="vmpd">
+    <div class="vmpd__inner" style="padding-top: 64px;">
+      <div class="vmpd__gate">
+        <div class="vmpd__gate-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="0" ry="0"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h1 class="vmpd__gate-heading">Exklusiv für<br>VM Pro Mitglieder</h1>
+        <p class="vmpd__gate-text">
+          Dieses Dashboard ist nur für aktive VeloMatch Pro Abonnenten zugänglich.
+          Werde jetzt Mitglied und speichere dein Rad dauerhaft.
+        </p>
+
+        <div class="vmpd__upgrade-features" role="list">
+          <div class="vmpd__upgrade-feature" role="listitem">
+            <div class="vmpd__upgrade-feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <p class="vmpd__upgrade-feature-name">Rad speichern</p>
+            <p class="vmpd__upgrade-feature-text">Dein Fahrrad dauerhaft im Konto hinterlegt</p>
+          </div>
+          <div class="vmpd__upgrade-feature" role="listitem">
+            <div class="vmpd__upgrade-feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <p class="vmpd__upgrade-feature-name">Strava</p>
+            <p class="vmpd__upgrade-feature-text">Verknüpfung mit deinem Strava-Konto</p>
+          </div>
+          <div class="vmpd__upgrade-feature" role="listitem">
+            <div class="vmpd__upgrade-feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <p class="vmpd__upgrade-feature-name">Kaufhistorie</p>
+            <p class="vmpd__upgrade-feature-text">Alle Bestellungen im Überblick</p>
+          </div>
+        </div>
+
+        <a class="vmpd__gate-btn" href="/pages/velomatch-pro">VM Pro abonnieren — 5,99 €/Monat</a>
+        <a class="vmpd__gate-btn vmpd__gate-btn--secondary" href="/account">Zurück zum Konto</a>
+      </div>
     </div>
   </div>
 
