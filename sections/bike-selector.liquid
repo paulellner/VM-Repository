@@ -820,10 +820,21 @@
   </div>
 </section>
 
+{%- if customer and customer.tags contains 'vm-pro' -%}
+  {%- form 'customer', id: 'vm-pro-save-form' -%}
+    <input type="hidden" name="customer[note]" id="vm-pro-note-input" value="">
+  {%- endform -%}
+  <style>#vm-pro-save-form { display: none; }</style>
+{%- endif -%}
+
 <!-- ── SELECTOR LOGIC ──────────────────────────────────────────────────── -->
 <script>
 (function () {
   'use strict';
+
+  /* ── Pro membership flags (Liquid-rendered) ────────────────────────────── */
+  var IS_PRO = {% if customer and customer.tags contains 'vm-pro' %}true{% else %}false{% endif %};
+  var PRO_SAVED_NOTE = {{ customer.note | default: '' | json }};
 
   /* ── IDs / DOM ──────────────────────────────────────────────────────────── */
   var sid   = '{{ section.id }}';
@@ -1735,7 +1746,17 @@
     save();
     if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel, true);
     if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
-    if (n === 4) renderResult();
+    if (n === 4) {
+    renderResult();
+    if (IS_PRO) {
+      var sv = findVariant(S.brand, S.model, S.variant);
+      if (sv) saveBikeToAccount({
+        brand: S.brand, model: S.model, variant: S.variant,
+        schaltgruppe: sv.schaltgruppe, modelljahre: sv.modelljahre,
+        collectionTag: sv.collectionTag, savedAt: new Date().toISOString()
+      });
+    }
+  }
   }
 
   /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
@@ -1881,59 +1902,65 @@
       $cta.setAttribute('href', base + '?filter.p.tag=' + encodeURIComponent(v.collectionTag));
     }
 
-    /* Populate VM Pro save form */
-    var proNote = document.getElementById('vm-pro-bike-note');
-    if (proNote) {
-      proNote.value = JSON.stringify({
-        brand: b.name, model: m.name, variant: v.name,
-        schaltgruppe: v.schaltgruppe, modelljahre: v.modelljahre,
-        collectionTag: v.collectionTag, savedAt: new Date().toISOString()
-      });
-    }
   }
 
-  /* ── PERSISTENCE (localStorage) ────────────────────────────────────────── */
+  /* ── PERSISTENCE ───────────────────────────────────────────────────────── */
   function save() {
     try {
       localStorage.setItem(SK, JSON.stringify({ brand: S.brand, model: S.model, variant: S.variant }));
-    } catch (e) { /* ignore quota/private-mode errors */ }
+    } catch (e) {}
   }
 
   function clearSave() {
     try { localStorage.removeItem(SK); } catch (e) {}
   }
 
-  function loadSaved() {
+  /* Save bike to Shopify customer note (Pro only — silent background POST) */
+  function saveBikeToAccount(data) {
+    var form = document.getElementById('vm-pro-save-form');
+    var input = document.getElementById('vm-pro-note-input');
+    if (!form || !input) return;
+    input.value = JSON.stringify({ vm_bike: data });
+    var fd = new FormData(form);
+    fetch('/account', { method: 'POST', body: fd }).catch(function() {});
+  }
+
+  /* Load bike from customer note (Pro only) — returns true if restored */
+  function loadFromAccount() {
     try {
-      var d = JSON.parse(localStorage.getItem(SK) || 'null');
-      if (!d || !d.brand) return;
-      var b = findBrand(d.brand);
-      if (!b) return;
-      S.brand = d.brand;
-      if (d.model && findModel(d.brand, d.model)) {
-        S.model = d.model;
-        if (d.variant && findVariant(d.brand, d.model, d.variant)) {
-          S.variant = d.variant;
+      var d = JSON.parse(PRO_SAVED_NOTE || 'null');
+      if (!d || !d.vm_bike) return false;
+      var bike = d.vm_bike;
+      if (!bike.brand || bike.brand === 'custom') return false;
+      var b = findBrand(bike.brand);
+      if (!b) return false;
+      S.brand = bike.brand;
+      if (bike.model && findModel(bike.brand, bike.model)) {
+        S.model = bike.model;
+        if (bike.variant && findVariant(bike.brand, bike.model, bike.variant)) {
+          S.variant = bike.variant;
         }
       }
       var target = S.variant ? 4 : S.model ? 3 : 2;
       renderCards($gBrands, BIKES, S.brand, pickBrand);
-      if (target >= 3) {
-        renderCards($gModels, b.models, S.model, pickModel);
-      }
+      if (target >= 3) renderCards($gModels, b.models, S.model, pickModel);
       if (target >= 4) {
         var mm = findModel(S.brand, S.model);
         if (mm) renderCards($gVars, mm.variants, S.variant, pickVariant);
       }
       goTo(target);
-    } catch (e) {}
+      return true;
+    } catch (e) { return false; }
   }
 
   /* ── INIT ───────────────────────────────────────────────────────────────── */
   $back.addEventListener('click', back);
   $reset.addEventListener('click', reset);
-  clearSave();
-  renderCards($gBrands, BIKES, null, pickBrand);
+  clearSave(); /* always clear localStorage — free users start fresh every time */
+  var restored = IS_PRO && loadFromAccount();
+  if (!restored) {
+    renderCards($gBrands, BIKES, null, pickBrand);
+  }
 
 })();
 </script>

@@ -374,15 +374,9 @@
         {%- if customer and customer.tags contains 'vm-pro' -%}
           <button class="vm-intro__pro-btn" disabled>★ Du bist bereits Pro</button>
         {%- else -%}
-          <button class="vm-intro__pro-btn" id="vm-intro-pro-btn" onclick="vmProAddToCart(this)">Hier Anmelden →</button>
+          <a class="vm-intro__pro-btn" href="/products/velomatch-pro">Alle Vorteile →</a>
         {%- endif -%}
       </div>
-    </div>
-
-    <!-- Scroll indicator -->
-    <div class="vm-intro__arrow" aria-hidden="true">
-      <span>Los geht's</span>
-      <span class="vm-intro__arrow-icon">↓</span>
     </div>
 
   </div>

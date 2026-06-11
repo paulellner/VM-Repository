@@ -56,19 +56,35 @@
 .vm-header__nav a:hover,
 .vm-header__nav a[aria-current="page"] { color: var(--vm-bone); }
 
-/* VM Pro nav link — signal highlight */
+/* VM Pro nav — compact wordmark */
 .vm-header__nav-pro {
-  color:          var(--vm-signal) !important;
-  font-weight:    800 !important;
-  border:         1px solid rgba(201,228,91,0.35);
-  padding:        3px 10px !important;
-  letter-spacing: 0.08em !important;
+  display:         inline-flex !important;
+  align-items:     center !important;
+  gap:             5px !important;
+  color:           inherit !important;
+  text-decoration: none !important;
+  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing:  -0.03em !important;
+  padding:         0 !important;
+  font-weight:     400 !important;
+  text-transform:  none !important;
 }
-.vm-header__nav-pro:hover {
-  color:       var(--vm-signal) !important;
-  background:  rgba(201,228,91,0.1);
-  border-color: var(--vm-signal);
+.vm-header__nav-pro-velo  { font-weight: 400; color: var(--vm-sage); transition: color 220ms ease; }
+.vm-header__nav-pro-match { font-weight: 700; color: var(--vm-sage); transition: color 220ms ease; }
+.vm-header__nav-pro-tag {
+  background:     var(--vm-signal);
+  color:          var(--vm-ink);
+  font-family:    'Helvetica Neue', Arial, sans-serif;
+  font-size:      9px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        2px 6px;
+  line-height:    1.5;
+  flex-shrink:    0;
 }
+.vm-header__nav-pro:hover .vm-header__nav-pro-velo,
+.vm-header__nav-pro:hover .vm-header__nav-pro-match { color: var(--vm-bone); }
 
 .vm-header__cart {
   background:      var(--vm-signal);
@@ -184,7 +200,10 @@
           </li>
           {%- if forloop.index == 1 -%}
             <li>
-              <a class="vm-header__nav-pro" href="/products/velomatch-pro">★ Pro</a>
+              <a class="vm-header__nav-pro" href="/products/velomatch-pro" aria-label="velomatch Pro">
+                <span class="vm-header__nav-pro-velo">velo</span><span class="vm-header__nav-pro-match">match</span>
+                <span class="vm-header__nav-pro-tag">PRO</span>
+              </a>
             </li>
           {%- endif -%}
         {%- endfor -%}
