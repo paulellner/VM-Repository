@@ -822,28 +822,6 @@
   </div>
 </section>
 
-{%- if customer and customer.tags contains 'vm-pro' -%}
-  {%- form 'customer', id: 'vm-pro-save-form' -%}
-    <input type="hidden" name="customer[email]"      value="{{ customer.email | escape }}">
-    <input type="hidden" name="customer[first_name]" value="{{ customer.first_name | escape }}">
-    <input type="hidden" name="customer[last_name]"  value="{{ customer.last_name | escape }}">
-    <input type="hidden" name="customer[note]"       id="vm-pro-note-input" value="">
-    <input type="hidden" name="return_to"            value="/pages/vm-pro-dashboard">
-    <button type="submit" id="vm-pro-submit-hidden" aria-hidden="true" tabindex="-1">Speichern</button>
-  {%- endform -%}
-{%- endif -%}
-<style>
-#vm-pro-save-form {
-  position: absolute;
-  width: 1px; height: 1px;
-  margin: -1px; padding: 0;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
-
 <!-- ── SELECTOR LOGIC ──────────────────────────────────────────────────── -->
 <script>
 (function () {
@@ -1956,33 +1934,49 @@
   $back.addEventListener('click', back);
   $reset.addEventListener('click', reset);
 
-  /* Save button — Pro members only */
+  /* Save button — Pro members only (via App Proxy → Admin API) */
   var $saveBtn = document.getElementById('vm-pro-save-btn');
   if ($saveBtn && IS_PRO) {
     $saveBtn.addEventListener('click', function () {
       var sv = findVariant(S.brand, S.model, S.variant);
       if (!sv) return;
-      var noteInput  = document.getElementById('vm-pro-note-input');
-      var submitHidden = document.getElementById('vm-pro-submit-hidden');
-      if (!noteInput || !submitHidden) return;
-
-      noteInput.value = JSON.stringify({
-        vm_bike: {
-          brand:         S.brand,
-          model:         S.model,
-          variant:       S.variant,
-          schaltgruppe:  sv.schaltgruppe,
-          modelljahre:   sv.modelljahre,
-          collectionTag: sv.collectionTag,
-          savedAt:       new Date().toISOString()
-        }
-      });
 
       $saveBtn.disabled    = true;
       $saveBtn.textContent = '…';
-      /* Trigger click on the real submit button so Shopify's submit-event
-         listeners (bot-protection, captcha) fire normally */
-      submitHidden.click();
+
+      fetch('/apps/vm-pro/save', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          vm_bike: {
+            brand:         S.brand,
+            model:         S.model,
+            variant:       S.variant,
+            schaltgruppe:  sv.schaltgruppe,
+            modelljahre:   sv.modelljahre,
+            collectionTag: sv.collectionTag,
+            savedAt:       new Date().toISOString()
+          }
+        })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.success) {
+          $saveBtn.textContent      = 'Gespeichert ✓';
+          $saveBtn.style.background = 'var(--vm-olive)';
+          $saveBtn.style.color      = 'var(--vm-bone)';
+          setTimeout(function () {
+            window.location.href = '/pages/vm-pro-dashboard';
+          }, 1200);
+        } else {
+          $saveBtn.disabled    = false;
+          $saveBtn.textContent = 'Fehler — nochmal versuchen';
+        }
+      })
+      .catch(function () {
+        $saveBtn.disabled    = false;
+        $saveBtn.textContent = 'Fehler — nochmal versuchen';
+      });
     });
   }
 
