@@ -1,0 +1,20 @@
+# Shopify App Configuration — vm-pro-save
+# Deploy with: shopify app deploy
+# Requires Shopify CLI: npm install -g @shopify/cli
+
+client_id = "770a1c77aeb738cee44defbc9af711fe"
+
+name = "VM Pro Save"
+
+[access_scopes]
+scopes = "write_customers"
+
+[auth]
+redirect_urls = [
+  "https://vm-pro-save.DEIN-SUBDOMAIN.workers.dev/callback"
+]
+
+[app_proxy]
+url = "https://vm-pro-save.DEIN-SUBDOMAIN.workers.dev"
+subpath = "vm-pro"
+prefix = "apps"
