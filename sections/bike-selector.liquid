@@ -1944,24 +1944,29 @@
       $saveBtn.disabled    = true;
       $saveBtn.textContent = '…';
 
+      var bikeData = {
+        brand:         S.brand,
+        model:         S.model,
+        variant:       S.variant,
+        schaltgruppe:  sv.schaltgruppe,
+        modelljahre:   sv.modelljahre,
+        collectionTag: sv.collectionTag,
+        savedAt:       new Date().toISOString()
+      };
+
       fetch('/apps/vm-pro/save', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          vm_bike: {
-            brand:         S.brand,
-            model:         S.model,
-            variant:       S.variant,
-            schaltgruppe:  sv.schaltgruppe,
-            modelljahre:   sv.modelljahre,
-            collectionTag: sv.collectionTag,
-            savedAt:       new Date().toISOString()
-          }
-        })
+        body:    JSON.stringify({ vm_bike: bikeData })
       })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.success) {
+          /* Bridge: store locally so the dashboard shows the bike instantly,
+             even before Shopify's storefront note cache has propagated. */
+          try {
+            localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bikeData }));
+          } catch (e) {}
           $saveBtn.textContent      = 'Gespeichert ✓';
           $saveBtn.style.background = 'var(--vm-olive)';
           $saveBtn.style.color      = 'var(--vm-bone)';

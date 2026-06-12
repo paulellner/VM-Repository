@@ -949,12 +949,26 @@
     }
 
     var bike = null;
+
+    /* 1. Persistent source: customer.note (server-rendered) */
     try {
       var raw = typeof window.__vmProNote === 'string'
         ? JSON.parse(window.__vmProNote)
         : window.__vmProNote;
       if (raw && raw.vm_bike && raw.vm_bike.collectionTag) bike = raw.vm_bike;
     } catch (e) {}
+
+    /* 2. Fallback: localStorage bridge — covers the brief window right after
+          saving, before Shopify's storefront note cache has propagated. */
+    if (!bike) {
+      try {
+        var local = JSON.parse(localStorage.getItem('vm_pro_saved_bike') || 'null');
+        if (local && local.vm_bike && local.vm_bike.collectionTag) bike = local.vm_bike;
+      } catch (e) {}
+    } else {
+      /* Keep the local bridge in sync with the authoritative server note. */
+      try { localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bike })); } catch (e) {}
+    }
 
     if (bike) {
       var specs = '';
