@@ -1,63 +1,111 @@
 /**
  * VeloMatch Pro — Bike Save Worker
  *
- * Shopify App Proxy endpoint: POST /apps/vm-pro/save
- * Shopify forwards the request here and injects:
- *   ?shop=velomatch.myshopify.com
- *   &logged_in_customer_id=<number>
- *   &signature=<hmac-sha256>
- *   &timestamp=<unix>
+ * Endpoints:
+ *   GET  /setup?shop=velomatch.myshopify.com  → startet OAuth (einmalig)
+ *   GET  /callback                            → tauscht Code gegen Token (einmalig)
+ *   POST /save                                → speichert Bike via Admin API (App Proxy)
  *
- * Environment secrets (set via: wrangler secret put <NAME>):
- *   SHOPIFY_CLIENT_SECRET  — App client secret (for signature verification)
- *   SHOPIFY_ADMIN_TOKEN    — Admin API access token (from Custom App)
+ * Secrets (wrangler secret put <NAME>):
+ *   SHOPIFY_CLIENT_ID      — Client ID aus dem Dev Dashboard
+ *   SHOPIFY_CLIENT_SECRET  — Schlüssel aus dem Dev Dashboard
+ *   SHOPIFY_ADMIN_TOKEN    — wird nach dem OAuth-Setup-Schritt gesetzt
  */
 
 const API_VERSION = '2025-01';
 
-async function verifySignature(params, secret) {
+async function hmacSHA256(secret, message) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const buf = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyProxySignature(params, secret) {
   const sig = params.get('signature');
   if (!sig) return false;
-
   const message = [...params.entries()]
     .filter(([k]) => k !== 'signature')
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${v}`)
     .join('');
-
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw', enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false, ['sign']
-  );
-  const buf = await crypto.subtle.sign('HMAC', key, enc.encode(message));
-  const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
-  return hex === sig;
+  return (await hmacSHA256(secret, message)) === sig;
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    /* Only accept POST */
+    /* ── SCHRITT A: OAuth starten ─────────────────────────────────────────── */
+    if (url.pathname === '/setup') {
+      const shop = url.searchParams.get('shop') || 'velomatch.myshopify.com';
+      const redirectUri = encodeURIComponent(`${url.origin}/callback`);
+      const oauthUrl =
+        `https://${shop}/admin/oauth/authorize` +
+        `?client_id=${env.SHOPIFY_CLIENT_ID}` +
+        `&scope=write_customers` +
+        `&redirect_uri=${redirectUri}` +
+        `&state=setup`;
+      return Response.redirect(oauthUrl, 302);
+    }
+
+    /* ── SCHRITT B: OAuth Callback — Token anzeigen ───────────────────────── */
+    if (url.pathname === '/callback') {
+      const code = url.searchParams.get('code');
+      const shop = url.searchParams.get('shop');
+      if (!code || !shop) {
+        return new Response('Fehlende Parameter (code oder shop).', { status: 400 });
+      }
+
+      const tokenResp = await fetch(`https://${shop}/admin/oauth/access_token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_id:     env.SHOPIFY_CLIENT_ID,
+          client_secret: env.SHOPIFY_CLIENT_SECRET,
+          code,
+        }),
+      });
+      const tokenData = await tokenResp.json();
+
+      if (!tokenData.access_token) {
+        return new Response(
+          'Token-Anfrage fehlgeschlagen: ' + JSON.stringify(tokenData),
+          { status: 500 }
+        );
+      }
+
+      return new Response(
+        `<!DOCTYPE html><html><body style="font-family:monospace;padding:32px">
+        <h2>Setup abgeschlossen!</h2>
+        <p>Kopiere diesen Token und fuehre dann aus:<br>
+        <code>wrangler secret put SHOPIFY_ADMIN_TOKEN</code></p>
+        <p style="background:#f0f0f0;padding:16px;word-break:break-all">
+          <strong>${tokenData.access_token}</strong>
+        </p>
+        <p>Scopes: ${tokenData.scope}</p>
+        </body></html>`,
+        { headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+
+    /* ── HAUPTENDPOINT: Bike speichern (App Proxy POST /save) ─────────────── */
     if (request.method !== 'POST') {
       return Response.json({ error: 'Method not allowed' }, { status: 405 });
     }
 
-    /* Verify this is a genuine Shopify App Proxy call */
-    const valid = await verifySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+    const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
     if (!valid) {
       return Response.json({ error: 'Invalid signature' }, { status: 403 });
     }
 
-    /* Shopify adds logged_in_customer_id only for authenticated customers */
     const customerId = url.searchParams.get('logged_in_customer_id');
     if (!customerId) {
       return Response.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    /* Parse the bike payload */
     let bike;
     try {
       const body = await request.json();
@@ -73,7 +121,6 @@ export default {
     const shop = url.searchParams.get('shop');
     const note = JSON.stringify({ vm_bike: bike });
 
-    /* Write to customer.note via Admin API */
     const apiResp = await fetch(
       `https://${shop}/admin/api/${API_VERSION}/customers/${customerId}.json`,
       {
