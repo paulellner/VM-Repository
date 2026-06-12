@@ -688,16 +688,7 @@
 {%- elsif customer.tags contains 'vm-pro' -%}
   {%- comment -%} ── AUTHENTICATED VM PRO DASHBOARD ─────────────────────── {%- endcomment -%}
 
-  {%- comment -%} Parse saved bike from customer.note (stored as {vm_bike:{...}}) {%- endcomment -%}
-  {%- assign bike = nil -%}
-  {%- if customer.note != blank -%}
-    {%- assign _note = customer.note | parse_json -%}
-    {%- if _note.vm_bike.collectionTag -%}
-      {%- assign bike = _note.vm_bike -%}
-    {%- endif -%}
-  {%- endif -%}
-
-  <div class="vmpd">
+  <div class="vmpd" data-note="{{ customer.note | json }}">
     <div class="vmpd__inner">
 
       <!-- ── DASHBOARD HEADER ─────────────────────────────────────────── -->
@@ -760,73 +751,7 @@
                 Ändern →
               </a>
             </div>
-            <div class="vmpd__panel-body">
-
-              {%- if bike -%}
-                {%- if bike.brand -%}
-                  <p class="vmpd__bike-brand">{{ bike.brand }}</p>
-                {%- endif -%}
-                {%- if bike.model -%}
-                  <p class="vmpd__bike-model">{{ bike.model }}</p>
-                {%- endif -%}
-
-                <div class="vmpd__bike-specs">
-                  {%- if bike.variant -%}
-                    <div class="vmpd__bike-spec">
-                      <span class="vmpd__bike-spec-label">Variante</span>
-                      <span class="vmpd__bike-spec-value">{{ bike.variant }}</span>
-                    </div>
-                  {%- endif -%}
-                  {%- if bike.schaltgruppe -%}
-                    <div class="vmpd__bike-spec">
-                      <span class="vmpd__bike-spec-label">Schaltgruppe</span>
-                      <span class="vmpd__bike-spec-value">{{ bike.schaltgruppe }}</span>
-                    </div>
-                  {%- endif -%}
-                  {%- if bike.modelljahre -%}
-                    <div class="vmpd__bike-spec">
-                      <span class="vmpd__bike-spec-label">Modelljahre</span>
-                      <span class="vmpd__bike-spec-value">{{ bike.modelljahre }}</span>
-                    </div>
-                  {%- endif -%}
-                  {%- if bike.collectionTag -%}
-                    <div class="vmpd__bike-spec">
-                      <span class="vmpd__bike-spec-label">Teile-Filter</span>
-                      <span class="vmpd__bike-spec-value" style="font-size:12px; font-family:var(--vm-mono);">{{ bike.collectionTag }}</span>
-                    </div>
-                  {%- endif -%}
-                </div>
-
-                <a class="vmpd__parts-btn"
-                   href="/collections/all?filter.p.tag={{ bike.collectionTag | url_encode }}"
-                   aria-label="Passende Teile für dein gespeichertes Rad finden">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                       aria-hidden="true">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
-                  Passende Teile finden →
-                </a>
-
-              {%- else -%}
-                <div class="vmpd__empty" role="status">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                       aria-hidden="true" style="color: var(--vm-sage); opacity: 0.45">
-                    <circle cx="18.5" cy="17.5" r="3.5"/>
-                    <circle cx="5.5"  cy="17.5" r="3.5"/>
-                    <circle cx="15"   cy="5"    r="1"/>
-                    <path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/>
-                    <path d="M5.5 14L9 10"/>
-                  </svg>
-                  <p class="vmpd__empty-label">
-                    Noch kein Rad gespeichert. Gehe zur Startseite, wähle dein Fahrrad aus — es wird automatisch hier gespeichert.
-                  </p>
-                  <a class="vmpd__selector-link" href="/">Rad konfigurieren →</a>
-                </div>
-              {%- endif -%}
-
-            </div>
+            <div class="vmpd__panel-body" id="vmpd-bike-body"></div>
           </article>
 
           <!-- PANEL 2: Kaufhistorie -->
@@ -1009,6 +934,48 @@
 
     </div>
   </div>
+
+  <script>
+  (function () {
+    var wrap = document.querySelector('.vmpd[data-note]');
+    var body = document.getElementById('vmpd-bike-body');
+    if (!wrap || !body) return;
+
+    var BIKE_SVG = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
+    var SEARCH_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    var bike = null;
+    try {
+      var raw = JSON.parse(wrap.getAttribute('data-note') || 'null');
+      if (raw && raw.vm_bike && raw.vm_bike.collectionTag) bike = raw.vm_bike;
+    } catch (e) {}
+
+    wrap.removeAttribute('data-note');
+
+    if (bike) {
+      var specs = '';
+      if (bike.variant)      specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(bike.variant) + '</span></div>';
+      if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
+      if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
+      if (bike.collectionTag) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Teile-Filter</span><span class="vmpd__bike-spec-value" style="font-size:12px;font-family:var(--vm-mono)">' + esc(bike.collectionTag) + '</span></div>';
+
+      body.innerHTML =
+        (bike.brand ? '<p class="vmpd__bike-brand">' + esc(bike.brand) + '</p>' : '') +
+        (bike.model ? '<p class="vmpd__bike-model">' + esc(bike.model) + '</p>' : '') +
+        (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
+        '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '" aria-label="Passende Teile für dein gespeichertes Rad finden">' + SEARCH_SVG + ' Passende Teile finden →</a>';
+    } else {
+      body.innerHTML =
+        '<div class="vmpd__empty" role="status">' + BIKE_SVG +
+        '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Gehe zur Startseite, wähle dein Fahrrad aus — es wird automatisch hier gespeichert.</p>' +
+        '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
+    }
+  })();
+  </script>
 
 {%- else -%}
   <div class="vmpd">
