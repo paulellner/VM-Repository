@@ -196,6 +196,10 @@ export default {
           dominant_ride_type:   dominantType,
           avg_ride_distance_km: avgDist,
           recent_rides:         rides.length,
+          ytd_rides:            athleteStats.ytd_ride_totals?.count ?? null,
+          ytd_distance_km:      athleteStats.ytd_ride_totals
+            ? Math.round(athleteStats.ytd_ride_totals.distance / 1000)
+            : null,
           all_time_rides:       athleteStats.all_ride_totals?.count   ?? null,
           all_time_distance_km: athleteStats.all_ride_totals
             ? Math.round(athleteStats.all_ride_totals.distance / 1000)

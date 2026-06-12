@@ -670,15 +670,17 @@
 }
 .vmpd__strava-stats {
   display:       grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   border:        var(--vm-stroke) solid rgba(61,74,47,0.2);
   margin-bottom: 16px;
 }
 .vmpd__strava-stat-cell {
-  padding:      11px 14px;
-  border-right: var(--vm-stroke) solid rgba(61,74,47,0.2);
+  padding:       11px 14px;
+  border-right:  var(--vm-stroke) solid rgba(61,74,47,0.2);
+  border-bottom: var(--vm-stroke) solid rgba(61,74,47,0.2);
 }
-.vmpd__strava-stat-cell:last-child { border-right: none; }
+.vmpd__strava-stat-cell:nth-child(2n) { border-right: none; }
+.vmpd__strava-stat-cell:nth-last-child(-n+2) { border-bottom: none; }
 .vmpd__strava-stat-val {
   font-family: var(--vm-mono);
   font-size:   17px;
@@ -1173,11 +1175,17 @@
         ? '<div class="vmpd__strava-logo vmpd__strava-athlete-img" aria-hidden="true">S</div>'
         : '<img class="vmpd__strava-athlete-img" src="' + esc(a.profile) + '" alt="" loading="lazy">';
 
+      function fmtKm(km) {
+        if (km == null) return '\u2014';
+        return km.toLocaleString('de-DE') + ' km';
+      }
+
       var statsHtml =
         '<div class="vmpd__strava-stats">' +
-        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.recent_rides || '—') + '</span><span class="vmpd__strava-stat-lbl">Fahrten (30 T.)</span></div>' +
-        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.avg_ride_distance_km ? p.avg_ride_distance_km + ' km' : '—') + '</span><span class="vmpd__strava-stat-lbl">\xd8 Distanz</span></div>' +
-        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.all_time_distance_km ? (p.all_time_distance_km >= 1000 ? Math.round(p.all_time_distance_km / 100) / 10 + ' T km' : p.all_time_distance_km + ' km') : '—') + '</span><span class="vmpd__strava-stat-lbl">Gesamt</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + fmtKm(p.ytd_distance_km) + '</span><span class="vmpd__strava-stat-lbl">Dieses Jahr</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.ytd_rides != null ? p.ytd_rides : '\u2014') + '</span><span class="vmpd__strava-stat-lbl">Fahrten (Jahr)</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.avg_ride_distance_km ? p.avg_ride_distance_km + ' km' : '\u2014') + '</span><span class="vmpd__strava-stat-lbl">\xd8 Distanz</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + fmtKm(p.all_time_distance_km) + '</span><span class="vmpd__strava-stat-lbl">Gesamt</span></div>' +
         '</div>';
 
       var typeHtml = p.dominant_ride_type
