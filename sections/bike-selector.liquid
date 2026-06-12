@@ -801,7 +801,13 @@
           </ul>
           <span class="vm-result__sum-pro-price">5.99 € / Monat · jederzeit kündbar</span>
           {%- if customer and customer.tags contains 'vm-pro' -%}
-            <button class="vm-result__sum-pro-btn" id="vm-pro-save-btn" type="button">In VeloMatch Pro hinterlegen →</button>
+            {%- form 'customer', id: 'vm-pro-save-form' -%}
+              <input type="hidden" name="customer[note]" id="vm-pro-note-input" value="">
+              <input type="hidden" name="return_to" value="/pages/vm-pro-dashboard">
+              <button type="submit" class="vm-result__sum-pro-btn" id="vm-pro-save-btn">
+                In VeloMatch Pro hinterlegen →
+              </button>
+            {%- endform -%}
           {%- else -%}
             <button class="vm-result__sum-pro-btn" onclick="vmProAddToCart(this)">Hier Anmelden →</button>
           {%- endif -%}
@@ -819,13 +825,6 @@
 
   </div>
 </section>
-
-{%- if customer and customer.tags contains 'vm-pro' -%}
-  {%- form 'customer', id: 'vm-pro-save-form' -%}
-    <input type="hidden" name="customer[note]" id="vm-pro-note-input" value="">
-  {%- endform -%}
-  <style>#vm-pro-save-form { display: none; }</style>
-{%- endif -%}
 
 <!-- ── SELECTOR LOGIC ──────────────────────────────────────────────────── -->
 <script>
@@ -1748,7 +1747,6 @@
     if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
     if (n === 4) {
       renderResult();
-      resetSaveBtn();
     }
   }
 
@@ -1895,6 +1893,17 @@
       $cta.setAttribute('href', base + '?filter.p.tag=' + encodeURIComponent(v.collectionTag));
     }
 
+    /* Pre-fill note input so the submit button is ready to save */
+    var noteInput = document.getElementById('vm-pro-note-input');
+    if (noteInput) {
+      noteInput.value = JSON.stringify({
+        vm_bike: {
+          brand: S.brand, model: S.model, variant: S.variant,
+          schaltgruppe: v.schaltgruppe, modelljahre: v.modelljahre,
+          collectionTag: v.collectionTag, savedAt: new Date().toISOString()
+        }
+      });
+    }
   }
 
   /* ── PERSISTENCE ───────────────────────────────────────────────────────── */
@@ -1906,15 +1915,6 @@
 
   function clearSave() {
     try { localStorage.removeItem(SK); } catch (e) {}
-  }
-
-  /* Reset save button to default state when user makes a new selection */
-  function resetSaveBtn() {
-    var btn = document.getElementById('vm-pro-save-btn');
-    if (!btn) return;
-    btn.disabled     = false;
-    btn.textContent  = 'In VeloMatch Pro hinterlegen →';
-    btn.style.cssText = '';
   }
 
   /* Load bike from customer note (Pro only) — returns true if restored */
@@ -1948,44 +1948,6 @@
   /* ── INIT ───────────────────────────────────────────────────────────────── */
   $back.addEventListener('click', back);
   $reset.addEventListener('click', reset);
-
-  /* Save button — explicit user action for Pro members */
-  var $saveBtn = document.getElementById('vm-pro-save-btn');
-  if ($saveBtn && IS_PRO) {
-    $saveBtn.addEventListener('click', function () {
-      var sv = findVariant(S.brand, S.model, S.variant);
-      if (!sv) return;
-      var form  = document.getElementById('vm-pro-save-form');
-      var input = document.getElementById('vm-pro-note-input');
-      if (!form || !input) return;
-
-      input.value = JSON.stringify({
-        vm_bike: {
-          brand:         S.brand,
-          model:         S.model,
-          variant:       S.variant,
-          schaltgruppe:  sv.schaltgruppe,
-          modelljahre:   sv.modelljahre,
-          collectionTag: sv.collectionTag,
-          savedAt:       new Date().toISOString()
-        }
-      });
-
-      /* return_to redirects the user to the dashboard after Shopify saves the note */
-      var ret = form.querySelector('[name="return_to"]');
-      if (!ret) {
-        ret = document.createElement('input');
-        ret.type = 'hidden';
-        ret.name = 'return_to';
-        form.appendChild(ret);
-      }
-      ret.value = '/pages/vm-pro-dashboard';
-
-      $saveBtn.disabled    = true;
-      $saveBtn.textContent = '…';
-      form.submit();
-    });
-  }
 
   clearSave(); /* always clear localStorage — free users start fresh every time */
   var restored = IS_PRO && loadFromAccount();
