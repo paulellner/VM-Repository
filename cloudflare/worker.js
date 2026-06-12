@@ -101,6 +101,31 @@ export default {
       );
     }
 
+    /* ── C0: Strava-Profil lesen (App Proxy GET /strava/profile) ──────────── */
+    if (url.pathname === '/strava/profile') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ connected: false }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      if (!note.strava || !note.strava.athlete_id) {
+        return Response.json({ connected: false });
+      }
+
+      /* Tokens bleiben serverseitig — nur Anzeige-Daten zurückgeben */
+      const s = note.strava;
+      return Response.json({
+        connected:        true,
+        connected_at:     s.connected_at,
+        token_expires_at: s.token_expires_at,
+        athlete:          s.athlete,
+        profile:          s.profile,
+      });
+    }
+
     /* ── C: Strava verbinden (App Proxy GET /strava/connect) ──────────────── */
     if (url.pathname === '/strava/connect') {
       const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);

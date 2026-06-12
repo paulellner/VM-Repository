@@ -1100,24 +1100,15 @@
         : window.__vmProNote;
     } catch (e) {}
 
-    /* ── Handle ?strava= URL param ─────────────────────────────────────────── */
-    var urlParams   = new URLSearchParams(window.location.search);
-    var stravaParam = urlParams.get('strava');
-    var justConnected = false;
-
-    if (stravaParam) {
-      history.replaceState({}, '', window.location.pathname);
-      if (stravaParam === 'connected') {
-        try { localStorage.setItem('vm_strava_connected_ts', String(Date.now())); } catch(e) {}
-        justConnected = true;
+    /* Clean ?strava= URL param after OAuth redirect */
+    var stravaDenied = false;
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('strava')) {
+        stravaDenied = urlParams.get('strava') === 'denied';
+        history.replaceState({}, '', window.location.pathname);
       }
-    }
-    if (!justConnected) {
-      try {
-        var ts = parseInt(localStorage.getItem('vm_strava_connected_ts') || '0');
-        if (Date.now() - ts < 60000) justConnected = true;
-      } catch(e) {}
-    }
+    } catch (e) {}
 
     /* ── BIKE PANEL ────────────────────────────────────────────────────────── */
     var bikeBody = document.getElementById('vmpd-bike-body');
@@ -1154,37 +1145,43 @@
       }
     }
 
-    /* ── STRAVA PANEL ──────────────────────────────────────────────────────── */
+    /* STRAVA PANEL \u2014 Live-Daten via App Proxy */
     var stravaBody = document.getElementById('vmpd-strava-body');
     if (!stravaBody) return;
-
-    var strava = (noteData && noteData.strava && noteData.strava.athlete_id) ? noteData.strava : null;
-    var tokenExpired = strava && strava.token_expires_at && (Date.now() / 1000 > strava.token_expires_at);
 
     var RIDE_LABELS = {
       'Ride': 'Rennrad', 'MountainBikeRide': 'Mountainbike',
       'GravelRide': 'Gravel', 'VirtualRide': 'Indoor', 'EBikeRide': 'E-Bike'
     };
 
-    if (strava && !tokenExpired) {
-      var a = strava.athlete;
-      var p = strava.profile;
+    function fmtKm(km) {
+      if (km == null) return '\u2014';
+      return km.toLocaleString('de-DE') + ' km';
+    }
+
+    function renderConnect(msg) {
+      stravaBody.innerHTML =
+        '<div class="vmpd__strava-connect-wrap">' +
+        '<div class="vmpd__strava-row"><div class="vmpd__strava-logo" aria-hidden="true">S</div>' +
+        '<div><h3 class="vmpd__strava-info-heading">Strava verkn\u00fcpfen</h3>' +
+        '<p class="vmpd__strava-desc">' + (msg || 'Verbinde deinen Strava-Account, um Aktivit\u00e4tsdaten zu sammeln und Produkt-Empfehlungen zu personalisieren.') + '</p></div></div>' +
+        '<a class="vmpd__strava-connect-btn" href="/apps/vm-pro/strava/connect">Mit Strava verbinden \u2192</a></div>';
+    }
+
+    function renderConnected(s) {
+      var a = s.athlete || {};
+      var p = s.profile || {};
 
       var isDefaultAvatar = !a.profile || a.profile.indexOf('large.jpg') !== -1;
       var avatarHtml = isDefaultAvatar
         ? '<div class="vmpd__strava-logo vmpd__strava-athlete-img" aria-hidden="true">S</div>'
         : '<img class="vmpd__strava-athlete-img" src="' + esc(a.profile) + '" alt="" loading="lazy">';
 
-      function fmtKm(km) {
-        if (km == null) return '\u2014';
-        return km.toLocaleString('de-DE') + ' km';
-      }
-
       var statsHtml =
         '<div class="vmpd__strava-stats">' +
         '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + fmtKm(p.ytd_distance_km) + '</span><span class="vmpd__strava-stat-lbl">Dieses Jahr</span></div>' +
         '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.ytd_rides != null ? p.ytd_rides : '\u2014') + '</span><span class="vmpd__strava-stat-lbl">Fahrten (Jahr)</span></div>' +
-        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.avg_ride_distance_km ? p.avg_ride_distance_km + ' km' : '\u2014') + '</span><span class="vmpd__strava-stat-lbl">\xd8 Distanz</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.avg_ride_distance_km ? p.avg_ride_distance_km + ' km' : '\u2014') + '</span><span class="vmpd__strava-stat-lbl">\u00d8 Distanz</span></div>' +
         '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + fmtKm(p.all_time_distance_km) + '</span><span class="vmpd__strava-stat-lbl">Gesamt</span></div>' +
         '</div>';
 
@@ -1194,42 +1191,37 @@
 
       var bikesHtml = '';
       if (a.bikes && a.bikes.length) {
-        bikesHtml = '<div class="vmpd__strava-bikes"><span class="vmpd__strava-bikes-label">Fahrr\xe4der auf Strava</span>';
+        bikesHtml = '<div class="vmpd__strava-bikes"><span class="vmpd__strava-bikes-label">Fahrr\u00e4der auf Strava</span>';
         a.bikes.forEach(function(b) {
           bikesHtml += '<div class="vmpd__strava-bike-row"><span>' + esc(b.name) + '</span>' +
-            (b.distance_km ? '<span class="vmpd__strava-bike-km">' + b.distance_km.toLocaleString('de-DE') + ' km</span>' : '') + '</div>';
+            (b.distance_km ? '<span class="vmpd__strava-bike-km">' + b.distance_km.toLocaleString('de-DE') + ' km</span>' : '') + '</div>';
         });
         bikesHtml += '</div>';
       }
 
       var connDate = '';
-      try { connDate = new Date(strava.connected_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch(e) {}
+      try { connDate = new Date(s.connected_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch(e) {}
 
       stravaBody.innerHTML =
         '<div class="vmpd__strava-athlete">' + avatarHtml +
         '<div><p class="vmpd__strava-athlete-name">' + esc(a.firstname) + ' ' + esc(a.lastname) + '</p>' +
-        '<span class="vmpd__strava-connected-meta">Verbunden \xb7 ' + connDate + '</span></div></div>' +
+        '<span class="vmpd__strava-connected-meta">Verbunden \u00b7 ' + connDate + '</span></div></div>' +
         statsHtml + typeHtml + bikesHtml +
         '<a class="vmpd__strava-reconnect" href="/apps/vm-pro/strava/connect">Daten aktualisieren</a>';
-
-    } else if (justConnected && !strava) {
-      stravaBody.innerHTML =
-        '<div class="vmpd__strava-pending">Strava verbunden — Daten werden geladen…' +
-        '<span class="vmpd__strava-pending-reload" onclick="window.location.reload()">Seite aktualisieren</span></div>';
-      setTimeout(function() { window.location.reload(); }, 3000);
-
-    } else {
-      var msg = tokenExpired
-        ? 'Deine Strava-Verbindung ist abgelaufen. Bitte neu verbinden.'
-        : 'Verbinde deinen Strava-Account, um Aktivit\xe4tsdaten zu sammeln und Produkt-Empfehlungen zu personalisieren.';
-
-      stravaBody.innerHTML =
-        '<div class="vmpd__strava-connect-wrap">' +
-        '<div class="vmpd__strava-row"><div class="vmpd__strava-logo" aria-hidden="true">S</div>' +
-        '<div><h3 class="vmpd__strava-info-heading">Strava verkn\xfcpfen</h3>' +
-        '<p class="vmpd__strava-desc">' + msg + '</p></div></div>' +
-        '<a class="vmpd__strava-connect-btn" href="/apps/vm-pro/strava/connect">Mit Strava verbinden →</a></div>';
     }
+
+    stravaBody.innerHTML = '<div class="vmpd__strava-pending">Lade Strava-Daten\u2026</div>';
+
+    fetch('/apps/vm-pro/strava/profile', { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.connected && data.athlete) {
+          renderConnected(data);
+        } else {
+          renderConnect(stravaDenied ? 'Verbindung abgelehnt. Du kannst es jederzeit erneut versuchen.' : null);
+        }
+      })
+      .catch(function() { renderConnect(null); });
   })();
   </script>
 
