@@ -1908,26 +1908,13 @@
     try { localStorage.removeItem(SK); } catch (e) {}
   }
 
-  /* Save bike to Shopify customer note (Pro only) */
-  function saveBikeToAccount(data, cb) {
-    var form  = document.getElementById('vm-pro-save-form');
-    var input = document.getElementById('vm-pro-note-input');
-    if (!form || !input) { if (cb) cb(false); return; }
-    input.value = JSON.stringify({ vm_bike: data });
-    var fd = new FormData(form);
-    fetch('/account', { method: 'POST', body: fd })
-      .then(function (r) { if (cb) cb(r.ok || r.redirected); })
-      .catch(function ()  { if (cb) cb(false); });
-  }
-
   /* Reset save button to default state when user makes a new selection */
   function resetSaveBtn() {
     var btn = document.getElementById('vm-pro-save-btn');
     if (!btn) return;
-    btn.disabled  = false;
-    btn.textContent = 'In VeloMatch Pro hinterlegen →';
+    btn.disabled     = false;
+    btn.textContent  = 'In VeloMatch Pro hinterlegen →';
     btn.style.cssText = '';
-    btn.onclick = null;
   }
 
   /* Load bike from customer note (Pro only) — returns true if restored */
@@ -1968,33 +1955,35 @@
     $saveBtn.addEventListener('click', function () {
       var sv = findVariant(S.brand, S.model, S.variant);
       if (!sv) return;
-      $saveBtn.disabled    = true;
-      $saveBtn.textContent = '…';
-      saveBikeToAccount({
-        brand: S.brand, model: S.model, variant: S.variant,
-        schaltgruppe:   sv.schaltgruppe,
-        modelljahre:    sv.modelljahre,
-        collectionTag:  sv.collectionTag,
-        savedAt:        new Date().toISOString()
-      }, function (ok) {
-        if (ok) {
-          $saveBtn.textContent  = 'Gespeichert ✓';
-          $saveBtn.style.background = 'var(--vm-olive)';
-          $saveBtn.style.color      = 'var(--vm-bone)';
-          setTimeout(function () {
-            $saveBtn.textContent      = 'Zum Pro Dashboard →';
-            $saveBtn.style.background = '';
-            $saveBtn.style.color      = '';
-            $saveBtn.disabled         = false;
-            $saveBtn.addEventListener('click', function () {
-              window.location.href = '/pages/vm-pro-dashboard';
-            }, { once: true });
-          }, 1800);
-        } else {
-          $saveBtn.disabled    = false;
-          $saveBtn.textContent = 'Fehler — nochmal versuchen';
+      var form  = document.getElementById('vm-pro-save-form');
+      var input = document.getElementById('vm-pro-note-input');
+      if (!form || !input) return;
+
+      input.value = JSON.stringify({
+        vm_bike: {
+          brand:         S.brand,
+          model:         S.model,
+          variant:       S.variant,
+          schaltgruppe:  sv.schaltgruppe,
+          modelljahre:   sv.modelljahre,
+          collectionTag: sv.collectionTag,
+          savedAt:       new Date().toISOString()
         }
       });
+
+      /* return_to redirects the user to the dashboard after Shopify saves the note */
+      var ret = form.querySelector('[name="return_to"]');
+      if (!ret) {
+        ret = document.createElement('input');
+        ret.type = 'hidden';
+        ret.name = 'return_to';
+        form.appendChild(ret);
+      }
+      ret.value = '/pages/vm-pro-dashboard';
+
+      $saveBtn.disabled    = true;
+      $saveBtn.textContent = '…';
+      form.submit();
     });
   }
 
