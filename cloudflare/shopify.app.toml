@@ -11,10 +11,10 @@ scopes = "write_customers"
 
 [auth]
 redirect_urls = [
-  "https://vm-pro-save.DEIN-SUBDOMAIN.workers.dev/callback"
+  "https://dark-meadow-4665.paulellner-home.workers.dev/callback"
 ]
 
 [app_proxy]
-url = "https://vm-pro-save.DEIN-SUBDOMAIN.workers.dev"
+url = "https://dark-meadow-4665.paulellner-home.workers.dev"
 subpath = "vm-pro"
 prefix = "apps"
