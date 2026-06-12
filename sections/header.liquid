@@ -385,8 +385,8 @@
     <!-- VM Pro account icon -->
     {%- if customer -%}
       <a class="vm-header__account{% if customer.tags contains 'vm-pro' %} vm-header__account--pro{% endif %}"
-         href="{{ routes.account_url }}"
-         aria-label="Mein VM Pro Konto">
+         href="{% if customer.tags contains 'vm-pro' %}/pages/velomatch-pro-dashboard{% else %}{{ routes.account_url }}{% endif %}"
+         aria-label="{% if customer.tags contains 'vm-pro' %}VM Pro Dashboard{% else %}Mein Konto{% endif %}">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2.5"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
