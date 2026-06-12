@@ -792,7 +792,7 @@
 
         <!-- Right: VM Pro upsell -->
         <div class="vm-result__sum-pro">
-          <span class="vm-result__sum-pro-eyebrow">★ VeloMatch Pro</span>
+          <span class="vm-result__sum-pro-eyebrow">VeloMatch Pro</span>
           <p class="vm-result__sum-pro-title">Dein Rad.<br>Dauerhaft gespeichert.</p>
           <ul class="vm-result__sum-pro-list">
             <li>Rad dauerhaft speichern</li>
@@ -801,7 +801,7 @@
           </ul>
           <span class="vm-result__sum-pro-price">5.99 € / Monat · jederzeit kündbar</span>
           {%- if customer and customer.tags contains 'vm-pro' -%}
-            <button class="vm-result__sum-pro-btn" disabled>★ Du bist bereits Pro</button>
+            <button class="vm-result__sum-pro-btn" id="vm-pro-save-btn" type="button">In VeloMatch Pro hinterlegen →</button>
           {%- else -%}
             <button class="vm-result__sum-pro-btn" onclick="vmProAddToCart(this)">Hier Anmelden →</button>
           {%- endif -%}
@@ -1747,16 +1747,9 @@
     if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel, true);
     if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
     if (n === 4) {
-    renderResult();
-    if (IS_PRO) {
-      var sv = findVariant(S.brand, S.model, S.variant);
-      if (sv) saveBikeToAccount({
-        brand: S.brand, model: S.model, variant: S.variant,
-        schaltgruppe: sv.schaltgruppe, modelljahre: sv.modelljahre,
-        collectionTag: sv.collectionTag, savedAt: new Date().toISOString()
-      });
+      renderResult();
+      resetSaveBtn();
     }
-  }
   }
 
   /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
@@ -1915,14 +1908,26 @@
     try { localStorage.removeItem(SK); } catch (e) {}
   }
 
-  /* Save bike to Shopify customer note (Pro only — silent background POST) */
-  function saveBikeToAccount(data) {
-    var form = document.getElementById('vm-pro-save-form');
+  /* Save bike to Shopify customer note (Pro only) */
+  function saveBikeToAccount(data, cb) {
+    var form  = document.getElementById('vm-pro-save-form');
     var input = document.getElementById('vm-pro-note-input');
-    if (!form || !input) return;
+    if (!form || !input) { if (cb) cb(false); return; }
     input.value = JSON.stringify({ vm_bike: data });
     var fd = new FormData(form);
-    fetch('/account', { method: 'POST', body: fd }).catch(function() {});
+    fetch('/account', { method: 'POST', body: fd })
+      .then(function (r) { if (cb) cb(r.ok || r.redirected); })
+      .catch(function ()  { if (cb) cb(false); });
+  }
+
+  /* Reset save button to default state when user makes a new selection */
+  function resetSaveBtn() {
+    var btn = document.getElementById('vm-pro-save-btn');
+    if (!btn) return;
+    btn.disabled  = false;
+    btn.textContent = 'In VeloMatch Pro hinterlegen →';
+    btn.style.cssText = '';
+    btn.onclick = null;
   }
 
   /* Load bike from customer note (Pro only) — returns true if restored */
@@ -1956,6 +1961,43 @@
   /* ── INIT ───────────────────────────────────────────────────────────────── */
   $back.addEventListener('click', back);
   $reset.addEventListener('click', reset);
+
+  /* Save button — explicit user action for Pro members */
+  var $saveBtn = document.getElementById('vm-pro-save-btn');
+  if ($saveBtn && IS_PRO) {
+    $saveBtn.addEventListener('click', function () {
+      var sv = findVariant(S.brand, S.model, S.variant);
+      if (!sv) return;
+      $saveBtn.disabled    = true;
+      $saveBtn.textContent = '…';
+      saveBikeToAccount({
+        brand: S.brand, model: S.model, variant: S.variant,
+        schaltgruppe:   sv.schaltgruppe,
+        modelljahre:    sv.modelljahre,
+        collectionTag:  sv.collectionTag,
+        savedAt:        new Date().toISOString()
+      }, function (ok) {
+        if (ok) {
+          $saveBtn.textContent  = 'Gespeichert ✓';
+          $saveBtn.style.background = 'var(--vm-olive)';
+          $saveBtn.style.color      = 'var(--vm-bone)';
+          setTimeout(function () {
+            $saveBtn.textContent      = 'Zum Pro Dashboard →';
+            $saveBtn.style.background = '';
+            $saveBtn.style.color      = '';
+            $saveBtn.disabled         = false;
+            $saveBtn.addEventListener('click', function () {
+              window.location.href = '/pages/vm-pro-dashboard';
+            }, { once: true });
+          }, 1800);
+        } else {
+          $saveBtn.disabled    = false;
+          $saveBtn.textContent = 'Fehler — nochmal versuchen';
+        }
+      });
+    });
+  }
+
   clearSave(); /* always clear localStorage — free users start fresh every time */
   var restored = IS_PRO && loadFromAccount();
   if (!restored) {
