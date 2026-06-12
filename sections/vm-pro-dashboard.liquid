@@ -688,7 +688,8 @@
 {%- elsif customer.tags contains 'vm-pro' -%}
   {%- comment -%} ── AUTHENTICATED VM PRO DASHBOARD ─────────────────────── {%- endcomment -%}
 
-  <div class="vmpd" data-note="{{ customer.note | json }}">
+  <script>window.__vmProNote = {{ customer.note | json }};</script>
+  <div class="vmpd">
     <div class="vmpd__inner">
 
       <!-- ── DASHBOARD HEADER ─────────────────────────────────────────── -->
@@ -937,9 +938,8 @@
 
   <script>
   (function () {
-    var wrap = document.querySelector('.vmpd[data-note]');
     var body = document.getElementById('vmpd-bike-body');
-    if (!wrap || !body) return;
+    if (!body) return;
 
     var BIKE_SVG = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
     var SEARCH_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
@@ -950,11 +950,11 @@
 
     var bike = null;
     try {
-      var raw = JSON.parse(wrap.getAttribute('data-note') || 'null');
+      var raw = typeof window.__vmProNote === 'string'
+        ? JSON.parse(window.__vmProNote)
+        : window.__vmProNote;
       if (raw && raw.vm_bike && raw.vm_bike.collectionTag) bike = raw.vm_bike;
     } catch (e) {}
-
-    wrap.removeAttribute('data-note');
 
     if (bike) {
       var specs = '';
