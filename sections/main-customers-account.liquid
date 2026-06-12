@@ -577,98 +577,56 @@
             </div>
             <div class="vm-account__panel-body">
 
-              {%- if customer.note != blank -%}
-                {%- assign _acct_note = customer.note | parse_json -%}
-                {%- assign saved_bike = _acct_note.vm_bike -%}
+              <script>window.__vmAcctNote = {{ customer.note | json }};</script>
+              <div id="vm-acct-bike-body"></div>
+              <script>
+              (function () {
+                var el = document.getElementById('vm-acct-bike-body');
+                if (!el) return;
+                var bike = null;
+                try {
+                  var raw = typeof window.__vmAcctNote === 'string'
+                    ? JSON.parse(window.__vmAcctNote)
+                    : window.__vmAcctNote;
+                  if (raw && raw.vm_bike && raw.vm_bike.collectionTag) bike = raw.vm_bike;
+                } catch (e) {}
 
-                {%- if saved_bike.collectionTag -%}
+                var emptyHTML = '<div class="vm-account__empty" role="status">' +
+                  '<div class="vm-account__empty-icon" aria-hidden="true">' +
+                  '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--vm-sage);opacity:0.5">' +
+                  '<circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/>' +
+                  '<path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/>' +
+                  '</svg></div>' +
+                  '<p class="vm-account__empty-text">Kein Rad gespeichert. Wähle dein Fahrrad auf der Startseite aus und speichere es in deinem Konto.</p>' +
+                  '<a class="vm-account__empty-link" href="/">Zur Startseite →</a>' +
+                  '</div>';
 
-                  <div class="vm-account__bike-card" role="region" aria-label="Gespeichertes Fahrrad">
-                    <div class="vm-account__bike-grid">
+                if (!bike) { el.innerHTML = emptyHTML; return; }
 
-                      {%- if saved_bike.brand != blank -%}
-                        <div class="vm-account__bike-field">
-                          <span class="vm-account__bike-label">Marke</span>
-                          <span class="vm-account__bike-value">{{ saved_bike.brand }}</span>
-                        </div>
-                      {%- endif -%}
+                var fields = [
+                  { label: 'Marke',        key: 'brand'       },
+                  { label: 'Modell',       key: 'model'       },
+                  { label: 'Variante',     key: 'variant'     },
+                  { label: 'Schaltgruppe', key: 'schaltgruppe'},
+                ];
+                var grid = '';
+                fields.forEach(function (f) {
+                  if (bike[f.key]) {
+                    grid += '<div class="vm-account__bike-field">' +
+                      '<span class="vm-account__bike-label">' + f.label + '</span>' +
+                      '<span class="vm-account__bike-value">' + bike[f.key] + '</span>' +
+                      '</div>';
+                  }
+                });
 
-                      {%- if saved_bike.model != blank -%}
-                        <div class="vm-account__bike-field">
-                          <span class="vm-account__bike-label">Modell</span>
-                          <span class="vm-account__bike-value">{{ saved_bike.model }}</span>
-                        </div>
-                      {%- endif -%}
-
-                      {%- if saved_bike.variant != blank -%}
-                        <div class="vm-account__bike-field">
-                          <span class="vm-account__bike-label">Variante</span>
-                          <span class="vm-account__bike-value">{{ saved_bike.variant }}</span>
-                        </div>
-                      {%- endif -%}
-
-                      {%- if saved_bike.schaltgruppe != blank -%}
-                        <div class="vm-account__bike-field">
-                          <span class="vm-account__bike-label">Schaltgruppe</span>
-                          <span class="vm-account__bike-value">{{ saved_bike.schaltgruppe }}</span>
-                        </div>
-                      {%- endif -%}
-
-                    </div>
-
-                    <div class="vm-account__bike-actions">
-                      <a class="vm-account__parts-btn"
-                         href="/collections/all?filter.p.tag={{ saved_bike.collectionTag | url_encode }}"
-                         aria-label="Passende Teile für dein gespeichertes Rad finden">
-                        Passende Teile finden →
-                      </a>
-                    </div>
-                  </div>
-
-                {%- else -%}
-                  {%- comment -%}Note exists but is not valid bike JSON{%- endcomment -%}
-                  <div class="vm-account__empty" role="status">
-                    <div class="vm-account__empty-icon" aria-hidden="true">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                         style="color:var(--vm-sage);opacity:0.5">
-                      <circle cx="18.5" cy="17.5" r="3.5"/>
-                      <circle cx="5.5" cy="17.5" r="3.5"/>
-                      <circle cx="15" cy="5" r="1"/>
-                      <path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/>
-                      <path d="M5.5 14L9 10"/>
-                    </svg>
-                  </div>
-                    <p class="vm-account__empty-text">
-                      Kein Rad gespeichert. Wähle dein Fahrrad auf der Startseite aus
-                      und speichere es in deinem Konto.
-                    </p>
-                    <a class="vm-account__empty-link" href="/">Zur Startseite →</a>
-                  </div>
-                {%- endif -%}
-
-              {%- else -%}
-
-                <div class="vm-account__empty" role="status">
-                  <div class="vm-account__empty-icon" aria-hidden="true">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                         style="color:var(--vm-sage);opacity:0.5">
-                      <circle cx="18.5" cy="17.5" r="3.5"/>
-                      <circle cx="5.5" cy="17.5" r="3.5"/>
-                      <circle cx="15" cy="5" r="1"/>
-                      <path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/>
-                      <path d="M5.5 14L9 10"/>
-                    </svg>
-                  </div>
-                  <p class="vm-account__empty-text">
-                    Kein Rad gespeichert. Wähle dein Fahrrad auf der Startseite aus
-                    und speichere es in deinem Konto.
-                  </p>
-                  <a class="vm-account__empty-link" href="/">Zur Startseite →</a>
-                </div>
-
-              {%- endif -%}
+                el.innerHTML =
+                  '<div class="vm-account__bike-card" role="region" aria-label="Gespeichertes Fahrrad">' +
+                  '<div class="vm-account__bike-grid">' + grid + '</div>' +
+                  '<div class="vm-account__bike-actions">' +
+                  '<a class="vm-account__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '" aria-label="Passende Teile für dein gespeichertes Rad finden">Passende Teile finden →</a>' +
+                  '</div></div>';
+              })();
+              </script>
 
             </div>
           </section>
