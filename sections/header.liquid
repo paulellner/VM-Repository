@@ -387,7 +387,7 @@
     <!-- VM Pro account icon -->
     {%- if customer -%}
       <a class="vm-header__account{% if customer.tags contains 'vm-pro' %} vm-header__account--pro{% endif %}"
-         href="{% if customer.tags contains 'vm-pro' %}/pages/velomatch-pro-dashboard{% else %}{{ routes.account_url }}{% endif %}"
+         href="{% if customer.tags contains 'vm-pro' %}/pages/vm-pro-dashboard{% else %}{{ routes.account_url }}{% endif %}"
          aria-label="{% if customer.tags contains 'vm-pro' %}VM Pro Dashboard{% else %}Mein Konto{% endif %}">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2.5"
@@ -476,7 +476,7 @@
     <div class="vm-mobile-nav__account-row">
       {%- if customer -%}
         <a class="vm-mobile-nav__account-link{% if customer.tags contains 'vm-pro' %} vm-mobile-nav__account-link--pro{% endif %}"
-           href="{% if customer.tags contains 'vm-pro' %}/pages/velomatch-pro-dashboard{% else %}{{ routes.account_url }}{% endif %}"
+           href="{% if customer.tags contains 'vm-pro' %}/pages/vm-pro-dashboard{% else %}{{ routes.account_url }}{% endif %}"
            aria-label="{% if customer.tags contains 'vm-pro' %}VM Pro Dashboard{% else %}Mein Konto{% endif %}"
            onclick="document.getElementById('vm-mobile-nav').classList.remove('is-open'); document.body.style.overflow='';">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
