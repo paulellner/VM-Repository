@@ -635,6 +635,169 @@
   line-height: 1;
 }
 
+/* ── STRAVA CONNECTED STATE ──────────────────────────────────────────────── */
+
+.vmpd__strava-athlete {
+  display:     flex;
+  align-items: center;
+  gap:         16px;
+  margin-bottom: 20px;
+}
+.vmpd__strava-athlete-img {
+  width:        48px;
+  height:       48px;
+  border-radius: 50%;
+  object-fit:   cover;
+  flex-shrink:  0;
+  background:   var(--vm-sage);
+}
+.vmpd__strava-athlete-name {
+  font-size:      14px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-ink);
+  margin:         0 0 3px;
+  line-height:    1.2;
+}
+.vmpd__strava-connected-meta {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          #FC4C02;
+}
+.vmpd__strava-stats {
+  display:       grid;
+  grid-template-columns: repeat(3, 1fr);
+  border:        var(--vm-stroke) solid rgba(61,74,47,0.2);
+  margin-bottom: 16px;
+}
+.vmpd__strava-stat-cell {
+  padding:      11px 14px;
+  border-right: var(--vm-stroke) solid rgba(61,74,47,0.2);
+}
+.vmpd__strava-stat-cell:last-child { border-right: none; }
+.vmpd__strava-stat-val {
+  font-family: var(--vm-mono);
+  font-size:   17px;
+  font-weight: 400;
+  color:       #FC4C02;
+  display:     block;
+  line-height: 1;
+}
+.vmpd__strava-stat-lbl {
+  font-family:    var(--vm-mono);
+  font-size:      9px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-top:     4px;
+}
+.vmpd__strava-type-badge {
+  display:        inline-block;
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background:     rgba(252,76,2,0.1);
+  color:          #FC4C02;
+  padding:        3px 10px;
+  margin-bottom:  16px;
+}
+.vmpd__strava-bikes {
+  margin-bottom: 18px;
+}
+.vmpd__strava-bikes-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  8px;
+}
+.vmpd__strava-bike-row {
+  display:       flex;
+  justify-content: space-between;
+  font-size:     13px;
+  font-weight:   600;
+  color:         var(--vm-ink);
+  padding:       6px 0;
+  border-bottom: 1px solid rgba(61,74,47,0.08);
+}
+.vmpd__strava-bike-row:last-child { border-bottom: none; }
+.vmpd__strava-bike-km {
+  font-family: var(--vm-mono);
+  font-size:   11px;
+  color:       var(--vm-sage);
+}
+.vmpd__strava-reconnect {
+  font-family:     var(--vm-mono);
+  font-size:       10px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-sage);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  display:         inline-block;
+  margin-top:      14px;
+  transition:      color var(--vm-dur) ease;
+}
+.vmpd__strava-reconnect:hover { color: var(--vm-ink); }
+
+/* Connect (not yet linked) */
+.vmpd__strava-connect-wrap { padding: 4px 0 8px; }
+.vmpd__strava-connect-btn {
+  display:         block;
+  text-align:      center;
+  text-decoration: none;
+  background:      #FC4C02;
+  color:           #fff;
+  font-family:     var(--vm-sans);
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  0.06em;
+  padding:         13px 20px;
+  transition:      transform var(--vm-dur) var(--vm-ease),
+                   box-shadow var(--vm-dur) var(--vm-ease);
+  margin-top:      20px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vmpd__strava-connect-btn:hover {
+    transform:  translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--vm-ink);
+  }
+}
+
+/* Pending / loading state */
+.vmpd__strava-pending {
+  font-size:   14px;
+  color:       var(--vm-sage);
+  text-align:  center;
+  padding:     24px 0 16px;
+}
+.vmpd__strava-pending-reload {
+  display:         block;
+  text-align:      center;
+  font-family:     var(--vm-mono);
+  font-size:       11px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-moss);
+  text-decoration: underline;
+  margin-top:      10px;
+  cursor:          pointer;
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 960px) {
@@ -836,25 +999,7 @@
               <span class="vmpd__panel-num">03</span>
               <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
             </div>
-            <div class="vmpd__panel-body">
-              <div class="vmpd__strava-row">
-                <div class="vmpd__strava-logo" aria-hidden="true" role="img" aria-label="Strava">S</div>
-                <div>
-                  <h3 class="vmpd__strava-info-heading">Strava verknüpfen</h3>
-                  <span class="vmpd__strava-soon">Demnächst</span>
-                  <p class="vmpd__strava-desc">
-                    Verbinde deinen Strava-Account, um Ausrüstung automatisch zu tracken und
-                    personalisierte Teile-Empfehlungen für dein Fahrrad zu erhalten.
-                  </p>
-                </div>
-              </div>
-              <span class="vmpd__strava-btn-disabled"
-                    role="button"
-                    aria-disabled="true"
-                    aria-label="Strava verbinden — demnächst verfügbar">
-                Mit Strava verbinden (demnächst)
-              </span>
-            </div>
+            <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
           </article>
 
           <!-- PANEL 4: Konto-Einstellungen -->
@@ -938,55 +1083,144 @@
 
   <script>
   (function () {
-    var body = document.getElementById('vmpd-bike-body');
-    if (!body) return;
-
-    var BIKE_SVG = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
     var SEARCH_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+    var BIKE_SVG   = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
 
     function esc(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    var bike = null;
-
-    /* 1. Persistent source: customer.note (server-rendered) */
+    /* ── Parse customer.note ───────────────────────────────────────────────── */
+    var noteData = null;
     try {
-      var raw = typeof window.__vmProNote === 'string'
+      noteData = typeof window.__vmProNote === 'string'
         ? JSON.parse(window.__vmProNote)
         : window.__vmProNote;
-      if (raw && raw.vm_bike && raw.vm_bike.collectionTag) bike = raw.vm_bike;
     } catch (e) {}
 
-    /* 2. Fallback: localStorage bridge — covers the brief window right after
-          saving, before Shopify's storefront note cache has propagated. */
-    if (!bike) {
+    /* ── Handle ?strava= URL param ─────────────────────────────────────────── */
+    var urlParams   = new URLSearchParams(window.location.search);
+    var stravaParam = urlParams.get('strava');
+    var justConnected = false;
+
+    if (stravaParam) {
+      history.replaceState({}, '', window.location.pathname);
+      if (stravaParam === 'connected') {
+        try { localStorage.setItem('vm_strava_connected_ts', String(Date.now())); } catch(e) {}
+        justConnected = true;
+      }
+    }
+    if (!justConnected) {
       try {
-        var local = JSON.parse(localStorage.getItem('vm_pro_saved_bike') || 'null');
-        if (local && local.vm_bike && local.vm_bike.collectionTag) bike = local.vm_bike;
-      } catch (e) {}
-    } else {
-      /* Keep the local bridge in sync with the authoritative server note. */
-      try { localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bike })); } catch (e) {}
+        var ts = parseInt(localStorage.getItem('vm_strava_connected_ts') || '0');
+        if (Date.now() - ts < 60000) justConnected = true;
+      } catch(e) {}
     }
 
-    if (bike) {
-      var specs = '';
-      if (bike.variant)      specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(bike.variant) + '</span></div>';
-      if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
-      if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
-      if (bike.collectionTag) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Teile-Filter</span><span class="vmpd__bike-spec-value" style="font-size:12px;font-family:var(--vm-mono)">' + esc(bike.collectionTag) + '</span></div>';
+    /* ── BIKE PANEL ────────────────────────────────────────────────────────── */
+    var bikeBody = document.getElementById('vmpd-bike-body');
+    if (bikeBody) {
+      var bike = null;
+      if (noteData && noteData.vm_bike && noteData.vm_bike.collectionTag) {
+        bike = noteData.vm_bike;
+        try { localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bike })); } catch(e) {}
+      }
+      if (!bike) {
+        try {
+          var loc = JSON.parse(localStorage.getItem('vm_pro_saved_bike') || 'null');
+          if (loc && loc.vm_bike && loc.vm_bike.collectionTag) bike = loc.vm_bike;
+        } catch(e) {}
+      }
 
-      body.innerHTML =
-        (bike.brand ? '<p class="vmpd__bike-brand">' + esc(bike.brand) + '</p>' : '') +
-        (bike.model ? '<p class="vmpd__bike-model">' + esc(bike.model) + '</p>' : '') +
-        (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
-        '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '" aria-label="Passende Teile für dein gespeichertes Rad finden">' + SEARCH_SVG + ' Passende Teile finden →</a>';
+      if (bike) {
+        var specs = '';
+        if (bike.variant)      specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(bike.variant) + '</span></div>';
+        if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
+        if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
+
+        bikeBody.innerHTML =
+          (bike.brand ? '<p class="vmpd__bike-brand">' + esc(bike.brand) + '</p>' : '') +
+          (bike.model ? '<p class="vmpd__bike-model">' + esc(bike.model) + '</p>' : '') +
+          (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
+          '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
+          SEARCH_SVG + ' Passende Teile finden →</a>';
+      } else {
+        bikeBody.innerHTML =
+          '<div class="vmpd__empty" role="status">' + BIKE_SVG +
+          '<p class="vmpd__empty-label">Noch kein Rad gespeichert. W\xe4hle dein Fahrrad im Konfigurator aus.</p>' +
+          '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
+      }
+    }
+
+    /* ── STRAVA PANEL ──────────────────────────────────────────────────────── */
+    var stravaBody = document.getElementById('vmpd-strava-body');
+    if (!stravaBody) return;
+
+    var strava = (noteData && noteData.strava && noteData.strava.athlete_id) ? noteData.strava : null;
+    var tokenExpired = strava && strava.token_expires_at && (Date.now() / 1000 > strava.token_expires_at);
+
+    var RIDE_LABELS = {
+      'Ride': 'Rennrad', 'MountainBikeRide': 'Mountainbike',
+      'GravelRide': 'Gravel', 'VirtualRide': 'Indoor', 'EBikeRide': 'E-Bike'
+    };
+
+    if (strava && !tokenExpired) {
+      var a = strava.athlete;
+      var p = strava.profile;
+
+      var isDefaultAvatar = !a.profile || a.profile.indexOf('large.jpg') !== -1;
+      var avatarHtml = isDefaultAvatar
+        ? '<div class="vmpd__strava-logo vmpd__strava-athlete-img" aria-hidden="true">S</div>'
+        : '<img class="vmpd__strava-athlete-img" src="' + esc(a.profile) + '" alt="" loading="lazy">';
+
+      var statsHtml =
+        '<div class="vmpd__strava-stats">' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.recent_rides || '—') + '</span><span class="vmpd__strava-stat-lbl">Fahrten (30 T.)</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.avg_ride_distance_km ? p.avg_ride_distance_km + ' km' : '—') + '</span><span class="vmpd__strava-stat-lbl">\xd8 Distanz</span></div>' +
+        '<div class="vmpd__strava-stat-cell"><span class="vmpd__strava-stat-val">' + (p.all_time_distance_km ? (p.all_time_distance_km >= 1000 ? Math.round(p.all_time_distance_km / 100) / 10 + ' T km' : p.all_time_distance_km + ' km') : '—') + '</span><span class="vmpd__strava-stat-lbl">Gesamt</span></div>' +
+        '</div>';
+
+      var typeHtml = p.dominant_ride_type
+        ? '<span class="vmpd__strava-type-badge">Fahrstil: ' + esc(RIDE_LABELS[p.dominant_ride_type] || p.dominant_ride_type) + '</span>'
+        : '';
+
+      var bikesHtml = '';
+      if (a.bikes && a.bikes.length) {
+        bikesHtml = '<div class="vmpd__strava-bikes"><span class="vmpd__strava-bikes-label">Fahrr\xe4der auf Strava</span>';
+        a.bikes.forEach(function(b) {
+          bikesHtml += '<div class="vmpd__strava-bike-row"><span>' + esc(b.name) + '</span>' +
+            (b.distance_km ? '<span class="vmpd__strava-bike-km">' + b.distance_km.toLocaleString('de-DE') + ' km</span>' : '') + '</div>';
+        });
+        bikesHtml += '</div>';
+      }
+
+      var connDate = '';
+      try { connDate = new Date(strava.connected_at).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }); } catch(e) {}
+
+      stravaBody.innerHTML =
+        '<div class="vmpd__strava-athlete">' + avatarHtml +
+        '<div><p class="vmpd__strava-athlete-name">' + esc(a.firstname) + ' ' + esc(a.lastname) + '</p>' +
+        '<span class="vmpd__strava-connected-meta">Verbunden \xb7 ' + connDate + '</span></div></div>' +
+        statsHtml + typeHtml + bikesHtml +
+        '<a class="vmpd__strava-reconnect" href="/apps/vm-pro/strava/connect">Daten aktualisieren</a>';
+
+    } else if (justConnected && !strava) {
+      stravaBody.innerHTML =
+        '<div class="vmpd__strava-pending">Strava verbunden — Daten werden geladen…' +
+        '<span class="vmpd__strava-pending-reload" onclick="window.location.reload()">Seite aktualisieren</span></div>';
+      setTimeout(function() { window.location.reload(); }, 3000);
+
     } else {
-      body.innerHTML =
-        '<div class="vmpd__empty" role="status">' + BIKE_SVG +
-        '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Gehe zur Startseite, wähle dein Fahrrad aus — es wird automatisch hier gespeichert.</p>' +
-        '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
+      var msg = tokenExpired
+        ? 'Deine Strava-Verbindung ist abgelaufen. Bitte neu verbinden.'
+        : 'Verbinde deinen Strava-Account, um Aktivit\xe4tsdaten zu sammeln und Produkt-Empfehlungen zu personalisieren.';
+
+      stravaBody.innerHTML =
+        '<div class="vmpd__strava-connect-wrap">' +
+        '<div class="vmpd__strava-row"><div class="vmpd__strava-logo" aria-hidden="true">S</div>' +
+        '<div><h3 class="vmpd__strava-info-heading">Strava verkn\xfcpfen</h3>' +
+        '<p class="vmpd__strava-desc">' + msg + '</p></div></div>' +
+        '<a class="vmpd__strava-connect-btn" href="/apps/vm-pro/strava/connect">Mit Strava verbinden →</a></div>';
     }
   })();
   </script>
