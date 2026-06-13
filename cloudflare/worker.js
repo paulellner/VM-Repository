@@ -140,7 +140,7 @@ export default {
       return Response.redirect(
         `${STRAVA_AUTH}?client_id=${env.STRAVA_CLIENT_ID}` +
         `&redirect_uri=${redirectUri}&response_type=code` +
-        `&approval_prompt=auto&scope=read,activity:read_all&state=${state}`,
+        `&approval_prompt=force&scope=read,activity:read_all&state=${state}`,
         302
       );
     }
