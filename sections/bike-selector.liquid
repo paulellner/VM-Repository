@@ -454,6 +454,10 @@
   .vm-step-seg__label { display: none; }
   .vm-grid           { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vm-grid--3        { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vm-pick           { height: auto; min-height: 150px; padding: 18px; }
+  .vm-pick__name     { font-size: 21px; }
+  .vm-pick__meta     { flex-wrap: wrap; }
+  .vm-pick__chip     { white-space: nowrap; }
   .vm-result__sum         { grid-template-columns: 1fr; }
   .vm-result__sum-pro     { border-left: none; border-top: 1px solid rgba(201,228,91,0.18); padding: 28px 20px; }
   .vm-result__sum-info    { padding: 28px 20px; }
@@ -461,6 +465,7 @@
 
 /* ── Selbst zusammenstellen — special brand card ────────────────────────── */
 .vm-pick--custom {
+  grid-column:    span 2;
   border-color:   var(--vm-signal);
   border-width:   2px;
   background:     var(--vm-ink);

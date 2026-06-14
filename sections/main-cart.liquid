@@ -80,8 +80,10 @@
 .vm-cart__item:first-child { border-top: 1px solid rgba(61,74,47,0.15); }
 
 .vm-cart__item-img {
-  width:      96px;
+  width:      100%;
+  max-width:  96px;
   height:     72px;
+  box-sizing: border-box;
   border:     1.5px solid var(--vm-ink);
   object-fit: contain;
   background: var(--vm-paper);
@@ -89,8 +91,10 @@
   display:    block;
 }
 .vm-cart__item-ph {
-  width:           96px;
+  width:           100%;
+  max-width:       96px;
   height:          72px;
+  box-sizing:      border-box;
   border:          1.5px solid var(--vm-ink);
   background:      var(--vm-paper);
   display:         flex;
