@@ -137,8 +137,8 @@
 }
 
 /* ── PICK CARDS ──────────────────────────────────────────────────────────── */
-.vm-grid      { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
-.vm-grid--3   { grid-template-columns: repeat(3, 1fr); }
+.vm-grid      { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.vm-grid--3   { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 .vm-pick {
   background:   var(--vm-paper);
@@ -444,7 +444,7 @@
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .vm-grid { grid-template-columns: repeat(3, 1fr); }
+  .vm-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 880px) {
@@ -452,8 +452,8 @@
   .vm-step__n        { font-size: 44px; }
   .vm-step__h2       { font-size: 28px; }
   .vm-step-seg__label { display: none; }
-  .vm-grid           { grid-template-columns: repeat(2, 1fr); }
-  .vm-grid--3        { grid-template-columns: repeat(2, 1fr); }
+  .vm-grid           { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vm-grid--3        { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vm-result__sum         { grid-template-columns: 1fr; }
   .vm-result__sum-pro     { border-left: none; border-top: 1px solid rgba(201,228,91,0.18); padding: 28px 20px; }
   .vm-result__sum-info    { padding: 28px 20px; }
