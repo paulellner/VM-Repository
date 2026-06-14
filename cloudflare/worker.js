@@ -7,8 +7,10 @@
  *
  * App Proxy Endpunkte:
  *   POST /save              → Rad in customer.note speichern
- *   GET  /strava/connect    → Strava OAuth starten
+ *   GET  /strava/connect    → Strava OAuth starten (nur Erst-Verbindung)
  *   GET  /strava/callback   → Token tauschen, Daten speichern
+ *   GET  /strava/profile    → gespeicherte Daten lesen (Token bei Ablauf auto-refresh)
+ *   GET  /strava/refresh    → Daten neu laden via refresh_token (ohne Re-Login)
  *
  * Secrets:
  *   SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET / SHOPIFY_ADMIN_TOKEN
@@ -19,6 +21,7 @@ const API_VERSION  = '2025-01';
 const STRAVA_AUTH  = 'https://www.strava.com/oauth/authorize';
 const STRAVA_TOKEN = 'https://www.strava.com/oauth/token';
 const STRAVA_API   = 'https://www.strava.com/api/v3';
+const RIDE_TYPES   = ['Ride', 'VirtualRide', 'MountainBikeRide', 'GravelRide', 'EBikeRide'];
 
 async function hmacSHA256(secret, message) {
   const enc = new TextEncoder();
@@ -59,6 +62,119 @@ async function putNote(shop, customerId, token, note) {
       body: JSON.stringify({ customer: { id: Number(customerId), note: JSON.stringify(note) } }),
     }
   );
+}
+
+/* Athlet, Aktivitäten und Stats von Strava laden + Fahr-Profil berechnen.
+   Wird sowohl beim Erst-Connect als auch beim Refresh genutzt. */
+async function fetchStravaRecord(accessToken) {
+  const athleteResp = await fetch(`${STRAVA_API}/athlete`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` },
+  });
+  const athlete = await athleteResp.json();
+  if (!athlete || !athlete.id) throw new Error('Strava athlete fetch failed');
+
+  const [actsResp, statsResp] = await Promise.all([
+    fetch(`${STRAVA_API}/athlete/activities?per_page=30`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+    }),
+    fetch(`${STRAVA_API}/athletes/${athlete.id}/stats`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+    }),
+  ]);
+  const activities   = await actsResp.json();
+  const athleteStats = await statsResp.json();
+
+  const rides = Array.isArray(activities) ? activities.filter(a => RIDE_TYPES.includes(a.type)) : [];
+  const avgDist = rides.length
+    ? Math.round(rides.reduce((s, a) => s + a.distance, 0) / rides.length / 100) / 10
+    : null;
+  const typeCounts = {};
+  rides.forEach(a => { typeCounts[a.type] = (typeCounts[a.type] || 0) + 1; });
+  const dominantType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+
+  return {
+    athlete_id: athlete.id,
+    athlete: {
+      firstname: athlete.firstname,
+      lastname:  athlete.lastname,
+      profile:   athlete.profile_medium,
+      city:      athlete.city,
+      country:   athlete.country,
+      weight:    athlete.weight,
+      bikes: (athlete.bikes || []).map(b => ({
+        id:          b.id,
+        name:        b.name,
+        distance_km: Math.round(b.distance / 1000),
+      })),
+    },
+    profile: {
+      dominant_ride_type:   dominantType,
+      avg_ride_distance_km: avgDist,
+      recent_rides:         rides.length,
+      ytd_rides:            athleteStats.ytd_ride_totals?.count ?? null,
+      ytd_distance_km:      athleteStats.ytd_ride_totals
+        ? Math.round(athleteStats.ytd_ride_totals.distance / 1000)
+        : null,
+      all_time_rides:       athleteStats.all_ride_totals?.count ?? null,
+      all_time_distance_km: athleteStats.all_ride_totals
+        ? Math.round(athleteStats.all_ride_totals.distance / 1000)
+        : null,
+      computed_at: new Date().toISOString(),
+    },
+  };
+}
+
+/* Frischen Access-Token via refresh_token holen (kein erneuter Login nötig). */
+async function refreshStravaToken(env, refreshToken) {
+  const r = await fetch(STRAVA_TOKEN, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_id:     env.STRAVA_CLIENT_ID,
+      client_secret: env.STRAVA_CLIENT_SECRET,
+      grant_type:    'refresh_token',
+      refresh_token: refreshToken,
+    }),
+  });
+  return r.json();
+}
+
+/* Token erneuern, Daten frisch laden und in der Notiz speichern.
+   Gibt den aktualisierten strava-Block zurück oder null bei Fehler. */
+async function refreshAndStore(env, shop, customerId, note) {
+  const s = note.strava;
+  if (!s || !s.refresh_token) return null;
+
+  const tok = await refreshStravaToken(env, s.refresh_token);
+  if (!tok.access_token) {
+    console.error('Strava token refresh failed:', JSON.stringify(tok));
+    return null;
+  }
+
+  const record = await fetchStravaRecord(tok.access_token);
+  note.strava = {
+    athlete_id:       record.athlete_id,
+    access_token:     tok.access_token,
+    refresh_token:    tok.refresh_token || s.refresh_token,
+    token_expires_at: tok.expires_at,
+    connected_at:     s.connected_at,             // ursprüngliches Verbindungsdatum bewahren
+    refreshed_at:     new Date().toISOString(),
+    athlete:          record.athlete,
+    profile:          record.profile,
+  };
+  await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
+  return note.strava;
+}
+
+function publicStrava(s) {
+  return {
+    connected:        true,
+    connected_at:     s.connected_at,
+    refreshed_at:     s.refreshed_at,
+    token_expires_at: s.token_expires_at,
+    athlete:          s.athlete,
+    profile:          s.profile,
+  };
 }
 
 export default {
@@ -115,15 +231,35 @@ export default {
         return Response.json({ connected: false });
       }
 
-      /* Tokens bleiben serverseitig — nur Anzeige-Daten zurückgeben */
-      const s = note.strava;
-      return Response.json({
-        connected:        true,
-        connected_at:     s.connected_at,
-        token_expires_at: s.token_expires_at,
-        athlete:          s.athlete,
-        profile:          s.profile,
-      });
+      let s = note.strava;
+      /* Token abgelaufen (mit 2 Min. Puffer)? → automatisch erneuern, kein Re-Login. */
+      if (s.token_expires_at && Date.now() / 1000 > s.token_expires_at - 120) {
+        const refreshed = await refreshAndStore(env, shop, customerId, note);
+        if (refreshed) s = refreshed;
+      }
+      return Response.json(publicStrava(s));
+    }
+
+    /* ── C1: Strava-Daten neu laden (App Proxy GET /strava/refresh) ───────── */
+    if (url.pathname === '/strava/refresh') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ connected: false }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      if (!note.strava || !note.strava.refresh_token) {
+        return Response.json({ connected: false });
+      }
+
+      const refreshed = await refreshAndStore(env, shop, customerId, note);
+      if (!refreshed) {
+        /* Refresh fehlgeschlagen → alte Daten zurückgeben, Verbindung gilt als ungültig. */
+        return Response.json({ connected: true, refresh_failed: true, ...publicStrava(note.strava) });
+      }
+      return Response.json(publicStrava(refreshed));
     }
 
     /* ── C: Strava verbinden (App Proxy GET /strava/connect) ──────────────── */
@@ -161,7 +297,7 @@ export default {
       if (error === 'access_denied') return Response.redirect(dashUrl + '?strava=denied', 302);
       if (!code) return new Response('Fehlender Code', { status: 400 });
 
-      /* Token tauschen */
+      /* Authorization Code gegen Tokens tauschen */
       const tokenResp = await fetch(STRAVA_TOKEN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,62 +311,20 @@ export default {
       const td = await tokenResp.json();
       if (!td.access_token) return new Response('Strava-Auth fehlgeschlagen: ' + JSON.stringify(td), { status: 500 });
 
-      /* Aktivitäten + Athleten-Stats parallel laden */
-      const [actsResp, statsResp] = await Promise.all([
-        fetch(`${STRAVA_API}/athlete/activities?per_page=30`, {
-          headers: { 'Authorization': `Bearer ${td.access_token}` },
-        }),
-        fetch(`${STRAVA_API}/athletes/${td.athlete.id}/stats`, {
-          headers: { 'Authorization': `Bearer ${td.access_token}` },
-        }),
-      ]);
-      const [activities, athleteStats] = await Promise.all([actsResp.json(), statsResp.json()]);
+      const record = await fetchStravaRecord(td.access_token);
 
-      /* Fahr-Profil berechnen */
-      const rideTypes = ['Ride', 'VirtualRide', 'MountainBikeRide', 'GravelRide', 'EBikeRide'];
-      const rides = Array.isArray(activities) ? activities.filter(a => rideTypes.includes(a.type)) : [];
-      const avgDist = rides.length
-        ? Math.round(rides.reduce((s, a) => s + a.distance, 0) / rides.length / 100) / 10
-        : null;
-      const typeCounts = {};
-      rides.forEach(a => { typeCounts[a.type] = (typeCounts[a.type] || 0) + 1; });
-      const dominantType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-
-      /* In customer.note mergen (bestehende Daten nicht überschreiben) */
+      /* In customer.note mergen (bestehende Daten wie vm_bike nicht überschreiben) */
       const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      const now  = new Date().toISOString();
       note.strava = {
-        athlete_id:       td.athlete.id,
+        athlete_id:       record.athlete_id,
         access_token:     td.access_token,
         refresh_token:    td.refresh_token,
         token_expires_at: td.expires_at,
-        connected_at:     new Date().toISOString(),
-        athlete: {
-          firstname: td.athlete.firstname,
-          lastname:  td.athlete.lastname,
-          profile:   td.athlete.profile_medium,
-          city:      td.athlete.city,
-          country:   td.athlete.country,
-          weight:    td.athlete.weight,
-          bikes: (td.athlete.bikes || []).map(b => ({
-            id:          b.id,
-            name:        b.name,
-            distance_km: Math.round(b.distance / 1000),
-          })),
-        },
-        profile: {
-          dominant_ride_type:   dominantType,
-          avg_ride_distance_km: avgDist,
-          recent_rides:         rides.length,
-          ytd_rides:            athleteStats.ytd_ride_totals?.count ?? null,
-          ytd_distance_km:      athleteStats.ytd_ride_totals
-            ? Math.round(athleteStats.ytd_ride_totals.distance / 1000)
-            : null,
-          all_time_rides:       athleteStats.all_ride_totals?.count   ?? null,
-          all_time_distance_km: athleteStats.all_ride_totals
-            ? Math.round(athleteStats.all_ride_totals.distance / 1000)
-            : null,
-          computed_at: new Date().toISOString(),
-        },
+        connected_at:     now,
+        refreshed_at:     now,
+        athlete:          record.athlete,
+        profile:          record.profile,
       };
 
       const saveResp = await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);

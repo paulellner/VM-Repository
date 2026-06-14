@@ -750,6 +750,7 @@
   text-underline-offset: 2px;
   display:         inline-block;
   margin-top:      14px;
+  cursor:          pointer;
   transition:      color var(--vm-dur) ease;
 }
 .vmpd__strava-reconnect:hover { color: var(--vm-ink); }
@@ -1207,7 +1208,29 @@
         '<div><p class="vmpd__strava-athlete-name">' + esc(a.firstname) + ' ' + esc(a.lastname) + '</p>' +
         '<span class="vmpd__strava-connected-meta">Verbunden \u00b7 ' + connDate + '</span></div></div>' +
         statsHtml + typeHtml + bikesHtml +
-        '<a class="vmpd__strava-reconnect" href="/apps/vm-pro/strava/connect">Daten aktualisieren</a>';
+        '<span class="vmpd__strava-reconnect" id="vm-strava-refresh" role="button" tabindex="0">Daten aktualisieren</span>';
+
+      var refreshBtn = document.getElementById('vm-strava-refresh');
+      if (refreshBtn) refreshBtn.addEventListener('click', doRefresh);
+    }
+
+    /* Daten via refresh_token neu laden \u2014 ohne erneuten Strava-Login. */
+    function doRefresh() {
+      var btn = document.getElementById('vm-strava-refresh');
+      if (btn) { btn.textContent = 'Wird aktualisiert\u2026'; btn.style.pointerEvents = 'none'; }
+      fetch('/apps/vm-pro/strava/refresh', { headers: { 'Accept': 'application/json' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.connected && data.athlete) {
+            renderConnected(data);
+          } else if (btn) {
+            btn.textContent = 'Aktualisierung fehlgeschlagen';
+            btn.style.pointerEvents = '';
+          }
+        })
+        .catch(function() {
+          if (btn) { btn.textContent = 'Aktualisierung fehlgeschlagen'; btn.style.pointerEvents = ''; }
+        });
     }
 
     stravaBody.innerHTML = '<div class="vmpd__strava-pending">Lade Strava-Daten\u2026</div>';
