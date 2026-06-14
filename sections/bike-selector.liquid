@@ -138,7 +138,9 @@
 
 /* ── PICK CARDS ──────────────────────────────────────────────────────────── */
 .vm-grid      { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: start; }
-.vm-grid--3   { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.vm-grid--3   { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; grid-auto-rows: 1fr; }
+/* Ab Schritt 2: alle Karten gleich hoch wie die Karte mit dem meisten Text. */
+.vm-grid--3 .vm-pick { height: auto; min-height: 160px; }
 
 .vm-pick {
   background:   var(--vm-paper);
