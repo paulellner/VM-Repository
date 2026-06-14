@@ -755,6 +755,25 @@
 }
 .vmpd__strava-reconnect:hover { color: var(--vm-ink); }
 
+.vmpd__strava-logout {
+  display:         block;
+  margin-top:      10px;
+  background:      none;
+  border:          none;
+  padding:         0;
+  font-family:     var(--vm-mono);
+  font-size:       10px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.1em;
+  color:           var(--vm-sage);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor:          pointer;
+  transition:      color var(--vm-dur) ease;
+}
+.vmpd__strava-logout:hover { color: #FC4C02; }
+
 /* Connect (not yet linked) */
 .vmpd__strava-connect-wrap { padding: 4px 0 8px; }
 .vmpd__strava-connect-btn {
@@ -1214,10 +1233,29 @@
         '<div><p class="vmpd__strava-athlete-name">' + esc(a.firstname) + ' ' + esc(a.lastname) + '</p>' +
         '<span class="vmpd__strava-connected-meta">Verbunden \u00b7 ' + connDate + '</span></div></div>' +
         statsHtml + typeHtml + bikesHtml +
-        '<span class="vmpd__strava-reconnect" id="vm-strava-refresh" role="button" tabindex="0">Daten aktualisieren</span>';
+        '<span class="vmpd__strava-reconnect" id="vm-strava-refresh" role="button" tabindex="0">Daten aktualisieren</span>' +
+        '<button class="vmpd__strava-logout" id="vm-strava-logout" type="button">Bei Strava ausloggen</button>';
 
       var refreshBtn = document.getElementById('vm-strava-refresh');
       if (refreshBtn) refreshBtn.addEventListener('click', doRefresh);
+      var logoutBtn = document.getElementById('vm-strava-logout');
+      if (logoutBtn) logoutBtn.addEventListener('click', doDisconnect);
+    }
+
+    /* Strava-Verbindung trennen: Zugriff bei Strava widerrufen + gespeichertes
+       Profil entfernen, damit ein neues Strava-Profil verbunden werden kann. */
+    function doDisconnect() {
+      if (!window.confirm('Strava-Verbindung trennen? Dein gespeichertes Strava-Profil wird entfernt. Du kannst danach ein anderes Strava-Profil verbinden.')) return;
+      var btn = document.getElementById('vm-strava-logout');
+      if (btn) { btn.textContent = 'Wird getrennt…'; btn.style.pointerEvents = 'none'; }
+      fetch('/apps/vm-pro/strava/disconnect', { headers: { 'Accept': 'application/json' } })
+        .then(function(r) { return r.json(); })
+        .then(function() {
+          renderConnect('Strava wurde getrennt. Du kannst jetzt ein neues Strava-Profil verbinden. Hinweis: Bist du noch bei strava.com angemeldet, melde dich dort ab, um einen anderen Account zu nutzen.');
+        })
+        .catch(function() {
+          if (btn) { btn.textContent = 'Trennen fehlgeschlagen'; btn.style.pointerEvents = ''; }
+        });
     }
 
     /* Daten via refresh_token neu laden - ohne erneuten Strava-Login. */

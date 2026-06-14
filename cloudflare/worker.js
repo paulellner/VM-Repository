@@ -18,9 +18,10 @@
  */
 
 const API_VERSION  = '2025-01';
-const STRAVA_AUTH  = 'https://www.strava.com/oauth/authorize';
-const STRAVA_TOKEN = 'https://www.strava.com/oauth/token';
-const STRAVA_API   = 'https://www.strava.com/api/v3';
+const STRAVA_AUTH   = 'https://www.strava.com/oauth/authorize';
+const STRAVA_TOKEN  = 'https://www.strava.com/oauth/token';
+const STRAVA_DEAUTH = 'https://www.strava.com/oauth/deauthorize';
+const STRAVA_API    = 'https://www.strava.com/api/v3';
 const RIDE_TYPES   = ['Ride', 'VirtualRide', 'MountainBikeRide', 'GravelRide', 'EBikeRide'];
 
 async function hmacSHA256(secret, message) {
@@ -273,6 +274,39 @@ export default {
         return Response.json({ connected: true, refresh_failed: true, ...publicStrava(note.strava) });
       }
       return Response.json(publicStrava(refreshed));
+    }
+
+    /* ── C2: Strava trennen / ausloggen (App Proxy GET /strava/disconnect) ── */
+    if (url.pathname === '/strava/disconnect') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ connected: false }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+
+      if (note.strava) {
+        /* Best-effort: Zugriff bei Strava widerrufen — gibt den Athleten-Slot frei. */
+        let accessToken = note.strava.access_token;
+        if (note.strava.token_expires_at &&
+            Date.now() / 1000 > note.strava.token_expires_at - 120 &&
+            note.strava.refresh_token) {
+          const tok = await refreshStravaToken(env, note.strava.refresh_token);
+          if (tok && tok.access_token) accessToken = tok.access_token;
+        }
+        if (accessToken) {
+          try {
+            await fetch(`${STRAVA_DEAUTH}?access_token=${encodeURIComponent(accessToken)}`, { method: 'POST' });
+          } catch (e) { console.error('Strava deauthorize failed:', e); }
+        }
+        /* Strava-Block aus der Note entfernen (vm_bike bleibt erhalten). */
+        delete note.strava;
+        await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
+      }
+
+      return Response.json({ connected: false });
     }
 
     /* ── C: Strava verbinden (App Proxy GET /strava/connect) ──────────────── */
