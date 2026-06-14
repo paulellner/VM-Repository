@@ -1111,22 +1111,13 @@
       }
     } catch (e) {}
 
-    /* ── BIKE PANEL ────────────────────────────────────────────────────────── */
+    /* Alte browser-weite Bruecke entfernen (war accountuebergreifend - Datenleck). */
+    try { localStorage.removeItem('vm_pro_saved_bike'); } catch (e) {}
+
+    /* BIKE PANEL - pro Account, Live-Abruf via App Proxy */
     var bikeBody = document.getElementById('vmpd-bike-body');
     if (bikeBody) {
-      var bike = null;
-      if (noteData && noteData.vm_bike && noteData.vm_bike.collectionTag) {
-        bike = noteData.vm_bike;
-        try { localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bike })); } catch(e) {}
-      }
-      if (!bike) {
-        try {
-          var loc = JSON.parse(localStorage.getItem('vm_pro_saved_bike') || 'null');
-          if (loc && loc.vm_bike && loc.vm_bike.collectionTag) bike = loc.vm_bike;
-        } catch(e) {}
-      }
-
-      if (bike) {
+      var renderBike = function (bike) {
         var specs = '';
         if (bike.variant)      specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(bike.variant) + '</span></div>';
         if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
@@ -1138,15 +1129,30 @@
           (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
           '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
           SEARCH_SVG + ' Passende Teile finden →</a>';
-      } else {
+      };
+
+      var renderBikeEmpty = function () {
         bikeBody.innerHTML =
           '<div class="vmpd__empty" role="status">' + BIKE_SVG +
-          '<p class="vmpd__empty-label">Noch kein Rad gespeichert. W\xe4hle dein Fahrrad im Konfigurator aus.</p>' +
+          '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>' +
           '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
+      };
+
+      if (noteData && noteData.vm_bike && noteData.vm_bike.collectionTag) {
+        renderBike(noteData.vm_bike);
+      } else {
+        bikeBody.innerHTML = '<div class="vmpd__strava-pending">Lade dein Rad…</div>';
+        fetch('/apps/vm-pro/bike', { headers: { 'Accept': 'application/json' } })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d && d.bike && d.bike.collectionTag) renderBike(d.bike);
+            else renderBikeEmpty();
+          })
+          .catch(renderBikeEmpty);
       }
     }
 
-    /* STRAVA PANEL \u2014 Live-Daten via App Proxy */
+    /* STRAVA PANEL - Live-Daten via App Proxy */
     var stravaBody = document.getElementById('vmpd-strava-body');
     if (!stravaBody) return;
 
@@ -1214,7 +1220,7 @@
       if (refreshBtn) refreshBtn.addEventListener('click', doRefresh);
     }
 
-    /* Daten via refresh_token neu laden \u2014 ohne erneuten Strava-Login. */
+    /* Daten via refresh_token neu laden - ohne erneuten Strava-Login. */
     function doRefresh() {
       var btn = document.getElementById('vm-strava-refresh');
       if (btn) { btn.textContent = 'Wird aktualisiert\u2026'; btn.style.pointerEvents = 'none'; }

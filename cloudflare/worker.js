@@ -217,6 +217,19 @@ export default {
       );
     }
 
+    /* ── Bike lesen (App Proxy GET /bike) ─────────────────────────────────── */
+    if (url.pathname === '/bike') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ bike: null }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      return Response.json({ bike: note.vm_bike || null });
+    }
+
     /* ── C0: Strava-Profil lesen (App Proxy GET /strava/profile) ──────────── */
     if (url.pathname === '/strava/profile') {
       const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);

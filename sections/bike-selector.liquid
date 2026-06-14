@@ -1962,11 +1962,9 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.success) {
-          /* Bridge: store locally so the dashboard shows the bike instantly,
-             even before Shopify's storefront note cache has propagated. */
-          try {
-            localStorage.setItem('vm_pro_saved_bike', JSON.stringify({ vm_bike: bikeData }));
-          } catch (e) {}
+          /* Note: kein localStorage-Cache hier — das Dashboard liest das Rad
+             live pro Account via App Proxy (sonst Datenleck zwischen Accounts
+             im selben Browser). Der Worker schreibt direkt in customer.note. */
           $saveBtn.textContent      = 'Gespeichert ✓';
           $saveBtn.style.background = 'var(--vm-olive)';
           $saveBtn.style.color      = 'var(--vm-bone)';
