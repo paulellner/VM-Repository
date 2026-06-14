@@ -137,7 +137,7 @@
 }
 
 /* ── PICK CARDS ──────────────────────────────────────────────────────────── */
-.vm-grid      { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.vm-grid      { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
 .vm-grid--3   { grid-template-columns: repeat(3, 1fr); }
 
 .vm-pick {
@@ -794,17 +794,17 @@
         <div class="vm-result__sum-pro">
           <span class="vm-result__sum-pro-eyebrow">VeloMatch Pro</span>
           <p class="vm-result__sum-pro-title">Dein Rad.<br>Dauerhaft gespeichert.</p>
-          <ul class="vm-result__sum-pro-list">
-            <li>Rad dauerhaft speichern</li>
-            <li>Strava verknüpfen (bald)</li>
-            <li>Kaufhistorie tracken</li>
-          </ul>
-          <span class="vm-result__sum-pro-price">5.99 € / Monat · jederzeit kündbar</span>
           {%- if customer and customer.tags contains 'vm-pro' -%}
             <button class="vm-result__sum-pro-btn" id="vm-pro-save-btn" type="button">
               In VeloMatch Pro hinterlegen →
             </button>
           {%- else -%}
+            <ul class="vm-result__sum-pro-list">
+              <li>Rad dauerhaft speichern</li>
+              <li>Strava verknüpfen (bald)</li>
+              <li>Kaufhistorie tracken</li>
+            </ul>
+            <span class="vm-result__sum-pro-price">5.99 € / Monat · jederzeit kündbar</span>
             <button class="vm-result__sum-pro-btn" onclick="vmProAddToCart(this)">Hier Anmelden →</button>
           {%- endif -%}
         </div>
