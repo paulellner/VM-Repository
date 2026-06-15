@@ -1,0 +1,108 @@
+Handle,Title,Body (HTML),Vendor,Type,Tags,Published,Option1 Name,Option1 Value,Variant SKU,Variant Grams,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Price,Variant Compare At Price,Variant Requires Shipping,Variant Taxable,Gift Card,SEO Title,SEO Description,Status
+vm-wartung-kette,Ketten-Wartungspaket,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Kilometern und Fahrbedingungen.</p>
+<p>Eine verschlissene Kette ist der häufigste Grund für vorzeitigen Kassetten- und Kettensternverschleiß. Unser Ketten-Wartungspaket enthält alles für einen sauberen Kettenwechsel am Rennrad.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Hochwertige Rennrad-Kette (11-fach / 12-fach wählbar)</li>
+<li>1× Kettennieter / Quicklink (passend zur Kette)</li>
+<li>1× Kettenöl (50 ml) für die Erstbefettung nach dem Einbau</li>
+<li>1× Kettenverschleißlehre zur Erfolgskontrolle</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Dein VM Pro System empfiehlt den Wechsel nach ca. 2.000–2.500 km (konditionsabhängig). Ab 0,75 mm Kettenlängung (messbar mit der beiliegenden Lehre) unbedingt sofort tauschen — sonst leidet die Kassette.</p>
+<p><em>Einbau durch einen Fachbetrieb empfohlen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-chain, vm-pro, wartung, antrieb, kette",TRUE,Ausführung,11-fach,VM-KETTE-11,350,shopify,5,deny,manual,34.90,,TRUE,TRUE,FALSE,Ketten-Wartungspaket — veloMatch VM Pro,Ketten-Wartungspaket für Rennrad mit Kettennieter und Öl. Empfohlen vom VM Pro Bike Health System nach Strava-km-Auswertung.,active
+vm-wartung-kette,,,,,,,,12-fach,VM-KETTE-12,350,shopify,5,deny,manual,39.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kassette,Kassetten-Wartungspaket,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Kilometern und Fahrbedingungen.</p>
+<p>Die Kassette arbeitet Hand in Hand mit der Kette. Regelmäßig gewechselte Ketten schonen die Kassette — spätestens beim dritten Kettenwechsel ist jedoch auch die Kassette fällig.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Rennrad-Kassette (Zähnezahl wählbar)</li>
+<li>1× Kassettenabzieher-Adapter (kompatibel Shimano/SRAM)</li>
+<li>1× Entfetter-Spray (100 ml) für die Nabe</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Dein VM Pro System trackt den Kassettenverschleiß ab ca. 7.000–8.000 km. Erkennbar an überspringenden Gängen unter Last oder sichtbar abgenutzten Zahnflanken.</p>
+<p><em>Einbau durch einen Fachbetrieb empfohlen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-cassette, vm-pro, wartung, antrieb, kassette",TRUE,Ausführung,11-28T (11-fach),VM-KASS-1128-11,420,shopify,5,deny,manual,59.90,,TRUE,TRUE,FALSE,Kassetten-Wartungspaket — veloMatch VM Pro,Kassetten-Wartungspaket für Rennrad. Empfohlen vom VM Pro Bike Health System nach Strava-km-Auswertung.,active
+vm-wartung-kassette,,,,,,,,11-30T (11-fach),VM-KASS-1130-11,420,shopify,5,deny,manual,64.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kassette,,,,,,,,11-28T (12-fach),VM-KASS-1128-12,420,shopify,5,deny,manual,79.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kassette,,,,,,,,11-34T (12-fach),VM-KASS-1134-12,420,shopify,5,deny,manual,84.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-bremsbelaege,Bremsbeläge-Wartungsset,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Kilometern, Höhenmetern und Witterungsbedingungen.</p>
+<p>Bremsbeläge unterliegen bei viel Bergfahrt und nassem Wetter erhöhtem Verschleiß. Das VM Pro System gewichtet deinen Höhenmeter-Anteil aus Strava automatisch mit ein.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Satz Bremsbeläge vorne + hinten (Disc oder Felge wählbar)</li>
+<li>1× Isopropanol-Reinigungstuch für Scheibe/Felge vor dem Einbau</li>
+<li>1× Einbauanleitung (PDF-Link im Bestätigungsmail)</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Disc-Beläge: unter 1,5 mm Restmaterial sofort tauschen. Felgenbeläge: bei Verschleißindikator (Kerbe) oder Rissbildung. Quietschen nach nasser Fahrt ist normal — anhaltend trockenes Quietschen bedeutet Handlungsbedarf.</p>
+<p><em>Einbau durch einen Fachbetrieb empfohlen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-brakepads, vm-pro, wartung, bremse, bremsbeläge",TRUE,Ausführung,Disc (Shimano),VM-BPADS-DISC-SH,180,shopify,8,deny,manual,39.90,,TRUE,TRUE,FALSE,Bremsbeläge-Wartungsset — veloMatch VM Pro,Bremsbeläge-Wartungsset für Rennrad. Empfohlen vom VM Pro Bike Health System nach Strava-Höhenmeter- und Witterungsauswertung.,active
+vm-wartung-bremsbelaege,,,,,,,,Disc (SRAM),VM-BPADS-DISC-SR,180,shopify,8,deny,manual,39.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-bremsbelaege,,,,,,,,Felge (Kork/Gummi),VM-BPADS-RIM,120,shopify,10,deny,manual,24.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-zuege,Schalt- & Bremszüge Set,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Kilometern mit erhöhter Nassfahrt-Gewichtung.</p>
+<p>Züge und Hüllen sind unsichtbare Verschleißteile — bis sie versagen. Nässefahrten beschleunigen Korrosion und Verhärtung der Außenhülle erheblich. Das VM Pro System berücksichtigt deinen Anteil an Herbst-/Winterfahrten automatisch.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>2× Schaltzug (Edelstahl, geölt)</li>
+<li>2× Bremszug (Edelstahl, geölt)</li>
+<li>Schalt-Außenhülle (2 m)</li>
+<li>Brems-Außenhülle (2 m)</li>
+<li>Endkappen-Sortiment + Hülsenstopfen</li>
+<li>Teflon-Spray (50 ml) für Hülleninnenraum</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Bei zögerlichem Schalten, hartem Schalthebeldruck oder sichtbarem Kabelfransen. Empfehlung: spätestens alle 2 Jahre unabhängig von den Kilometern.</p>
+<p><em>Einbau durch einen Fachbetrieb empfohlen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-cables, vm-pro, wartung, züge, schaltung",TRUE,Ausführung,Shimano kompatibel,VM-ZUEGE-SH,280,shopify,10,deny,manual,44.90,,TRUE,TRUE,FALSE,Schalt- & Bremszüge Set — veloMatch VM Pro,Schalt- und Bremszüge Set für Rennrad. Empfohlen vom VM Pro Bike Health System mit Nassfahrt-Gewichtung.,active
+vm-wartung-zuege,,,,,,,,SRAM kompatibel,VM-ZUEGE-SR,280,shopify,10,deny,manual,44.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kettensterne,Kettensterne-Wartungspaket,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Langstreckenkilometern.</p>
+<p>Kettensterne sind das langlebigste Antriebsteil — aber wenn sie verschlissen sind, macht sich das mit Kettenspringen und Kraftverlust bemerkbar. Abgenutzte Kettensterne erkennt man an spitzen, schiefstehenden Zähnen (sogenannte &ldquo;Haifischzähne&rdquo;).</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Kettenblatt großes Chainring (wählbar)</li>
+<li>1× Kettenblatt kleines Chainring (wählbar)</li>
+<li>1× Kurbelschrauben-Satz</li>
+<li>1× Entfetter 200 ml für Reinigung vor Einbau</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Ca. alle 15.000 km (abhängig von Fahrbelastung). Werden immer zusammen getauscht — niemals einzeln, da Kettenstern und Kette aufeinander eingelaufen sind.</p>
+<p><em>Einbau durch einen Fachbetrieb empfohlen. Kurbeltyp vor Bestellung prüfen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-chainrings, vm-pro, wartung, antrieb, kettensterne",TRUE,Ausführung,50/34T (Compact),VM-CRING-5034,520,shopify,3,deny,manual,119.90,,TRUE,TRUE,FALSE,Kettensterne-Wartungspaket — veloMatch VM Pro,Kettensterne-Wartungspaket für Rennrad. Empfohlen vom VM Pro Bike Health System nach Langstrecken-Auswertung.,active
+vm-wartung-kettensterne,,,,,,,,52/36T (Mittelkompakt),VM-CRING-5236,520,shopify,3,deny,manual,129.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kettensterne,,,,,,,,53/39T (Standard),VM-CRING-5339,520,shopify,3,deny,manual,139.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-reifen,Reifen-Wartungsset,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — basierend auf deinen Strava-Gesamtkilometern.</p>
+<p>Der Hinterreifen verschleißt etwa doppelt so schnell wie der Vorderreifen. Unser Set enthält daher zwei Hinterreifen und einen Vorderreifen — oder auf Wunsch ein klassisches 2er-Set.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>2× Rennrad-Reifen (Größe wählbar)</li>
+<li>2× Hochdruck-Schlauch (passend, mit Presta-Ventil)</li>
+<li>1× Reifenheber-Set (3 Stück)</li>
+<li>1× CO₂-Kartuschen-Set (2×16g) für unterwegs</li>
+</ul>
+<h3>Wann tauschen?</h3>
+<p>Bei deutlichem Profilabrieb (Mittelstreifen blank), Rissen in der Flanke oder nach Fremdkörpereinstich mit Reifendeformation. Im Schnitt alle 3.000–5.000 km je nach Untergrund und Reifenqualität.</p>
+<p><em>Reifenmaß (z.B. 700×25C) bitte vor Bestellung am Reifen ablesen.</em></p>",veloMatch,Wartungspaket,"vm-wartung-tires, vm-pro, wartung, bereifung, reifen",TRUE,Ausführung,700×25C,VM-TIRE-25C,560,shopify,5,deny,manual,89.90,,TRUE,TRUE,FALSE,Reifen-Wartungsset — veloMatch VM Pro,Reifen-Wartungsset für Rennrad inkl. Schläuche und CO₂-Kartuschen. Empfohlen vom VM Pro Bike Health System.,active
+vm-wartung-reifen,,,,,,,,700×28C,VM-TIRE-28C,580,shopify,5,deny,manual,89.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-reifen,,,,,,,,700×32C,VM-TIRE-32C,600,shopify,5,deny,manual,94.90,,TRUE,TRUE,FALSE,,,
+vm-wartung-kettenpflege,Kettenöl & Pflegeset,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — nach ca. 250–300 km (Nassfahrten verkürzen das Intervall automatisch).</p>
+<p>Eine gepflegte Kette ist die günstigste Wartung am Rennrad. Das VM Pro System erinnert dich auf Basis deiner gefahrenen Kilometer und dem Anteil an Winterfahrten.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Dry Lube 100 ml (für trockene Sommerbedingungen)</li>
+<li>1× Wet Lube 100 ml (für Nässe und Winter)</li>
+<li>1× Kettenreiniger 200 ml</li>
+<li>1× Kettenreinigungsbürste</li>
+<li>1× Mikrofaser-Tuch (2 Stück)</li>
+</ul>
+<h3>Anwendung</h3>
+<p>Kette mit Entfetter reinigen, trocken reiben, Öl tropfenweise auftragen (ein Tropfen pro Glied), 10 Minuten einziehen lassen, Überschuss abwischen. Nie auf nasse Kette ölen.</p>",veloMatch,Pflegeset,"vm-wartung-chain_lube, vm-pro, pflege, verbrauchsmittel, kettenöl",TRUE,Ausführung,Standard-Set,VM-LUBE-SET,380,shopify,20,deny,manual,24.90,,TRUE,TRUE,FALSE,Kettenöl & Pflegeset — veloMatch VM Pro,Kettenöl und Pflegeset für Rennrad. Empfohlen vom VM Pro Bike Health System nach Strava-km-Auswertung.,active
+vm-wartung-reinigungsset,Fahrrad-Reinigungsset,"<p><strong>Empfohlen von deinem VM Pro Bike Health System</strong> — nach jeweils 4 Fahrten, damit dein Rennrad immer in Topzustand bleibt.</p>
+<p>Regelmäßige Reinigung ist die günstigste Versicherung gegen vorzeitigen Verschleiß. Schmutz und Sand im Antrieb wirken wie Schleifpapier. Das VM Pro System trackt die Anzahl deiner Fahrten via Strava und erinnert dich zum richtigen Zeitpunkt.</p>
+<h3>Im Paket enthalten</h3>
+<ul>
+<li>1× Fahrradreiniger Konzentrat 500 ml (ergibt 5 L gebrauchsfertig)</li>
+<li>1× Entfetter 200 ml (für Antrieb und Kette)</li>
+<li>1× Detailing-Spray 200 ml (für Rahmen und Anbauteile)</li>
+<li>1× Reinigungsbürsten-Set (3 Stück: Kette, Kassette, Rahmen)</li>
+<li>1× Schwamm + 2× Mikrofasertücher</li>
+</ul>
+<h3>So gehst du vor</h3>
+<p>Antrieb mit Entfetter einsprühen (5 Min.), Rahmen mit Reiniger einschäumen, alles gründlich abspülen, trocknen, Antrieb neu ölen. Dauert ca. 20–30 Minuten.</p>",veloMatch,Pflegeset,"vm-wartung-cleaner, vm-pro, pflege, verbrauchsmittel, reinigung",TRUE,Ausführung,Standard-Set,VM-CLEAN-SET,980,shopify,15,deny,manual,29.90,,TRUE,TRUE,FALSE,Fahrrad-Reinigungsset — veloMatch VM Pro,Fahrrad-Reinigungsset für Rennrad. Empfohlen vom VM Pro Bike Health System nach Strava-Fahrt-Tracking.,active
