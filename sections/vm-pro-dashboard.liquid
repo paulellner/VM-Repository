@@ -799,6 +799,20 @@
   }
 }
 
+/* Powered by Strava badge */
+.vmpd__strava-powered {
+  padding:    14px 24px 18px;
+  border-top: 1px solid rgba(61,74,47,0.12);
+  display:    flex;
+  align-items: center;
+}
+.vmpd__strava-powered img {
+  height:  20px;
+  width:   auto;
+  display: block;
+  opacity: 0.9;
+}
+
 /* Pending / loading state */
 .vmpd__strava-pending {
   font-size:   14px;
@@ -1039,6 +1053,12 @@
               <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
             </div>
             <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
+            <div class="vmpd__strava-powered">
+              <img src="{{ 'api_logo_pwrdBy_strava_horiz_orange.png' | asset_url }}"
+                   alt="Powered by Strava"
+                   width="128"
+                   loading="lazy">
+            </div>
           </article>
 
           <!-- PANEL 4: Konto-Einstellungen -->
