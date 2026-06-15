@@ -75,11 +75,20 @@
   display:    flex;
   justify-content: space-between;
   align-items: center;
+  gap:        16px;
   font-size:  12px;
   opacity:    0.5;
   font-family: 'Courier New', monospace;
   letter-spacing: 0.05em;
 }
+
+.vm-footer__bottom-link {
+  color:           inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition:      opacity 220ms ease;
+}
+.vm-footer__bottom-link:hover { opacity: 0.8; }
 
 @media (max-width: 880px) {
   .vm-footer__inner  { grid-template-columns: 1fr; padding: 40px 20px; gap: 32px; }
@@ -123,6 +132,7 @@
   <div class="vm-footer__bottom">
     <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
     <span>Alle Preise inkl. MwSt.</span>
+    <a class="vm-footer__bottom-link" href="/pages/impressum">Impressum</a>
   </div>
 </footer>
 
