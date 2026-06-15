@@ -7,6 +7,7 @@
  *
  * App Proxy Endpunkte:
  *   POST /save                  → Rad in customer.note speichern
+ *   POST /cancel                → Abo-Kündigung beantragen
  *   GET  /bike                  → gespeichertes Rad lesen
  *   GET  /bike/health           → Verschleißstatus aller Komponenten
  *   POST /bike/health/reset     → Komponente als erneuert markieren
@@ -174,30 +175,30 @@ async function refreshAndStore(env, shop, customerId, note) {
 /* ── Verschleiß-Modell ────────────────────────────────────────────────────────
    Basis-Intervalle aus Herstellerempfehlungen und Industrie-Richtwerten.
    Multiplikatoren bilden Fahrbedingungen ab (Nässe via Saison-Proxy,
-   Watt aus Strava-Aktivitätsdaten, Höhenmeter für Bremsbeläge).
+   Watt aus Strava-Aktivitätsdaten, Höhenmeter für Bremsbel\u00e4ge).
    ─────────────────────────────────────────────────────────────────────────── */
 
 const WEAR_COMPONENTS = [
-  /* id             name                       maxKm  warnPct critPct mult       */
-  { id: 'chain',      name: 'Kette',              maxKm: 2500,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
-    tip: 'Kettenverschleißlehre nutzen — ab 0,75 mm Längung sofort tauschen.' },
-  { id: 'cassette',   name: 'Kassette',            maxKm: 8000,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
-    tip: 'Kassette spätestens beim dritten Kettenwechsel erneuern.' },
-  { id: 'brakepads',  name: 'Bremsbeläge',         maxKm: 2500,  warnPct: 0.65, critPct: 0.85, mult: 'elev',
-    tip: 'Disc-Beläge: Mindest-Materialstärke 1,5 mm. Quietschen = sofort prüfen.' },
-  { id: 'cables',     name: 'Schalt- & Bremszüge', maxKm: 10000, warnPct: 0.75, critPct: 0.90, mult: 'wet',
-    tip: 'Bei zögerlichem Schalten oder harten Schalthebeln Züge + Hüllen tauschen.' },
-  { id: 'chainrings', name: 'Kettensterne',         maxKm: 15000, warnPct: 0.75, critPct: 0.90, mult: 'overall',
-    tip: 'Abnutzung erkennbar an spitzen, schiefstehenden Zähnen ("Haifischzähne").' },
-  { id: 'tires',      name: 'Bereifung',            maxKm: 4000,  warnPct: 0.65, critPct: 0.85, mult: 'none',
-    tip: 'Hinterreifen verschleißt 2× schneller. Bei Rissen im Profil sofort tauschen.' },
+  /* id             name                            maxKm  warnPct critPct mult       */
+  { id: 'chain',      name: 'Kette',                maxKm: 2500,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
+    tip: 'Kettenverschlei\u00dflehre nutzen \u2014 ab 0,75 mm L\u00e4ngung sofort tauschen.' },
+  { id: 'cassette',   name: 'Kassette',             maxKm: 8000,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
+    tip: 'Kassette sp\u00e4testens beim dritten Kettenwechsel erneuern.' },
+  { id: 'brakepads',  name: 'Bremsbel\u00e4ge',        maxKm: 2500,  warnPct: 0.65, critPct: 0.85, mult: 'elev',
+    tip: 'Disc-Bel\u00e4ge: Mindest-Materialst\u00e4rke 1,5 mm. Quietschen = sofort pr\u00fcfen.' },
+  { id: 'cables',     name: 'Schalt- & Bremsz\u00fcge', maxKm: 10000, warnPct: 0.75, critPct: 0.90, mult: 'wet',
+    tip: 'Bei z\u00f6gerlichem Schalten oder harten Schalthebeln Z\u00fcge + H\u00fcllen tauschen.' },
+  { id: 'chainrings', name: 'Kettensterne',          maxKm: 15000, warnPct: 0.75, critPct: 0.90, mult: 'overall',
+    tip: 'Abnutzung erkennbar an spitzen, schiefstehenden Z\u00e4hnen ("Haifischz\u00e4hne").' },
+  { id: 'tires',      name: 'Bereifung',             maxKm: 4000,  warnPct: 0.65, critPct: 0.85, mult: 'none',
+    tip: 'Hinterreifen verschlei\u00dft 2\u00d7 schneller. Bei Rissen im Profil sofort tauschen.' },
   /* Verbrauchsmittel */
-  { id: 'chain_lube', name: 'Kettenpflege',         maxKm: 300,   warnPct: 0.60, critPct: 0.85, mult: 'lube',
+  { id: 'chain_lube', name: 'Kettenpflege',          maxKm: 300,   warnPct: 0.60, critPct: 0.85, mult: 'lube',
     isConsumable: true,
-    tip: 'Nasse Fahrten halbieren das Intervall. Kette bis zur nächsten Fahrt einziehen lassen.' },
-  { id: 'cleaner',    name: 'Reinigungsset',         maxRides: 4,  warnPct: 0.60, critPct: 0.90, mult: 'none',
+    tip: 'Nasse Fahrten halbieren das Intervall. Kette bis zur n\u00e4chsten Fahrt einziehen lassen.' },
+  { id: 'cleaner',    name: 'Reinigungsset',          maxRides: 4,  warnPct: 0.60, critPct: 0.90, mult: 'none',
     isConsumable: true, isRideBased: true,
-    tip: 'Regelmäßige Reinigung verlängert die Lebensdauer aller Antriebsteile erheblich.' },
+    tip: 'Regelm\u00e4\u00dfige Reinigung verl\u00e4ngert die Lebensdauer aller Antriebsteile erheblich.' },
 ];
 
 /* Fahrbedingungen aus den letzten 90 Tagen → Verschleißmultiplikatoren.
@@ -220,7 +221,7 @@ function computeConditions(activities) {
     : null;
   const powerFactor = avgWatts ? Math.min(0.30, Math.max(0, (avgWatts - 150) / 200)) : 0;
 
-  /* Höhenfaktor: Bremsbeläge verschleißen bei viel Bergfahrt schneller */
+  /* Höhenfaktor: Bremsbel\u00e4ge verschleißen bei viel Bergfahrt schneller */
   const totDist    = outdoor.reduce((s, a) => s + a.distance, 0);
   const totElev    = outdoor.reduce((s, a) => s + (a.total_elevation_gain || 0), 0);
   const elevPerKm  = totDist > 0 ? Math.round(totElev / (totDist / 1000)) : 0;
@@ -233,7 +234,7 @@ function computeConditions(activities) {
     overall:     r2(1.0 + wetFactor + powerFactor + elevFactor),  /* Antrieb gesamt  */
     wet:         r2(1.0 + wetFactor),                              /* Züge (Korrosion)*/
     lube:        r2(1.0 + wetPct * 1.5),                          /* Schmiermittel   */
-    elev:        r2(1.0 + elevFactor + wetFactor * 0.5),          /* Bremsbeläge     */
+    elev:        r2(1.0 + elevFactor + wetFactor * 0.5),          /* Bremsbel\u00e4ge     */
     wet_pct:     Math.round(wetPct * 100),
     avg_watts:   avgWatts,
     elev_per_km: elevPerKm,
@@ -299,8 +300,8 @@ function computeHealth(allTimeKm, allTimeRides, cond, bundles) {
       id:      r.id,
       name:    r.name,
       message: r.status === 'red'
-        ? `${r.name} kurz vor Verschleißgrenze — jetzt erneuern`
-        : `${r.name} bald fällig — bitte prüfen`,
+        ? `${r.name} kurz vor Verschlei\u00dfgrenze \u2014 jetzt erneuern`
+        : `${r.name} bald f\u00e4llig \u2014 bitte pr\u00fcfen`,
     }));
 
   return { components: results, overall_status: overall, alerts };
@@ -619,6 +620,63 @@ export default {
       }
 
       return Response.redirect(dashUrl + '?strava=connected', 302);
+    }
+
+    /* ── F: Abo kündigen (App Proxy POST /cancel) ────────────────────────── */
+    if (url.pathname === '/cancel') {
+      if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405 });
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ error: 'not_authenticated' }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+
+      /* Kundendaten holen (Note + Tags in einer Anfrage) */
+      const custResp = await fetch(
+        `https://${shop}/admin/api/${API_VERSION}/customers/${customerId}.json`,
+        { headers: { 'X-Shopify-Access-Token': env.SHOPIFY_ADMIN_TOKEN } }
+      );
+      if (!custResp.ok) return Response.json({ error: 'customer_not_found' }, { status: 500 });
+
+      const custData = await custResp.json();
+      const customer = custData.customer;
+
+      /* Note aktualisieren */
+      let note = {};
+      try { note = JSON.parse(customer.note || '{}'); } catch {}
+      const now = new Date().toISOString();
+      note.vm_pro = { ...(note.vm_pro || {}), cancel_requested_at: now };
+
+      /* Tag hinzufügen (vm-pro-cancel-requested) damit der Shop-Inhaber es sieht */
+      const existingTags = customer.tags || '';
+      const tagList = existingTags.split(',').map(t => t.trim()).filter(Boolean);
+      if (!tagList.includes('vm-pro-cancel-requested')) {
+        tagList.push('vm-pro-cancel-requested');
+      }
+
+      const saveResp = await fetch(
+        `https://${shop}/admin/api/${API_VERSION}/customers/${customerId}.json`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': env.SHOPIFY_ADMIN_TOKEN },
+          body: JSON.stringify({
+            customer: {
+              id:   Number(customerId),
+              note: JSON.stringify(note),
+              tags: tagList.join(','),
+            },
+          }),
+        }
+      );
+
+      if (!saveResp.ok) {
+        console.error('Cancel save failed:', saveResp.status, await saveResp.text());
+        return Response.json({ error: 'save_failed' }, { status: 500 });
+      }
+
+      return Response.json({ ok: true, cancel_requested_at: now });
     }
 
     /* ── E: Bike speichern (App Proxy POST /save) ─────────────────────────── */

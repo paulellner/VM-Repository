@@ -1103,6 +1103,131 @@
   .vmpd__header-right { gap: 8px; }
   .vmpd__status-chip  { font-size: 9px; padding: 4px 10px; }
 }
+
+/* ── ABO KÜNDIGEN ────────────────────────────────────────────────────────── */
+
+.vmpd__cancel-zone {
+  margin-top:  56px;
+  padding-top: 32px;
+  border-top:  1px solid rgba(61,74,47,0.15);
+  text-align:  center;
+}
+
+.vmpd__cancel-btn {
+  display:        inline-block;
+  background:     none;
+  border:         1px solid rgba(217,70,42,0.35);
+  color:          #D9462A;
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding:        10px 24px;
+  cursor:         pointer;
+  transition:     background var(--vm-dur) ease, border-color var(--vm-dur) ease;
+}
+.vmpd__cancel-btn:hover {
+  background:   rgba(217,70,42,0.06);
+  border-color: #D9462A;
+}
+
+.vmpd__cancel-done {
+  display:     inline-block;
+  max-width:   480px;
+  font-size:   14px;
+  line-height: 1.6;
+  color:       var(--vm-ink);
+  padding:     16px 20px;
+  background:  rgba(61,74,47,0.07);
+  border:      1px solid rgba(61,74,47,0.2);
+  text-align:  left;
+}
+.vmpd__cancel-done strong { color: var(--vm-olive); }
+
+/* Modal */
+.vmpd__modal { display: none; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+.vmpd__modal--open { display: flex; }
+
+.vmpd__modal-bg {
+  position:   absolute;
+  inset:      0;
+  background: rgba(20,22,15,0.72);
+  cursor:     pointer;
+}
+
+.vmpd__modal-box {
+  position:   relative;
+  background: var(--vm-paper);
+  border:     2px solid var(--vm-ink);
+  max-width:  480px;
+  width:      100%;
+  padding:    36px 32px;
+  z-index:    1;
+}
+
+.vmpd__modal-title {
+  font-size:      18px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-ink);
+  margin:         0 0 16px;
+}
+
+.vmpd__modal-body {
+  font-size:   14px;
+  line-height: 1.65;
+  color:       var(--vm-ink);
+  margin:      0 0 10px;
+}
+
+.vmpd__modal-list {
+  font-size:   14px;
+  line-height: 1.8;
+  color:       var(--vm-ink);
+  margin:      0 0 16px;
+  padding-left: 20px;
+}
+
+.vmpd__modal-note {
+  font-family:  var(--vm-mono);
+  font-size:    11px;
+  color:        var(--vm-sage);
+  line-height:  1.55;
+  margin:       0 0 28px;
+  padding:      12px 14px;
+  background:   rgba(61,74,47,0.05);
+  border-left:  3px solid rgba(61,74,47,0.2);
+}
+
+.vmpd__modal-actions { display: flex; flex-direction: column; gap: 12px; }
+
+.vmpd__modal-btn {
+  display:        block;
+  width:          100%;
+  padding:        14px 20px;
+  font-family:    var(--vm-sans);
+  font-size:      13px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor:         pointer;
+  border:         none;
+  transition:     transform var(--vm-dur) var(--vm-ease), box-shadow var(--vm-dur) var(--vm-ease);
+}
+
+.vmpd__modal-btn--cancel { background: #D9462A; color: #fff; }
+@media (prefers-reduced-motion: no-preference) {
+  .vmpd__modal-btn--cancel:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--vm-ink); }
+}
+
+.vmpd__modal-btn--keep { background: rgba(61,74,47,0.08); color: var(--vm-ink); border: 1px solid rgba(61,74,47,0.2); }
+.vmpd__modal-btn--keep:hover { background: rgba(61,74,47,0.14); }
+
+@media (max-width: 480px) {
+  .vmpd__modal-box { padding: 28px 20px; }
+}
 </style>
 
 {%- comment -%} ── AUTH GATE ─────────────────────────────────────────────── {%- endcomment -%}
@@ -1384,6 +1509,36 @@
       </div>
       <!-- /vmpd__grid -->
 
+      <!-- ── ABO KÜNDIGEN ──────────────────────────────────────────────── -->
+      <div class="vmpd__cancel-zone">
+        <button class="vmpd__cancel-btn" id="vmpd-cancel-trigger" type="button">
+          Mitgliedschaft kündigen
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CANCEL MODAL ────────────────────────────────────────────────────── -->
+  <div id="vmpd-cancel-modal" class="vmpd__modal" role="dialog" aria-modal="true" aria-labelledby="vmpd-cancel-title">
+    <div class="vmpd__modal-bg" id="vmpd-cancel-bg"></div>
+    <div class="vmpd__modal-box" role="document">
+      <h2 class="vmpd__modal-title" id="vmpd-cancel-title">VM Pro kündigen</h2>
+      <p class="vmpd__modal-body">Möchtest du deine VeloMatch Pro Mitgliedschaft wirklich kündigen? Du verlierst damit:</p>
+      <ul class="vmpd__modal-list">
+        <li>Gespeichertes Fahrrad &amp; Fahrdaten</li>
+        <li>Strava-Verbindung &amp; Bike-Gesundheitsanalyse</li>
+        <li>Alle weiteren VM Pro Vorteile</li>
+      </ul>
+      <p class="vmpd__modal-note">Die Kündigung wird nach Ablauf des aktuellen Abrechnungsmonats wirksam. Bis dahin hast du weiterhin vollen Zugang.</p>
+      <div class="vmpd__modal-actions">
+        <button class="vmpd__modal-btn vmpd__modal-btn--cancel" id="vmpd-cancel-confirm" type="button">
+          Ja, bitte kündigen
+        </button>
+        <button class="vmpd__modal-btn vmpd__modal-btn--keep" id="vmpd-cancel-abort" type="button">
+          Nein, Mitgliedschaft behalten
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1774,6 +1929,66 @@
         }
       })
       .catch(function() { renderConnect(null); });
+
+    /* ── Abo kündigen ──────────────────────────────────────────────────────── */
+    var cancelTrigger = document.getElementById('vmpd-cancel-trigger');
+    var cancelModal   = document.getElementById('vmpd-cancel-modal');
+    var cancelConfirm = document.getElementById('vmpd-cancel-confirm');
+    var cancelAbort   = document.getElementById('vmpd-cancel-abort');
+    var cancelBg      = document.getElementById('vmpd-cancel-bg');
+
+    function openCancelModal() {
+      cancelModal.classList.add('vmpd__modal--open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() { if (cancelConfirm) cancelConfirm.focus(); }, 50);
+    }
+
+    function closeCancelModal() {
+      cancelModal.classList.remove('vmpd__modal--open');
+      document.body.style.overflow = '';
+      if (cancelTrigger) cancelTrigger.focus();
+    }
+
+    if (cancelTrigger) cancelTrigger.addEventListener('click', openCancelModal);
+    if (cancelAbort)   cancelAbort.addEventListener('click', closeCancelModal);
+    if (cancelBg)      cancelBg.addEventListener('click', closeCancelModal);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && cancelModal.classList.contains('vmpd__modal--open')) closeCancelModal();
+    });
+
+    if (cancelConfirm) {
+      cancelConfirm.addEventListener('click', function() {
+        cancelConfirm.textContent = 'Wird bearbeitet…';
+        cancelConfirm.disabled    = true;
+        fetch('/apps/vm-pro/cancel', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body:    JSON.stringify({ reason: 'user_requested' }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok) {
+            closeCancelModal();
+            var zone = document.querySelector('.vmpd__cancel-zone');
+            if (zone) {
+              zone.innerHTML =
+                '<div class="vmpd__cancel-done"><strong>Kündigung beantragt.</strong> '
+                + 'Du hast bis zum Ende des aktuellen Abrechnungsmonats weiterhin vollen Zugang. '
+                + 'Wir melden uns per E-Mail zur Bestätigung.</div>';
+            }
+          } else {
+            cancelConfirm.textContent = 'Fehler — bitte erneut versuchen';
+            cancelConfirm.disabled    = false;
+          }
+        })
+        .catch(function() {
+          cancelConfirm.textContent = 'Fehler — bitte erneut versuchen';
+          cancelConfirm.disabled    = false;
+        });
+      });
+    }
+
   })();
   </script>
 
