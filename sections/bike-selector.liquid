@@ -631,6 +631,18 @@
   .vm-custom-form__grid { grid-template-columns: 1fr; }
 }
 
+/* ── DISCLAIMER ──────────────────────────────────────────────────────────── */
+.vm-disclaimer {
+  margin-top:     28px;
+  padding-top:    20px;
+  border-top:     1px solid rgba(61,74,47,0.15);
+  font-family:    var(--vm-mono, 'Courier New', monospace);
+  font-size:      10px;
+  line-height:    1.7;
+  color:          var(--vm-sage, #9CA982);
+  letter-spacing: 0.04em;
+}
+
 </style>
 
 <!-- ── SECTION MARKUP ──────────────────────────────────────────────────── -->
@@ -825,6 +837,11 @@
         {{ section.settings.cta_text | default: 'Passende Teile anzeigen' }}&ensp;<span class="vm-cta__arr" aria-hidden="true">→</span>
       </a>
     </div>
+
+    <p class="vm-disclaimer">
+      Marken- und Produktnamen dienen ausschließlich zu Kompatibilitäts- und Orientierungszwecken.
+      Es besteht keine Verbindung zu den jeweiligen Herstellern.
+    </p>
 
   </div>
 </section>
