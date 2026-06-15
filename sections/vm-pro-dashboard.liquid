@@ -292,14 +292,11 @@
 .vmpd__grid {
   display:               grid;
   grid-template-columns: 1fr 340px;
-  grid-template-areas:   "bike strava" "orders account";
   gap:                   32px;
   align-items:           stretch;
+  margin-bottom:         32px;
 }
-
-/* Wrapper divs inside the grid are purely structural — dissolve them so
-   the four panels become direct grid items and share row heights. */
-.vmpd__grid > div { display: contents; }
+.vmpd__grid:last-of-type { margin-bottom: 0; }
 
 /* ── PANEL (shared) ──────────────────────────────────────────────────────── */
 
@@ -1073,7 +1070,7 @@
   .vmpd__inner   { padding: 0 20px 64px; }
   .vmpd__header  { margin: 0 -20px; padding: 32px 20px 28px; }
   .vmpd__stats   { margin: 0 -20px 40px; }
-  .vmpd__grid    { grid-template-columns: 1fr; grid-template-areas: "bike" "orders" "strava" "account"; }
+  .vmpd__grid    { grid-template-columns: 1fr; }
   .vmpd__upgrade-features { grid-template-columns: 1fr; max-width: 340px; }
 }
 
@@ -1311,7 +1308,39 @@
         </div>
       </div>
 
-      <!-- ── BIKE GESUNDHEIT (full-width, vor dem Grid) ──────────────── -->
+      <!-- ── OBERES GRID: Gespeichertes Rad + Strava ──────────────────── -->
+      <div class="vmpd__grid">
+
+        <!-- PANEL 1: Gespeichertes Rad -->
+        <article class="vmpd__panel" aria-labelledby="vmpd-bike-heading">
+          <div class="vmpd__panel-hd">
+            <span class="vmpd__panel-num">01</span>
+            <h2 class="vmpd__panel-title" id="vmpd-bike-heading">Gespeichertes Rad</h2>
+            <a class="vmpd__panel-action" href="/" aria-label="Rad neu konfigurieren">
+              Ändern →
+            </a>
+          </div>
+          <div class="vmpd__panel-body" id="vmpd-bike-body"></div>
+        </article>
+
+        <!-- PANEL 3: Strava -->
+        <article class="vmpd__panel" aria-labelledby="vmpd-strava-heading">
+          <div class="vmpd__panel-hd">
+            <span class="vmpd__panel-num">03</span>
+            <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
+          </div>
+          <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
+          <div class="vmpd__strava-powered">
+            <img src="{{ 'api_logo_pwrdBy_strava_horiz_orange.png' | asset_url }}"
+                 alt="Powered by Strava"
+                 width="128"
+                 loading="lazy">
+          </div>
+        </article>
+
+      </div>
+
+      <!-- ── BIKE GESUNDHEIT (full-width) ──────────────────────────────── -->
       <div id="vmpd-health-alert" style="margin-bottom:0"></div>
 
       <article class="vmpd__panel" style="margin-bottom:32px" aria-labelledby="vmpd-health-heading">
@@ -1325,186 +1354,147 @@
         </div>
       </article>
 
-      <!-- ── MAIN GRID ───────────────────────────────────────────────── -->
+      <!-- ── UNTERES GRID: Kaufhistorie + Konto ────────────────────────── -->
       <div class="vmpd__grid">
 
-        <!-- ── LEFT COLUMN: Bike + Orders ──────────────────────────── -->
-        <div>
-
-          <!-- PANEL 1: Gespeichertes Rad -->
-          <article class="vmpd__panel" style="grid-area:bike" aria-labelledby="vmpd-bike-heading">
-            <div class="vmpd__panel-hd">
-              <span class="vmpd__panel-num">01</span>
-              <h2 class="vmpd__panel-title" id="vmpd-bike-heading">Gespeichertes Rad</h2>
-              <a class="vmpd__panel-action" href="/" aria-label="Rad neu konfigurieren">
-                Ändern →
+        <!-- PANEL 2: Kaufhistorie -->
+        <article class="vmpd__panel" aria-labelledby="vmpd-orders-heading">
+          <div class="vmpd__panel-hd">
+            <span class="vmpd__panel-num">02</span>
+            <h2 class="vmpd__panel-title" id="vmpd-orders-heading">Kaufhistorie</h2>
+            {%- if customer.orders_count > 5 -%}
+              <a class="vmpd__panel-action" href="{{ routes.account_url }}" aria-label="Alle Bestellungen ansehen">
+                Alle ansehen →
               </a>
-            </div>
-            <div class="vmpd__panel-body" id="vmpd-bike-body"></div>
-          </article>
+            {%- endif -%}
+          </div>
+          <div class="vmpd__panel-body">
 
-          <!-- PANEL 2: Kaufhistorie -->
-          <article class="vmpd__panel" style="grid-area:orders" aria-labelledby="vmpd-orders-heading">
-            <div class="vmpd__panel-hd">
-              <span class="vmpd__panel-num">02</span>
-              <h2 class="vmpd__panel-title" id="vmpd-orders-heading">Kaufhistorie</h2>
-              {%- if customer.orders_count > 5 -%}
-                <a class="vmpd__panel-action" href="{{ routes.account_url }}" aria-label="Alle Bestellungen ansehen">
-                  Alle ansehen →
-                </a>
-              {%- endif -%}
-            </div>
-            <div class="vmpd__panel-body">
-
-              {%- if customer.orders.size > 0 -%}
-                <table class="vmpd__orders-table" aria-label="Bestellhistorie">
-                  <thead>
+            {%- if customer.orders.size > 0 -%}
+              <table class="vmpd__orders-table" aria-label="Bestellhistorie">
+                <thead>
+                  <tr>
+                    <th scope="col">Bestellung</th>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Gesamt</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for order in customer.orders limit: 5 -%}
                     <tr>
-                      <th scope="col">Bestellung</th>
-                      <th scope="col">Datum</th>
-                      <th scope="col">Gesamt</th>
-                      <th scope="col">Status</th>
+                      <td>
+                        <a class="vmpd__order-num"
+                           href="{{ order.customer_url }}"
+                           aria-label="Bestellung {{ order.name }} öffnen">
+                          {{ order.name }}
+                        </a>
+                      </td>
+                      <td>
+                        <span class="vmpd__order-date">
+                          {{ order.created_at | date: "%d.%m.%Y" }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="vmpd__order-total">
+                          {{ order.total_price | money }}
+                        </span>
+                      </td>
+                      <td>
+                        {%- case order.financial_status -%}
+                          {%- when 'paid' -%}
+                            <span class="vmpd__order-badge vmpd__order-badge--paid">Bezahlt</span>
+                          {%- when 'pending' -%}
+                            <span class="vmpd__order-badge vmpd__order-badge--pending">Ausstehend</span>
+                          {%- when 'refunded', 'voided' -%}
+                            <span class="vmpd__order-badge vmpd__order-badge--refunded">Erstattet</span>
+                          {%- else -%}
+                            <span class="vmpd__order-badge vmpd__order-badge--pending">{{ order.financial_status }}</span>
+                        {%- endcase -%}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {%- for order in customer.orders limit: 5 -%}
-                      <tr>
-                        <td>
-                          <a class="vmpd__order-num"
-                             href="{{ order.customer_url }}"
-                             aria-label="Bestellung {{ order.name }} öffnen">
-                            {{ order.name }}
-                          </a>
-                        </td>
-                        <td>
-                          <span class="vmpd__order-date">
-                            {{ order.created_at | date: "%d.%m.%Y" }}
-                          </span>
-                        </td>
-                        <td>
-                          <span class="vmpd__order-total">
-                            {{ order.total_price | money }}
-                          </span>
-                        </td>
-                        <td>
-                          {%- case order.financial_status -%}
-                            {%- when 'paid' -%}
-                              <span class="vmpd__order-badge vmpd__order-badge--paid">Bezahlt</span>
-                            {%- when 'pending' -%}
-                              <span class="vmpd__order-badge vmpd__order-badge--pending">Ausstehend</span>
-                            {%- when 'refunded', 'voided' -%}
-                              <span class="vmpd__order-badge vmpd__order-badge--refunded">Erstattet</span>
-                            {%- else -%}
-                              <span class="vmpd__order-badge vmpd__order-badge--pending">{{ order.financial_status }}</span>
-                          {%- endcase -%}
-                        </td>
-                      </tr>
-                    {%- endfor -%}
-                  </tbody>
-                </table>
+                  {%- endfor -%}
+                </tbody>
+              </table>
 
-              {%- else -%}
-                <p class="vmpd__orders-empty">
-                  Noch keine Bestellungen. Deine ersten Käufe erscheinen hier.
-                </p>
-              {%- endif -%}
+            {%- else -%}
+              <p class="vmpd__orders-empty">
+                Noch keine Bestellungen. Deine ersten Käufe erscheinen hier.
+              </p>
+            {%- endif -%}
 
-            </div>
-          </article>
+          </div>
+        </article>
 
-        </div>
-        <!-- /left column -->
+        <!-- PANEL 4: Konto-Einstellungen -->
+        <article class="vmpd__panel" aria-labelledby="vmpd-account-heading">
+          <div class="vmpd__panel-hd">
+            <span class="vmpd__panel-num">04</span>
+            <h2 class="vmpd__panel-title" id="vmpd-account-heading">Konto</h2>
+          </div>
+          <div class="vmpd__panel-body" style="padding-top: 8px; padding-bottom: 8px;">
+            <ul class="vmpd__account-links" role="list">
 
-        <!-- ── RIGHT COLUMN: Strava + Konto ────────────────────────── -->
-        <div>
+              <li class="vmpd__account-link-item" role="listitem">
+                <a class="vmpd__account-link" href="{{ routes.account_url }}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Konto-Übersicht
+                  <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
+                </a>
+              </li>
 
-          <!-- PANEL 3: Strava -->
-          <article class="vmpd__panel" style="grid-area:strava" aria-labelledby="vmpd-strava-heading">
-            <div class="vmpd__panel-hd">
-              <span class="vmpd__panel-num">03</span>
-              <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
-            </div>
-            <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
-            <div class="vmpd__strava-powered">
-              <img src="{{ 'api_logo_pwrdBy_strava_horiz_orange.png' | asset_url }}"
-                   alt="Powered by Strava"
-                   width="128"
-                   loading="lazy">
-            </div>
-          </article>
+              <li class="vmpd__account-link-item" role="listitem">
+                <a class="vmpd__account-link"
+                   href="{{ routes.account_url }}/addresses">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  Adressbuch
+                  <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
+                </a>
+              </li>
 
-          <!-- PANEL 4: Konto-Einstellungen -->
-          <article class="vmpd__panel" style="grid-area:account" aria-labelledby="vmpd-account-heading">
-            <div class="vmpd__panel-hd">
-              <span class="vmpd__panel-num">04</span>
-              <h2 class="vmpd__panel-title" id="vmpd-account-heading">Konto</h2>
-            </div>
-            <div class="vmpd__panel-body" style="padding-top: 8px; padding-bottom: 8px;">
-              <ul class="vmpd__account-links" role="list">
+              <li class="vmpd__account-link-item" role="listitem">
+                <a class="vmpd__account-link"
+                   href="/pages/velomatch-pro"
+                   aria-label="VM Pro Abo-Informationen">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       aria-hidden="true">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  VM Pro Vorteile
+                  <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
+                </a>
+              </li>
 
-                <li class="vmpd__account-link-item" role="listitem">
-                  <a class="vmpd__account-link" href="{{ routes.account_url }}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         aria-hidden="true">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Konto-Übersicht
-                    <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
-                  </a>
-                </li>
+              <li class="vmpd__account-link-item" role="listitem">
+                <a class="vmpd__account-link"
+                   href="{{ routes.account_logout_url }}"
+                   aria-label="Vom Konto ausloggen">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  Ausloggen
+                  <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
+                </a>
+              </li>
 
-                <li class="vmpd__account-link-item" role="listitem">
-                  <a class="vmpd__account-link"
-                     href="{{ routes.account_url }}/addresses">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         aria-hidden="true">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                      <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                    Adressbuch
-                    <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
-                  </a>
-                </li>
-
-                <li class="vmpd__account-link-item" role="listitem">
-                  <a class="vmpd__account-link"
-                     href="/pages/velomatch-pro"
-                     aria-label="VM Pro Abo-Informationen">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         aria-hidden="true">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    VM Pro Vorteile
-                    <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
-                  </a>
-                </li>
-
-                <li class="vmpd__account-link-item" role="listitem">
-                  <a class="vmpd__account-link"
-                     href="{{ routes.account_logout_url }}"
-                     aria-label="Vom Konto ausloggen">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         aria-hidden="true">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                      <polyline points="16 17 21 12 16 7"/>
-                      <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Ausloggen
-                    <span class="vmpd__account-link-arr" aria-hidden="true">→</span>
-                  </a>
-                </li>
-
-              </ul>
-            </div>
-          </article>
-
-        </div>
-        <!-- /right column -->
+            </ul>
+          </div>
+        </article>
 
       </div>
       <!-- /vmpd__grid -->
