@@ -834,6 +834,234 @@
   cursor:          pointer;
 }
 
+/* ── BIKE HEALTH PANEL ───────────────────────────────────────────────────── */
+
+/* Alert-Leiste (erscheint nur bei gelb/rot) */
+.vmpd__alert-bar {
+  display:     flex;
+  align-items: flex-start;
+  gap:         14px;
+  background:  var(--vm-ink);
+  border:      2px solid var(--vm-signal);
+  padding:     14px 20px;
+  margin-bottom: 4px;
+}
+.vmpd__alert-bar--warn { border-color: #E4A83B; }
+.vmpd__alert-icon { flex-shrink: 0; margin-top: 1px; }
+.vmpd__alert-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.vmpd__alert-item {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height:    1.4;
+}
+.vmpd__alert-item--red    { color: var(--vm-signal); }
+.vmpd__alert-item--yellow { color: #E4A83B; }
+
+/* Gesamt-Statuszeile */
+.vmpd__health-statusbar {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       16px 24px;
+  background:    var(--vm-paper);
+  border-bottom: 1px solid rgba(61,74,47,0.2);
+  flex-wrap:     wrap;
+}
+.vmpd__health-lamp {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+}
+.vmpd__health-lamp--green  { background: #5CB85C; box-shadow: 0 0 7px rgba(92,184,92,0.55); }
+.vmpd__health-lamp--yellow { background: #E4A83B; box-shadow: 0 0 7px rgba(228,168,59,0.5); }
+.vmpd__health-lamp--red    { background: #D9462A; box-shadow: 0 0 7px rgba(217,70,42,0.55); }
+
+.vmpd__health-status-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-sage);
+}
+.vmpd__health-status-val {
+  font-size:   14px;
+  font-weight: 800;
+  color:       var(--vm-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.vmpd__health-odo {
+  margin-left:    auto;
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  color:          var(--vm-sage);
+  text-align:     right;
+}
+
+/* Abschnitte (Verschleißteile / Verbrauchsmittel) */
+.vmpd__comp-section { }
+.vmpd__comp-section-hd {
+  padding:        9px 24px 7px;
+  background:     rgba(61,74,47,0.05);
+  border-top:     1px solid rgba(61,74,47,0.15);
+  border-bottom:  1px solid rgba(61,74,47,0.15);
+  font-family:    var(--vm-mono);
+  font-size:      9px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+}
+
+/* Einzelne Komponentenzeile */
+.vmpd__comp-row {
+  display:       grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items:   start;
+  gap:           0 14px;
+  padding:       14px 24px;
+  border-bottom: 1px solid rgba(61,74,47,0.08);
+}
+.vmpd__comp-row:last-child { border-bottom: none; }
+
+.vmpd__comp-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  margin-top: 4px; flex-shrink: 0;
+}
+.vmpd__comp-dot--green  { background: #5CB85C; }
+.vmpd__comp-dot--yellow { background: #E4A83B; }
+.vmpd__comp-dot--red    { background: #D9462A; }
+
+.vmpd__comp-main { min-width: 0; }
+.vmpd__comp-header {
+  display:     flex;
+  align-items: baseline;
+  gap:         8px;
+  margin-bottom: 5px;
+}
+.vmpd__comp-name {
+  font-size:      13px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color:          var(--vm-ink);
+}
+.vmpd__comp-pct {
+  font-family: var(--vm-mono);
+  font-size:   11px;
+  font-weight: 700;
+  color:       var(--vm-sage);
+}
+.vmpd__comp-pct--yellow { color: #C88B20; }
+.vmpd__comp-pct--red    { color: #D9462A; }
+
+/* Fortschrittsbalken */
+.vmpd__comp-bar {
+  height:   3px;
+  background: rgba(61,74,47,0.12);
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.vmpd__comp-bar-fill { height: 100%; transition: width 500ms cubic-bezier(0.2,0.7,0.2,1); }
+.vmpd__comp-bar-fill--green  { background: #5CB85C; }
+.vmpd__comp-bar-fill--yellow { background: #E4A83B; }
+.vmpd__comp-bar-fill--red    { background: #D9462A; }
+
+.vmpd__comp-sub {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  flex-wrap:   wrap;
+  margin-top:  2px;
+}
+.vmpd__comp-remaining {
+  font-family: var(--vm-mono);
+  font-size:   10px;
+  color:       var(--vm-sage);
+}
+.vmpd__comp-tip {
+  font-size:  10px;
+  color:      var(--vm-sage);
+  font-style: italic;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+.vmpd__comp-reset-btn {
+  font-family:     var(--vm-mono);
+  font-size:       9px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.08em;
+  color:           var(--vm-sage);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor:          pointer;
+  border:          none;
+  background:      none;
+  padding:         0;
+  transition:      color var(--vm-dur) ease;
+}
+.vmpd__comp-reset-btn:hover { color: var(--vm-olive); }
+
+/* Kaufen-Button */
+.vmpd__comp-actions { flex-shrink: 0; }
+.vmpd__comp-buy {
+  display:         inline-block;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  text-decoration: none;
+  font-family:     var(--vm-sans);
+  font-size:       10px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  0.06em;
+  padding:         6px 12px;
+  white-space:     nowrap;
+  transition:      transform var(--vm-dur) var(--vm-ease), box-shadow var(--vm-dur) var(--vm-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vmpd__comp-buy:hover { transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--vm-ink); }
+}
+
+/* Bedingungs-Fußzeile */
+.vmpd__health-cond {
+  display:    flex;
+  gap:        24px;
+  flex-wrap:  wrap;
+  padding:    12px 24px;
+  background: rgba(61,74,47,0.04);
+  border-top: 1px solid rgba(61,74,47,0.15);
+}
+.vmpd__health-cond-item { display: flex; flex-direction: column; gap: 1px; }
+.vmpd__health-cond-lbl {
+  font-family:    var(--vm-mono);
+  font-size:      8px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-sage);
+}
+.vmpd__health-cond-val {
+  font-family: var(--vm-mono);
+  font-size:   12px;
+  color:       var(--vm-ink);
+}
+.vmpd__health-loading {
+  padding:    36px 24px;
+  text-align: center;
+  font-family: var(--vm-mono);
+  font-size:   12px;
+  color:       var(--vm-sage);
+}
+.vmpd__health-no-strava {
+  padding:   28px 24px;
+  font-size: 14px;
+  color:     var(--vm-sage);
+  line-height: 1.6;
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 
 @media (max-width: 960px) {
@@ -952,6 +1180,20 @@
           <span class="vmpd__stat-sub">Gesamt</span>
         </div>
       </div>
+
+      <!-- ── BIKE GESUNDHEIT (full-width, vor dem Grid) ──────────────── -->
+      <div id="vmpd-health-alert" style="margin-bottom:0"></div>
+
+      <article class="vmpd__panel" style="margin-bottom:32px" aria-labelledby="vmpd-health-heading">
+        <div class="vmpd__panel-hd">
+          <span class="vmpd__panel-num">00</span>
+          <h2 class="vmpd__panel-title" id="vmpd-health-heading">Bike Gesundheit</h2>
+          <span id="vmpd-health-chip" style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span>
+        </div>
+        <div id="vmpd-health-body">
+          <div class="vmpd__health-loading">Lade Statusdaten…</div>
+        </div>
+      </article>
 
       <!-- ── MAIN GRID ───────────────────────────────────────────────── -->
       <div class="vmpd__grid">
@@ -1142,6 +1384,201 @@
 
   <script>
   (function () {
+
+    /* ── BIKE HEALTH PANEL ──────────────────────────────────────────────────
+       Lädt Verschleißstatus via GET /apps/vm-pro/bike/health.
+       Zeigt Ampelsystem (grün/gelb/rot) für alle Komponenten + Consumables.
+       Reset-Funktion markiert Komponente als "gerade erneuert".
+    ─────────────────────────────────────────────────────────────────────── */
+
+    var healthBody  = document.getElementById('vmpd-health-body');
+    var healthAlert = document.getElementById('vmpd-health-alert');
+    var healthChip  = document.getElementById('vmpd-health-chip');
+
+    var STATUS_MSG = {
+      green:  'Alles in Ordnung',
+      yellow: 'Prüfung empfohlen',
+      red:    'Handlungsbedarf',
+    };
+
+    function escH(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function fmtNum(n) {
+      return n != null ? Number(n).toLocaleString('de-DE') : '—';
+    }
+
+    function lamp(status, size) {
+      size = size || 10;
+      return '<span class="vmpd__health-lamp vmpd__health-lamp--' + status + '"'
+           + ' style="width:' + size + 'px;height:' + size + 'px" aria-hidden="true"></span>';
+    }
+
+    function bar(pct, status) {
+      return '<div class="vmpd__comp-bar" role="progressbar" aria-valuenow="' + pct
+           + '" aria-valuemin="0" aria-valuemax="100">'
+           + '<div class="vmpd__comp-bar-fill vmpd__comp-bar-fill--' + status + '"'
+           + ' style="width:' + Math.min(100, pct) + '%"></div></div>';
+    }
+
+    function compRow(comp) {
+      /* Remaining text */
+      var remText = comp.is_ride_based
+        ? (comp.rides_remaining != null ? 'Noch ' + comp.rides_remaining + ' Fahrt' + (comp.rides_remaining === 1 ? '' : 'en') : '')
+        : (comp.km_remaining != null ? 'Noch ca. ' + fmtNum(comp.km_remaining) + ' km' : '');
+      var sinceText = (!comp.is_ride_based && comp.km_since_reset != null)
+        ? ' · ' + fmtNum(comp.km_since_reset) + ' km seit Erneuerung'
+        : '';
+      var resetDate = comp.reset_at ? ' (zuletzt ' + comp.reset_at + ')' : '';
+
+      /* Buy button — nur bei Warnung oder Kritisch */
+      var buyBtn = comp.status !== 'green'
+        ? '<a class="vmpd__comp-buy" href="/collections/all?filter.p.tag=vm-wartung-' + escH(comp.id)
+          + '" aria-label="' + escH(comp.name) + ' kaufen">Kaufen →</a>'
+        : '';
+
+      /* Percentage color class */
+      var pctClass = comp.status !== 'green' ? ' vmpd__comp-pct--' + comp.status : '';
+
+      return '<div class="vmpd__comp-row">'
+           +   '<span class="vmpd__comp-dot vmpd__comp-dot--' + comp.status + '" aria-hidden="true"></span>'
+           +   '<div class="vmpd__comp-main">'
+           +     '<div class="vmpd__comp-header">'
+           +       '<span class="vmpd__comp-name">' + escH(comp.name) + '</span>'
+           +       '<span class="vmpd__comp-pct' + pctClass + '">' + comp.wear_pct + '%</span>'
+           +     '</div>'
+           +     bar(comp.wear_pct, comp.status)
+           +     '<div class="vmpd__comp-sub">'
+           +       (remText ? '<span class="vmpd__comp-remaining">' + remText + sinceText + resetDate + '</span>' : '')
+           +       '<button class="vmpd__comp-reset-btn" data-comp-id="' + escH(comp.id) + '" type="button">'
+           +         'Als erneuert markieren</button>'
+           +     '</div>'
+           +     (comp.tip && comp.status !== 'green'
+                   ? '<p class="vmpd__comp-tip">' + escH(comp.tip) + '</p>'
+                   : '')
+           +   '</div>'
+           +   '<div class="vmpd__comp-actions">' + buyBtn + '</div>'
+           + '</div>';
+    }
+
+    function renderHealth(data) {
+      /* Alert-Leiste */
+      if (healthAlert) {
+        if (data.alerts && data.alerts.length) {
+          var alertColor  = data.overall_status === 'red' ? 'var(--vm-signal)' : '#E4A83B';
+          var alertWarn   = data.overall_status !== 'red' ? ' vmpd__alert-bar--warn' : '';
+          var alertItems  = data.alerts.map(function(a) {
+            return '<li class="vmpd__alert-item vmpd__alert-item--' + a.level + '">' + escH(a.message) + '</li>';
+          }).join('');
+          healthAlert.innerHTML =
+            '<div class="vmpd__alert-bar' + alertWarn + '">'
+            + '<svg class="vmpd__alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"'
+            +   ' stroke="' + alertColor + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'
+            +   ' aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'
+            +   '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+            + '<ul class="vmpd__alert-list">' + alertItems + '</ul>'
+            + '</div>';
+          healthAlert.style.marginBottom = '0';
+          healthAlert.style.display = 'block';
+        } else {
+          healthAlert.style.display = 'none';
+        }
+      }
+
+      /* Panel-Header-Chip mit Gesamt-Status */
+      if (healthChip) {
+        var chipColor = data.overall_status === 'red'   ? '#D9462A'
+                      : data.overall_status === 'yellow' ? '#C88B20'
+                      : '#5CB85C';
+        healthChip.innerHTML = lamp(data.overall_status, 8) + '<span>' + STATUS_MSG[data.overall_status] + '</span>';
+        healthChip.style.color   = chipColor;
+        healthChip.style.display = 'inline-flex';
+      }
+
+      /* Gesamt-Statuszeile */
+      var condInfo = '';
+      var cond = data.conditions || {};
+      if (cond.avg_watts) condInfo += ' · Ø ' + cond.avg_watts + ' W';
+      if (cond.wet_pct != null) condInfo += ' · ' + cond.wet_pct + '% nass';
+      if (cond.overall) condInfo += ' · Faktor ' + cond.overall + '×';
+
+      var html = '<div class="vmpd__health-statusbar">'
+               +   lamp(data.overall_status, 12)
+               +   '<span class="vmpd__health-status-label">Gesamt </span>'
+               +   '<span class="vmpd__health-status-val">' + STATUS_MSG[data.overall_status] + '</span>'
+               +   '<span class="vmpd__health-odo">' + fmtNum(data.odometer_km) + ' km gesamt' + condInfo + '</span>'
+               + '</div>';
+
+      /* Verschleißteile */
+      var wear = (data.components || []).filter(function(c) { return !c.is_consumable; });
+      wear.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
+      html += '<div class="vmpd__comp-section">'
+            + '<div class="vmpd__comp-section-hd">Verschleißteile</div>';
+      wear.forEach(function(c) { html += compRow(c); });
+      html += '</div>';
+
+      /* Verbrauchsmittel */
+      var cons = (data.components || []).filter(function(c) { return c.is_consumable; });
+      cons.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
+      html += '<div class="vmpd__comp-section">'
+            + '<div class="vmpd__comp-section-hd">Verbrauchsmittel</div>';
+      cons.forEach(function(c) { html += compRow(c); });
+      html += '</div>';
+
+      /* Bedingungs-Fußzeile */
+      var condHtml = '';
+      if (cond.wet_pct != null) condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Nasse Fahrten</span><span class="vmpd__health-cond-val">' + cond.wet_pct + '%</span></div>';
+      if (cond.avg_watts)       condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Ø Leistung</span><span class="vmpd__health-cond-val">' + cond.avg_watts + ' W</span></div>';
+      if (cond.elev_per_km != null) condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Ø Hm/km</span><span class="vmpd__health-cond-val">' + cond.elev_per_km + ' m</span></div>';
+      if (cond.overall)         condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Verschleißfaktor</span><span class="vmpd__health-cond-val">' + cond.overall + '×</span></div>';
+      if (condHtml) html += '<div class="vmpd__health-cond">' + condHtml + '</div>';
+
+      healthBody.innerHTML = html;
+
+      /* Reset-Buttons verknüpfen */
+      healthBody.querySelectorAll('.vmpd__comp-reset-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { resetComp(btn.getAttribute('data-comp-id'), btn); });
+      });
+    }
+
+    function renderHealthError(error) {
+      if (healthChip) healthChip.style.display = 'none';
+      var msg = error === 'strava_not_connected'
+        ? 'Verbinde deinen Strava-Account, um den Bike-Verschleißstatus zu sehen.'
+        : 'Statusdaten konnten nicht geladen werden. Bitte Seite neu laden.';
+      healthBody.innerHTML = '<div class="vmpd__health-no-strava">' + msg + '</div>';
+    }
+
+    function resetComp(compId, btn) {
+      var prev = btn.textContent;
+      btn.textContent   = 'Wird gespeichert…';
+      btn.style.pointerEvents = 'none';
+      fetch('/apps/vm-pro/bike/health/reset', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify({ component_id: compId }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok) { loadHealth(); }
+        else { btn.textContent = 'Fehler — neu laden'; btn.style.pointerEvents = ''; }
+      })
+      .catch(function() { btn.textContent = prev; btn.style.pointerEvents = ''; });
+    }
+
+    function loadHealth() {
+      healthBody.innerHTML = '<div class="vmpd__health-loading">Lade Statusdaten…</div>';
+      fetch('/apps/vm-pro/bike/health', { headers: { 'Accept': 'application/json' } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.ok) renderHealth(d); else renderHealthError(d.error); })
+        .catch(function()  { renderHealthError('connection_error'); });
+    }
+
+    loadHealth();
+
+    /* ─────────────────────────────────────────────────────────────────────── */
+
     var SEARCH_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
     var BIKE_SVG   = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
 

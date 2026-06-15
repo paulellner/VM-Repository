@@ -6,11 +6,15 @@
  *   GET /callback
  *
  * App Proxy Endpunkte:
- *   POST /save              → Rad in customer.note speichern
- *   GET  /strava/connect    → Strava OAuth starten (nur Erst-Verbindung)
- *   GET  /strava/callback   → Token tauschen, Daten speichern
- *   GET  /strava/profile    → gespeicherte Daten lesen (Token bei Ablauf auto-refresh)
- *   GET  /strava/refresh    → Daten neu laden via refresh_token (ohne Re-Login)
+ *   POST /save                  → Rad in customer.note speichern
+ *   GET  /bike                  → gespeichertes Rad lesen
+ *   GET  /bike/health           → Verschleißstatus aller Komponenten
+ *   POST /bike/health/reset     → Komponente als erneuert markieren
+ *   GET  /strava/connect        → Strava OAuth starten
+ *   GET  /strava/callback       → Token tauschen, Daten speichern
+ *   GET  /strava/profile        → gespeicherte Daten lesen (auto-refresh)
+ *   GET  /strava/refresh        → Daten neu laden via refresh_token
+ *   GET  /strava/disconnect     → Strava trennen + Athleten-Slot freigeben
  *
  * Secrets:
  *   SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET / SHOPIFY_ADMIN_TOKEN
@@ -167,6 +171,143 @@ async function refreshAndStore(env, shop, customerId, note) {
   return note.strava;
 }
 
+/* ── Verschleiß-Modell ────────────────────────────────────────────────────────
+   Basis-Intervalle aus Herstellerempfehlungen und Industrie-Richtwerten.
+   Multiplikatoren bilden Fahrbedingungen ab (Nässe via Saison-Proxy,
+   Watt aus Strava-Aktivitätsdaten, Höhenmeter für Bremsbeläge).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+const WEAR_COMPONENTS = [
+  /* id             name                       maxKm  warnPct critPct mult       */
+  { id: 'chain',      name: 'Kette',              maxKm: 2500,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
+    tip: 'Kettenverschleißlehre nutzen — ab 0,75 mm Längung sofort tauschen.' },
+  { id: 'cassette',   name: 'Kassette',            maxKm: 8000,  warnPct: 0.70, critPct: 0.90, mult: 'overall',
+    tip: 'Kassette spätestens beim dritten Kettenwechsel erneuern.' },
+  { id: 'brakepads',  name: 'Bremsbeläge',         maxKm: 2500,  warnPct: 0.65, critPct: 0.85, mult: 'elev',
+    tip: 'Disc-Beläge: Mindest-Materialstärke 1,5 mm. Quietschen = sofort prüfen.' },
+  { id: 'cables',     name: 'Schalt- & Bremszüge', maxKm: 10000, warnPct: 0.75, critPct: 0.90, mult: 'wet',
+    tip: 'Bei zögerlichem Schalten oder harten Schalthebeln Züge + Hüllen tauschen.' },
+  { id: 'chainrings', name: 'Kettensterne',         maxKm: 15000, warnPct: 0.75, critPct: 0.90, mult: 'overall',
+    tip: 'Abnutzung erkennbar an spitzen, schiefstehenden Zähnen ("Haifischzähne").' },
+  { id: 'tires',      name: 'Bereifung',            maxKm: 4000,  warnPct: 0.65, critPct: 0.85, mult: 'none',
+    tip: 'Hinterreifen verschleißt 2× schneller. Bei Rissen im Profil sofort tauschen.' },
+  /* Verbrauchsmittel */
+  { id: 'chain_lube', name: 'Kettenpflege',         maxKm: 300,   warnPct: 0.60, critPct: 0.85, mult: 'lube',
+    isConsumable: true,
+    tip: 'Nasse Fahrten halbieren das Intervall. Kette bis zur nächsten Fahrt einziehen lassen.' },
+  { id: 'cleaner',    name: 'Reinigungsset',         maxRides: 4,  warnPct: 0.60, critPct: 0.90, mult: 'none',
+    isConsumable: true, isRideBased: true,
+    tip: 'Regelmäßige Reinigung verlängert die Lebensdauer aller Antriebsteile erheblich.' },
+];
+
+/* Fahrbedingungen aus den letzten 90 Tagen → Verschleißmultiplikatoren.
+   Quellen: Saison (Nässeproxy), average_watts, total_elevation_gain.
+   Für Räder ohne Powermeter wird powerFactor = 0 gesetzt (konservativ). */
+function computeConditions(activities) {
+  const outdoor = activities.filter(a =>
+    ['Ride', 'MountainBikeRide', 'GravelRide'].includes(a.type) && !a.trainer
+  );
+  if (!outdoor.length) return { overall: 1.0, wet: 1.0, lube: 1.0, elev: 1.0, wet_pct: 0, avg_watts: null, elev_per_km: 0 };
+
+  /* Nässeproxy: Fahrten in Monaten Okt–März (Mitteleuropa) */
+  const wetRides = outdoor.filter(a => { const m = new Date(a.start_date).getMonth(); return m >= 9 || m <= 2; });
+  const wetPct   = wetRides.length / outdoor.length;
+
+  /* Leistungsfaktor: durchschnittliche Watt vs. Basis 150 W */
+  const withPower  = outdoor.filter(a => a.average_watts > 0);
+  const avgWatts   = withPower.length
+    ? Math.round(withPower.reduce((s, a) => s + a.average_watts, 0) / withPower.length)
+    : null;
+  const powerFactor = avgWatts ? Math.min(0.30, Math.max(0, (avgWatts - 150) / 200)) : 0;
+
+  /* Höhenfaktor: Bremsbeläge verschleißen bei viel Bergfahrt schneller */
+  const totDist    = outdoor.reduce((s, a) => s + a.distance, 0);
+  const totElev    = outdoor.reduce((s, a) => s + (a.total_elevation_gain || 0), 0);
+  const elevPerKm  = totDist > 0 ? Math.round(totElev / (totDist / 1000)) : 0;
+  const elevFactor = Math.min(0.25, elevPerKm / 40);
+
+  const wetFactor = wetPct * 0.50;
+  const r2        = v => Math.round(v * 100) / 100;
+
+  return {
+    overall:     r2(1.0 + wetFactor + powerFactor + elevFactor),  /* Antrieb gesamt  */
+    wet:         r2(1.0 + wetFactor),                              /* Züge (Korrosion)*/
+    lube:        r2(1.0 + wetPct * 1.5),                          /* Schmiermittel   */
+    elev:        r2(1.0 + elevFactor + wetFactor * 0.5),          /* Bremsbeläge     */
+    wet_pct:     Math.round(wetPct * 100),
+    avg_watts:   avgWatts,
+    elev_per_km: elevPerKm,
+  };
+}
+
+/* Verschleiß aller Komponenten berechnen und in Status (green/yellow/red) umwandeln. */
+function computeHealth(allTimeKm, allTimeRides, cond, bundles) {
+  const b      = bundles   || {};
+  const comps  = b.components || {};
+  const startKm    = b.odometer_start_km ?? allTimeKm;
+  const startRides = b.rides_start       ?? allTimeRides;
+
+  const results = WEAR_COMPONENTS.map(def => {
+    const state      = comps[def.id] || {};
+    const resetKm    = state.reset_km    ?? startKm;
+    const resetRides = state.reset_rides ?? startRides;
+
+    let wearPct, kmSince, effectiveKm, kmLeft, ridesLeft;
+
+    if (def.isRideBased) {
+      const rSince = Math.max(0, allTimeRides - resetRides);
+      wearPct   = Math.min(1, rSince / def.maxRides);
+      ridesLeft = Math.max(0, def.maxRides - rSince);
+    } else {
+      const raw   = Math.max(0, allTimeKm - resetKm);
+      const mult  = cond[def.mult] ?? 1.0;
+      effectiveKm = Math.round(raw * mult);
+      wearPct     = Math.min(1, effectiveKm / def.maxKm);
+      kmSince     = raw;
+      /* Rückrechnung in echte km, die der Fahrer noch hat */
+      kmLeft      = mult > 0 ? Math.max(0, Math.round((def.maxKm - effectiveKm) / mult)) : 0;
+    }
+
+    const status = wearPct >= def.critPct ? 'red'
+                 : wearPct >= def.warnPct ? 'yellow'
+                 : 'green';
+
+    return {
+      id: def.id, name: def.name, status,
+      wear_pct:        Math.round(wearPct * 100),
+      km_since_reset:  kmSince    ?? null,
+      effective_km:    effectiveKm ?? null,
+      km_remaining:    kmLeft      ?? null,
+      rides_remaining: ridesLeft   ?? null,
+      reset_at:        state.reset_at ?? null,
+      tip:             def.tip,
+      is_consumable:   !!def.isConsumable,
+      is_ride_based:   !!def.isRideBased,
+      max_km:          def.maxKm    ?? null,
+      max_rides:       def.maxRides ?? null,
+    };
+  });
+
+  const statuses = results.map(r => r.status);
+  const overall  = statuses.includes('red') ? 'red' : statuses.includes('yellow') ? 'yellow' : 'green';
+
+  const alerts = results
+    .filter(r => r.status !== 'green')
+    .sort((a, b) => b.wear_pct - a.wear_pct)
+    .map(r => ({
+      level:   r.status,
+      id:      r.id,
+      name:    r.name,
+      message: r.status === 'red'
+        ? `${r.name} kurz vor Verschleißgrenze — jetzt erneuern`
+        : `${r.name} bald fällig — bitte prüfen`,
+    }));
+
+  return { components: results, overall_status: overall, alerts };
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 function publicStrava(s) {
   return {
     connected:        true,
@@ -216,6 +357,104 @@ export default {
         <p>Scopes: ${td.scope}</p></body></html>`,
         { headers: { 'Content-Type': 'text/html' } }
       );
+    }
+
+    /* ── GET /bike/health — Verschleißstatus aller Komponenten ──────────────── */
+    if (url.pathname === '/bike/health') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ ok: false, error: 'not_authenticated' }, { status: 401 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+
+      /* Strava muss verbunden sein — liefert den Kilometerzähler */
+      if (!note.strava?.profile) {
+        return Response.json({ ok: false, error: 'strava_not_connected' });
+      }
+
+      /* Token erneuern falls abgelaufen */
+      let s = note.strava;
+      if (s.token_expires_at && Date.now() / 1000 > s.token_expires_at - 120) {
+        const refreshed = await refreshAndStore(env, shop, customerId, note);
+        if (refreshed) { s = refreshed; note.strava = refreshed; }
+      }
+
+      const allTimeKm    = s.profile?.all_time_distance_km ?? 0;
+      const allTimeRides = s.profile?.all_time_rides        ?? 0;
+
+      /* Aktivitäten der letzten 90 Tage für Verschleißmultiplikator */
+      const since90 = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
+      let acts = [];
+      try {
+        const r = await fetch(
+          `${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
+          { headers: { Authorization: `Bearer ${s.access_token}` } }
+        );
+        if (r.ok) { acts = await r.json(); if (!Array.isArray(acts)) acts = []; }
+      } catch (e) { console.error('Activities fetch failed:', e); }
+
+      /* vm_bundles beim ersten Aufruf initialisieren */
+      if (!note.vm_bundles) {
+        note.vm_bundles = {
+          initialized_at:    new Date().toISOString(),
+          odometer_start_km: allTimeKm,
+          rides_start:       allTimeRides,
+          components:        {},
+        };
+        putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note)
+          .catch(e => console.error('vm_bundles init save failed:', e));
+      }
+
+      const cond   = computeConditions(acts);
+      const health = computeHealth(allTimeKm, allTimeRides, cond, note.vm_bundles);
+
+      return Response.json({
+        ok:             true,
+        odometer_km:    allTimeKm,
+        odometer_rides: allTimeRides,
+        conditions:     cond,
+        ...health,
+      });
+    }
+
+    /* ── POST /bike/health/reset — Komponente als erneuert markieren ─────────── */
+    if (url.pathname === '/bike/health/reset') {
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+      if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ error: 'not_authenticated' }, { status: 401 });
+
+      let body;
+      try { body = await request.json(); } catch {
+        return Response.json({ error: 'bad_request' }, { status: 400 });
+      }
+      const { component_id } = body || {};
+      if (!component_id) return Response.json({ error: 'missing component_id' }, { status: 400 });
+
+      const def = WEAR_COMPONENTS.find(c => c.id === component_id);
+      if (!def) return Response.json({ error: 'unknown_component' }, { status: 400 });
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+
+      const allTimeKm    = note.strava?.profile?.all_time_distance_km ?? 0;
+      const allTimeRides = note.strava?.profile?.all_time_rides        ?? 0;
+
+      if (!note.vm_bundles)            note.vm_bundles            = {};
+      if (!note.vm_bundles.components) note.vm_bundles.components = {};
+
+      const resetAt = new Date().toISOString().split('T')[0];
+      note.vm_bundles.components[component_id] = def.isRideBased
+        ? { reset_rides: allTimeRides, reset_at: resetAt }
+        : { reset_km: allTimeKm,       reset_at: resetAt };
+
+      await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
+      return Response.json({ ok: true, component_id, reset_at: resetAt });
     }
 
     /* ── Bike lesen (App Proxy GET /bike) ─────────────────────────────────── */
