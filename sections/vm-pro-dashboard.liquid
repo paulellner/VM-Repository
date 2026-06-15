@@ -839,6 +839,23 @@
   .vmpd__bike-spec:last-child { border-bottom: none !important; }
   .vmpd__wordmark { font-size: 26px; }
 }
+
+@media (max-width: 480px) {
+  .vmpd__inner  { padding: 0 16px 48px; }
+  .vmpd__header { margin: 0 -16px; padding: 20px 16px 18px; }
+  .vmpd__stats  { margin: 0 -16px 28px; }
+  .vmpd__stat   { padding: 14px 16px; }
+  .vmpd__stat-value { font-size: 18px; }
+  .vmpd__panel-hd   { padding: 14px 16px; }
+  .vmpd__panel-body { padding: 20px 16px; }
+  .vmpd__bike-brand { font-size: 22px; }
+  .vmpd__bike-model { font-size: 14px; margin-bottom: 16px; }
+  .vmpd__bike-spec-value { font-size: 13px; }
+  .vmpd__parts-btn  { font-size: 12px; padding: 11px 16px; width: 100%; justify-content: center; }
+  .vmpd__strava-stats { grid-template-columns: 1fr 1fr; }
+  .vmpd__header-right { gap: 8px; }
+  .vmpd__status-chip  { font-size: 9px; padding: 4px 10px; }
+}
 </style>
 
 {%- comment -%} ── AUTH GATE ─────────────────────────────────────────────── {%- endcomment -%}
@@ -1112,6 +1129,13 @@
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    function deHyphen(s) {
+      if (!s) return '';
+      return s.split('-').map(function(w) {
+        return w ? w.charAt(0).toUpperCase() + w.slice(1) : '';
+      }).join(' ');
+    }
+
     /* ── Parse customer.note ───────────────────────────────────────────────── */
     var noteData = null;
     try {
@@ -1137,14 +1161,18 @@
     var bikeBody = document.getElementById('vmpd-bike-body');
     if (bikeBody) {
       var renderBike = function (bike) {
+        var displayBrand   = bike.brandName   || bike.brand   || '';
+        var displayModel   = bike.modelName   || deHyphen(bike.model)   || '';
+        var displayVariant = bike.variantName || deHyphen(bike.variant) || '';
+
         var specs = '';
-        if (bike.variant)      specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(bike.variant) + '</span></div>';
+        if (displayVariant)    specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(displayVariant) + '</span></div>';
         if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
         if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
 
         bikeBody.innerHTML =
-          (bike.brand ? '<p class="vmpd__bike-brand">' + esc(bike.brand) + '</p>' : '') +
-          (bike.model ? '<p class="vmpd__bike-model">' + esc(bike.model) + '</p>' : '') +
+          (displayBrand ? '<p class="vmpd__bike-brand">' + esc(displayBrand) + '</p>' : '') +
+          (displayModel ? '<p class="vmpd__bike-model">' + esc(displayModel) + '</p>' : '') +
           (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
           '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
           SEARCH_SVG + ' Passende Teile finden →</a>';

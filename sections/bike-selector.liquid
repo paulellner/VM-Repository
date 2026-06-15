@@ -1951,10 +1951,15 @@
       $saveBtn.disabled    = true;
       $saveBtn.textContent = '…';
 
+      var bObj = findBrand(S.brand);
+      var mObj = findModel(S.brand, S.model);
       var bikeData = {
         brand:         S.brand,
+        brandName:     bObj ? bObj.name : S.brand,
         model:         S.model,
+        modelName:     mObj ? mObj.name : S.model,
         variant:       S.variant,
+        variantName:   sv.name || S.variant,
         schaltgruppe:  sv.schaltgruppe,
         modelljahre:   sv.modelljahre,
         collectionTag: sv.collectionTag,
