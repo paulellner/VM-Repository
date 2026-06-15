@@ -292,18 +292,23 @@
 .vmpd__grid {
   display:               grid;
   grid-template-columns: 1fr 340px;
+  grid-template-areas:   "bike strava" "orders account";
   gap:                   32px;
-  align-items:           start;
+  align-items:           stretch;
 }
+
+/* Wrapper divs inside the grid are purely structural — dissolve them so
+   the four panels become direct grid items and share row heights. */
+.vmpd__grid > div { display: contents; }
 
 /* ── PANEL (shared) ──────────────────────────────────────────────────────── */
 
 .vmpd__panel {
   border:          var(--vm-stroke) solid var(--vm-ink);
   background:      var(--vm-paper);
-  margin-bottom:   32px;
+  display:         flex;
+  flex-direction:  column;
 }
-.vmpd__panel:last-child { margin-bottom: 0; }
 
 .vmpd__panel-hd {
   display:       flex;
@@ -347,7 +352,7 @@
 }
 .vmpd__panel-action:hover { opacity: 1; color: var(--vm-olive); }
 
-.vmpd__panel-body { padding: 28px 24px; }
+.vmpd__panel-body { padding: 28px 24px; flex: 1; }
 
 /* ── BIKE PANEL ──────────────────────────────────────────────────────────── */
 
@@ -1068,7 +1073,7 @@
   .vmpd__inner   { padding: 0 20px 64px; }
   .vmpd__header  { margin: 0 -20px; padding: 32px 20px 28px; }
   .vmpd__stats   { margin: 0 -20px 40px; }
-  .vmpd__grid    { grid-template-columns: 1fr; }
+  .vmpd__grid    { grid-template-columns: 1fr; grid-template-areas: "bike" "orders" "strava" "account"; }
   .vmpd__upgrade-features { grid-template-columns: 1fr; max-width: 340px; }
 }
 
@@ -1202,7 +1207,7 @@
         <div>
 
           <!-- PANEL 1: Gespeichertes Rad -->
-          <article class="vmpd__panel" aria-labelledby="vmpd-bike-heading">
+          <article class="vmpd__panel" style="grid-area:bike" aria-labelledby="vmpd-bike-heading">
             <div class="vmpd__panel-hd">
               <span class="vmpd__panel-num">01</span>
               <h2 class="vmpd__panel-title" id="vmpd-bike-heading">Gespeichertes Rad</h2>
@@ -1214,7 +1219,7 @@
           </article>
 
           <!-- PANEL 2: Kaufhistorie -->
-          <article class="vmpd__panel" aria-labelledby="vmpd-orders-heading">
+          <article class="vmpd__panel" style="grid-area:orders" aria-labelledby="vmpd-orders-heading">
             <div class="vmpd__panel-hd">
               <span class="vmpd__panel-num">02</span>
               <h2 class="vmpd__panel-title" id="vmpd-orders-heading">Kaufhistorie</h2>
@@ -1289,7 +1294,7 @@
         <div>
 
           <!-- PANEL 3: Strava -->
-          <article class="vmpd__panel" aria-labelledby="vmpd-strava-heading">
+          <article class="vmpd__panel" style="grid-area:strava" aria-labelledby="vmpd-strava-heading">
             <div class="vmpd__panel-hd">
               <span class="vmpd__panel-num">03</span>
               <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
@@ -1304,7 +1309,7 @@
           </article>
 
           <!-- PANEL 4: Konto-Einstellungen -->
-          <article class="vmpd__panel" aria-labelledby="vmpd-account-heading">
+          <article class="vmpd__panel" style="grid-area:account" aria-labelledby="vmpd-account-heading">
             <div class="vmpd__panel-hd">
               <span class="vmpd__panel-num">04</span>
               <h2 class="vmpd__panel-title" id="vmpd-account-heading">Konto</h2>
@@ -1423,14 +1428,9 @@
     }
 
     function compRow(comp) {
-      /* Remaining text */
-      var remText = comp.is_ride_based
-        ? (comp.rides_remaining != null ? 'Noch ' + comp.rides_remaining + ' Fahrt' + (comp.rides_remaining === 1 ? '' : 'en') : '')
-        : (comp.km_remaining != null ? 'Noch ca. ' + fmtNum(comp.km_remaining) + ' km' : '');
-      var sinceText = (!comp.is_ride_based && comp.km_since_reset != null)
-        ? ' · ' + fmtNum(comp.km_since_reset) + ' km seit Erneuerung'
-        : '';
-      var resetDate = comp.reset_at ? ' (zuletzt ' + comp.reset_at + ')' : '';
+      var remText   = '';
+      var sinceText = '';
+      var resetDate = comp.reset_at ? '(zuletzt ' + comp.reset_at + ')' : '';
 
       /* Buy button — nur bei Warnung oder Kritisch */
       var buyBtn = comp.status !== 'green'
@@ -1450,7 +1450,7 @@
            +     '</div>'
            +     bar(comp.wear_pct, comp.status)
            +     '<div class="vmpd__comp-sub">'
-           +       (remText ? '<span class="vmpd__comp-remaining">' + remText + sinceText + resetDate + '</span>' : '')
+           +       (resetDate ? '<span class="vmpd__comp-remaining">' + resetDate + '</span>' : '')
            +       '<button class="vmpd__comp-reset-btn" data-comp-id="' + escH(comp.id) + '" type="button">'
            +         'Als erneuert markieren</button>'
            +     '</div>'
