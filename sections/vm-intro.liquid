@@ -42,10 +42,53 @@
 }
 
 /* Content above overlay */
+.vm-intro__upper,
 .vm-intro__content,
 .vm-intro__lower {
   position: relative;
   z-index:  2;
+}
+
+/* ── Stats top bar ──────────────────────────────────────────────────── */
+.vm-intro__upper {
+  display:         flex;
+  justify-content: center;
+  padding:         48px 48px 0;
+}
+
+.vm-intro__stats {
+  display:     flex;
+  flex-wrap:   wrap;
+  gap:         0;
+  align-items: center;
+  justify-content: center;
+}
+
+.vm-intro__stat {
+  padding:      0 40px;
+  text-align:   center;
+  border-right: 1px solid rgba(245,241,232,0.18);
+}
+.vm-intro__stat:last-child { border-right: none; }
+
+.vm-intro__stat-num {
+  display:        block;
+  font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-size:      clamp(22px, 2.5vw, 32px);
+  font-weight:    700;
+  color:          var(--vm-signal);
+  line-height:    1;
+  letter-spacing: -0.02em;
+}
+.vm-intro__stat-lbl {
+  display:        block;
+  font-family:    var(--vm-mono);
+  font-size:      9px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color:          rgba(245,241,232,0.5);
+  margin-top:     6px;
 }
 
 /* ── Main Content — pushed to bottom ────────────────────────────────── */
@@ -79,8 +122,8 @@
 .vm-intro__headline {
   font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
   font-size:      clamp(48px, 7vw, 96px);
-  font-weight:    400;
-  letter-spacing: -0.045em;
+  font-weight:    700;
+  letter-spacing: -0.03em;
   line-height:    1.0;
   text-transform: none;
   color:          var(--vm-bone);
@@ -102,49 +145,12 @@
   letter-spacing: 0;
 }
 
-/* ── Stats Bar ──────────────────────────────────────────────────────── */
+/* ── Bottom scroll cue ───────────────────────────────────────────── */
 .vm-intro__lower {
-  border-top:  1px solid rgba(245,241,232,0.1);
-  margin-top:  48px;
-  padding:     22px 48px;
+  padding:     0 48px 24px;
   display:     flex;
   align-items: center;
-}
-
-.vm-intro__stats {
-  display:  flex;
-  flex-wrap: wrap;
-}
-
-.vm-intro__stat {
-  padding-right:  32px;
-  margin-right:   32px;
-  border-right:   1px solid rgba(245,241,232,0.14);
-}
-.vm-intro__stat:last-child {
-  border-right: none;
-  margin-right: 0;
-  padding-right: 0;
-}
-
-.vm-intro__stat-num {
-  display:        block;
-  font-family:    var(--vm-mono);
-  font-size:      24px;
-  font-weight:    400;
-  color:          var(--vm-signal);
-  line-height:    1;
-  letter-spacing: -0.02em;
-}
-.vm-intro__stat-lbl {
-  display:        block;
-  font-family:    var(--vm-mono);
-  font-size:      9px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color:          rgba(245,241,232,0.45);
-  margin-top:     5px;
+  justify-content: flex-end;
 }
 
 .vm-intro__scroll {
@@ -169,13 +175,14 @@
 
 /* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
+  .vm-intro__upper   { padding: 32px 24px 0; }
   .vm-intro__content { padding: 0 24px 12px; max-width: 100%; }
-  .vm-intro__lower   { padding: 18px 24px; }
+  .vm-intro__lower   { padding: 0 24px 20px; }
 }
 @media (max-width: 600px) {
-  .vm-intro__stats   { flex-direction: column; gap: 16px; }
-  .vm-intro__stat    { border-right: none; margin-right: 0; padding-right: 0; }
-  .vm-intro__scroll  { display: none; }
+  .vm-intro__stats  { gap: 0; }
+  .vm-intro__stat   { padding: 0 20px; }
+  .vm-intro__scroll { display: none; }
 }
 </style>
 
@@ -184,19 +191,8 @@
   <div class="vm-intro__bg" aria-hidden="true"></div>
   <div class="vm-intro__overlay" aria-hidden="true"></div>
 
-  <!-- ── Hero Copy ─────────────────────────────────────────────────────── -->
-  <div class="vm-intro__content">
-    <p class="vm-intro__eyebrow">{{ section.settings.eyebrow | default: 'velomatch PRO' }}</p>
-    <h1 class="vm-intro__headline">
-      Dein Rad.<br>
-      Deine Leistung.<br>
-      Deine <em>Teile.</em>
-    </h1>
-    <p class="vm-intro__sub">{{ section.settings.subtext | default: 'Verschlei&szlig;tracking, Strava-Integration und smarte Kaufvorschl&auml;ge &mdash; alles in einem Dashboard. F&uuml;r Fahrer, die es ernst meinen.' }}</p>
-  </div>
-
-  <!-- ── Stats Bar ─────────────────────────────────────────────────────── -->
-  <div class="vm-intro__lower">
+  <!-- ── Stats top bar ────────────────────────────────────────────────── -->
+  <div class="vm-intro__upper">
     <div class="vm-intro__stats" role="list">
       <div class="vm-intro__stat" role="listitem">
         <span class="vm-intro__stat-num">+{{ section.settings.stat1_num | default: '12' }}</span>
@@ -211,6 +207,21 @@
         <span class="vm-intro__stat-lbl">{{ section.settings.stat3_lbl | default: 'Varianten' }}</span>
       </div>
     </div>
+  </div>
+
+  <!-- ── Hero Copy ─────────────────────────────────────────────────────── -->
+  <div class="vm-intro__content">
+    <p class="vm-intro__eyebrow">{{ section.settings.eyebrow | default: 'velomatch PRO' }}</p>
+    <h1 class="vm-intro__headline">
+      Dein Rad.<br>
+      Deine Leistung.<br>
+      Deine <em>Teile.</em>
+    </h1>
+    <p class="vm-intro__sub">{{ section.settings.subtext | default: 'Verschlei&szlig;tracking, Strava-Integration und smarte Kaufvorschl&auml;ge &mdash; alles in einem Dashboard. F&uuml;r Fahrer, die es ernst meinen.' }}</p>
+  </div>
+
+  <!-- ── Scroll cue ───────────────────────────────────────────────────── -->
+  <div class="vm-intro__lower">
     <div class="vm-intro__scroll" aria-hidden="true">
       <span class="vm-intro__scroll-icon">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
