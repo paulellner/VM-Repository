@@ -193,10 +193,10 @@ const WEAR_COMPONENTS = [
   { id: 'tires',      name: 'Bereifung',             maxKm: 4000,  warnPct: 0.65, critPct: 0.85, mult: 'none',
     tip: 'Hinterreifen verschlei\u00dft 2\u00d7 schneller. Bei Rissen im Profil sofort tauschen.' },
   /* Verbrauchsmittel */
-  { id: 'chain_lube', name: 'Kettenpflege',          maxKm: 300,   warnPct: 0.60, critPct: 0.85, mult: 'lube',
+  { id: 'chain_lube', name: 'Kettenpflege',          maxKm: 500,   warnPct: 0.60, critPct: 0.85, mult: 'lube',
     isConsumable: true,
     tip: 'Nasse Fahrten halbieren das Intervall. Kette bis zur n\u00e4chsten Fahrt einziehen lassen.' },
-  { id: 'cleaner',    name: 'Reinigungsset',          maxRides: 4,  warnPct: 0.60, critPct: 0.90, mult: 'none',
+  { id: 'cleaner',    name: 'Reinigungsset',          maxRides: 5,  warnPct: 0.60, critPct: 0.90, mult: 'none',
     isConsumable: true, isRideBased: true,
     tip: 'Regelm\u00e4\u00dfige Reinigung verl\u00e4ngert die Lebensdauer aller Antriebsteile erheblich.' },
 ];
