@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VM Pro – Verschleiß Kaufoption Demo</title>
+<style>
+  :root {
+    --vm-ink:    #3D4A2F;
+    --vm-paper:  #F5F1E8;
+    --vm-sage:   #7A8A6A;
+    --vm-olive:  #5C6B44;
+    --vm-signal: #E4C97E;
+    --vm-mono:   'Courier New', monospace;
+    --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+    --vm-dur:    200ms;
+    --vm-ease:   cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #E8E4DB; font-family: var(--vm-sans); padding: 40px 24px; color: var(--vm-ink); }
+
+  h1 { font-size: 13px; font-family: var(--vm-mono); text-transform: uppercase; letter-spacing: 0.14em; color: var(--vm-sage); margin-bottom: 24px; }
+
+  .panel { border: 2px solid var(--vm-ink); background: var(--vm-paper); max-width: 720px; margin: 0 auto 40px; }
+  .panel-head { padding: 18px 24px; border-bottom: 1px solid rgba(61,74,47,0.2); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 11px; font-family: var(--vm-mono); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--vm-sage); }
+
+  /* Alert bar */
+  .alert-bar { display: flex; align-items: flex-start; gap: 14px; background: var(--vm-ink); border-bottom: 2px solid; padding: 14px 20px; }
+  .alert-bar--red { border-color: #D9462A; }
+  .alert-bar--yellow { border-color: #E4A83B; }
+  .alert-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .alert-item { font-family: var(--vm-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .alert-item--red { color: #D9462A; }
+  .alert-item--yellow { color: #E4A83B; }
+
+  /* Status bar */
+  .statusbar { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-bottom: 1px solid rgba(61,74,47,0.2); flex-wrap: wrap; }
+  .lamp { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .lamp--green  { background: #5CB85C; box-shadow: 0 0 7px rgba(92,184,92,0.55); }
+  .lamp--yellow { background: #E4A83B; box-shadow: 0 0 7px rgba(228,168,59,0.5); }
+  .lamp--red    { background: #D9462A; box-shadow: 0 0 7px rgba(217,70,42,0.55); }
+  .status-label { font-family: var(--vm-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--vm-sage); }
+  .status-val { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .odo { margin-left: auto; font-family: var(--vm-mono); font-size: 11px; color: var(--vm-sage); }
+
+  /* Section header */
+  .section-hd { padding: 9px 24px 7px; background: rgba(61,74,47,0.05); border-top: 1px solid rgba(61,74,47,0.15); border-bottom: 1px solid rgba(61,74,47,0.15); font-family: var(--vm-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--vm-sage); }
+
+  /* Component row */
+  .comp-row { display: grid; grid-template-columns: 14px 1fr auto; align-items: start; gap: 0 14px; padding: 14px 24px; border-bottom: 1px solid rgba(61,74,47,0.08); }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .comp-dot--green  { background: #5CB85C; }
+  .comp-dot--yellow { background: #E4A83B; }
+  .comp-dot--red    { background: #D9462A; }
+  .comp-main { min-width: 0; }
+  .comp-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+  .comp-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .comp-pct { font-family: var(--vm-mono); font-size: 11px; font-weight: 700; color: var(--vm-sage); }
+  .comp-pct--yellow { color: #C88B20; }
+  .comp-pct--red    { color: #D9462A; }
+  .comp-bar { height: 3px; background: rgba(61,74,47,0.12); margin-bottom: 6px; overflow: hidden; }
+  .comp-bar-fill { height: 100%; }
+  .comp-bar-fill--green  { background: #5CB85C; }
+  .comp-bar-fill--yellow { background: #E4A83B; }
+  .comp-bar-fill--red    { background: #D9462A; }
+  .comp-sub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+  .comp-reset { font-family: var(--vm-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vm-sage); text-decoration: underline; text-underline-offset: 2px; border: none; background: none; cursor: pointer; padding: 0; }
+  .comp-tip { font-size: 10px; color: var(--vm-sage); font-style: italic; line-height: 1.4; margin-top: 4px; }
+
+  /* Kaufen button */
+  .comp-actions { flex-shrink: 0; }
+  .comp-buy { display: inline-block; background: var(--vm-signal); color: var(--vm-ink); text-decoration: none; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 12px; white-space: nowrap; }
+  .comp-buy:hover { transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--vm-ink); }
+
+  /* Erklärungsbox */
+  .explainer { max-width: 720px; margin: 0 auto 32px; background: white; border: 1px solid #ddd; padding: 20px 24px; font-size: 13px; line-height: 1.6; }
+  .explainer h2 { font-size: 11px; font-family: var(--vm-mono); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; color: var(--vm-sage); }
+  .threshold-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  .threshold-table th { text-align: left; font-family: var(--vm-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--vm-sage); padding: 6px 10px; border-bottom: 2px solid rgba(61,74,47,0.2); }
+  .threshold-table td { padding: 7px 10px; border-bottom: 1px solid rgba(61,74,47,0.08); }
+  .dot-g { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #5CB85C; margin-right: 4px; }
+  .dot-y { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #E4A83B; margin-right: 4px; }
+  .dot-r { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #D9462A; margin-right: 4px; }
+  .badge-no  { display: inline-block; font-size: 9px; font-family: var(--vm-mono); font-weight: 700; background: rgba(61,74,47,0.08); color: var(--vm-sage); padding: 2px 7px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .badge-yes { display: inline-block; font-size: 9px; font-family: var(--vm-mono); font-weight: 700; background: var(--vm-signal); color: var(--vm-ink); padding: 2px 7px; text-transform: uppercase; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<h1>VM Pro · Bike Gesundheit — Kaufoption Demo (Beispieldaten)</h1>
+
+<!-- ── ERKLÄRUNG ────────────────────────────────────────────────────────────── -->
+<div class="explainer">
+  <h2>Wann erscheint "Kaufen →"?</h2>
+  <p>Die Regel ist simpel: <strong>Kein Button bei Grün — Button bei Gelb oder Rot.</strong></p>
+  <p style="margin-top:8px">Für jede Komponente gibt es zwei Schwellenwerte, die in Prozent der maximalen Lebensdauer (km oder Fahrten) gemessen werden:</p>
+  <table class="threshold-table">
+    <thead>
+      <tr><th>Status</th><th>Bedingung</th><th>Kaufoption</th><th>Tipp sichtbar</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="dot-g"></span>Grün</td>
+        <td>Verschleiß &lt; Warn-Schwelle</td>
+        <td><span class="badge-no">Kein Button</span></td>
+        <td>Nein</td>
+      </tr>
+      <tr>
+        <td><span class="dot-y"></span>Gelb</td>
+        <td>≥ Warn-Schwelle (z.B. 70% bei Kette)</td>
+        <td><span class="badge-yes">Kaufen →</span></td>
+        <td>Ja</td>
+      </tr>
+      <tr>
+        <td><span class="dot-r"></span>Rot</td>
+        <td>≥ Kritisch-Schwelle (z.B. 90% bei Kette)</td>
+        <td><span class="badge-yes">Kaufen →</span></td>
+        <td>Ja</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px;font-size:12px;color:#888">Die effektiven km werden mit einem Fahrbedingungsmultiplikator verrechnet — z.B. viele nasse Winterfahrten oder hohes Watt-Niveau beschleunigen den Verschleiß.</p>
+</div>
+
+<!-- ── DEMO PANEL: Gelber Gesamtstatus ──────────────────────────────────────── -->
+
+<!-- Alert-Leiste (erscheint nur wenn gelb oder rot) -->
+<div style="max-width:720px;margin:0 auto 4px">
+  <div class="alert-bar alert-bar--yellow">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E4A83B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <ul class="alert-list">
+      <li class="alert-item alert-item--red">Kette kurz vor Verschleißgrenze — jetzt erneuern</li>
+      <li class="alert-item alert-item--yellow">Bremsbeläge bald fällig — bitte prüfen</li>
+      <li class="alert-item alert-item--yellow">Kettenpflege bald fällig — bitte prüfen</li>
+    </ul>
+  </div>
+</div>
+
+<div class="panel" style="max-width:720px;margin:0 auto 40px">
+  <div class="panel-head">
+    <span class="panel-title">Bike Gesundheit</span>
+    <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#C88B20">
+      <span class="lamp lamp--yellow"></span> Prüfen empfohlen
+    </span>
+  </div>
+
+  <!-- Statuszeile -->
+  <div class="statusbar">
+    <span class="lamp lamp--yellow"></span>
+    <span class="status-label">Gesamt </span>
+    <span class="status-val">Prüfen empfohlen</span>
+    <span class="odo">4.820 km gesamt · 38% nasse Fahrten</span>
+  </div>
+
+  <!-- Verschleißteile -->
+  <div class="section-hd">Verschleißteile</div>
+
+  <!-- KETTE — ROT: Kaufen sichtbar -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--red"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Kette</span>
+        <span class="comp-pct comp-pct--red">93%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--red" style="width:93%"></div></div>
+      <div class="comp-sub">
+        <span style="font-family:var(--vm-mono);font-size:10px;color:#888">(zuletzt 12.03.2026)</span>
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+      <p class="comp-tip">Kettenverschleißlehre nutzen — ab 0,75 mm Längung sofort tauschen.</p>
+    </div>
+    <div class="comp-actions">
+      <a class="comp-buy" href="#">Kaufen →</a>
+    </div>
+  </div>
+
+  <!-- KASSETTE — GRÜN: kein Button -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--green"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Kassette</span>
+        <span class="comp-pct">45%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--green" style="width:45%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+    </div>
+    <div class="comp-actions"><!-- kein Button bei Grün --></div>
+  </div>
+
+  <!-- BREMSBELÄGE — GELB: Kaufen sichtbar -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--yellow"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Bremsbeläge</span>
+        <span class="comp-pct comp-pct--yellow">72%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--yellow" style="width:72%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+      <p class="comp-tip">Disc-Beläge: Mindest-Materialstärke 1,5 mm. Quietschen = sofort prüfen.</p>
+    </div>
+    <div class="comp-actions">
+      <a class="comp-buy" href="#">Kaufen →</a>
+    </div>
+  </div>
+
+  <!-- ZÜGE — GRÜN: kein Button -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--green"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Schalt- &amp; Bremszüge</span>
+        <span class="comp-pct">31%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--green" style="width:31%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+    </div>
+    <div class="comp-actions"></div>
+  </div>
+
+  <!-- KETTENSTERNE — GRÜN -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--green"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Kettensterne</span>
+        <span class="comp-pct">18%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--green" style="width:18%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+    </div>
+    <div class="comp-actions"></div>
+  </div>
+
+  <!-- BEREIFUNG — GRÜN -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--green"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Bereifung</span>
+        <span class="comp-pct">60%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--green" style="width:60%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+    </div>
+    <div class="comp-actions"></div>
+  </div>
+
+  <!-- Verbrauchsmittel -->
+  <div class="section-hd">Verbrauchsmittel</div>
+
+  <!-- KETTENPFLEGE — GELB: Kaufen sichtbar -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--yellow"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Kettenpflege</span>
+        <span class="comp-pct comp-pct--yellow">68%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--yellow" style="width:68%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+      <p class="comp-tip">Nasse Fahrten halbieren das Intervall. Kette bis zur nächsten Fahrt einziehen lassen.</p>
+    </div>
+    <div class="comp-actions">
+      <a class="comp-buy" href="#">Kaufen →</a>
+    </div>
+  </div>
+
+  <!-- REINIGUNGSSET — GRÜN -->
+  <div class="comp-row">
+    <span class="comp-dot comp-dot--green"></span>
+    <div class="comp-main">
+      <div class="comp-header">
+        <span class="comp-name">Reinigungsset</span>
+        <span class="comp-pct">25%</span>
+      </div>
+      <div class="comp-bar"><div class="comp-bar-fill comp-bar-fill--green" style="width:25%"></div></div>
+      <div class="comp-sub">
+        <button class="comp-reset">Als erneuert markieren</button>
+      </div>
+    </div>
+    <div class="comp-actions"></div>
+  </div>
+
+</div>
+
+</body>
+</html>
