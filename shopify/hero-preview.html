@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VeloMatch – Hero Bildvergleich</title>
+<style>
+  :root {
+    --vm-ink:    #3D4A2F;
+    --vm-paper:  #F5F1E8;
+    --vm-sage:   #7A8A6A;
+    --vm-olive:  #5C6B44;
+    --vm-signal: #E4C97E;
+    --vm-mono:   'Courier New', monospace;
+    --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a18; font-family: var(--vm-sans); color: var(--vm-paper); }
+
+  /* ── HERO SECTION ─────────────────────────────────────────────────────── */
+
+  .hero {
+    position:   relative;
+    width:      100%;
+    height:     100svh;
+    min-height: 620px;
+    overflow:   hidden;
+    display:    flex;
+    flex-direction: column;
+  }
+
+  /* Background image placeholder — replace src with your actual photo */
+  .hero__bg {
+    position:   absolute;
+    inset:      0;
+    background-size:     cover;
+    background-position: center 30%;
+    background-repeat:   no-repeat;
+    transition: opacity 600ms ease;
+  }
+
+  /* Overlay: dark gradient from bottom, slight desaturation */
+  .hero__overlay {
+    position: absolute;
+    inset:    0;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(20,24,14,0.28) 0%,
+        rgba(20,24,14,0.10) 30%,
+        rgba(20,24,14,0.55) 70%,
+        rgba(20,24,14,0.88) 100%
+      );
+  }
+
+  /* Top nav */
+  .hero__nav {
+    position:       relative;
+    z-index:        10;
+    display:        flex;
+    align-items:    center;
+    justify-content: space-between;
+    padding:        24px 48px;
+  }
+  .hero__logo {
+    font-family:    var(--vm-sans);
+    font-size:      22px;
+    font-weight:    400;
+    letter-spacing: -0.04em;
+    color:          var(--vm-paper);
+    text-decoration: none;
+  }
+  .hero__logo span { color: var(--vm-signal); }
+  .hero__nav-links {
+    display:    flex;
+    gap:        32px;
+    list-style: none;
+  }
+  .hero__nav-links a {
+    font-family:    var(--vm-mono);
+    font-size:      10px;
+    font-weight:    700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color:          rgba(245,241,232,0.7);
+    text-decoration: none;
+  }
+  .hero__nav-links a:hover { color: var(--vm-paper); }
+
+  /* Hero content */
+  .hero__content {
+    position:   relative;
+    z-index:    10;
+    margin-top: auto;
+    padding:    0 48px 56px;
+    max-width:  760px;
+  }
+
+  .hero__eyebrow {
+    font-family:    var(--vm-mono);
+    font-size:      10px;
+    font-weight:    700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color:          var(--vm-signal);
+    margin-bottom:  18px;
+    display:        flex;
+    align-items:    center;
+    gap:            10px;
+  }
+  .hero__eyebrow::before {
+    content:    '';
+    display:    inline-block;
+    width:      28px;
+    height:     1px;
+    background: var(--vm-signal);
+  }
+
+  .hero__headline {
+    font-family:    var(--vm-sans);
+    font-size:      clamp(42px, 6vw, 72px);
+    font-weight:    400;
+    letter-spacing: -0.045em;
+    line-height:    1.0;
+    color:          var(--vm-paper);
+    margin-bottom:  24px;
+    text-transform: none;
+  }
+  .hero__headline em {
+    font-style:  normal;
+    color:       var(--vm-signal);
+  }
+
+  .hero__sub {
+    font-size:   16px;
+    line-height: 1.55;
+    color:       rgba(245,241,232,0.72);
+    max-width:   480px;
+    margin-bottom: 36px;
+  }
+
+  .hero__cta-group {
+    display:   flex;
+    gap:       16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .hero__cta-primary {
+    display:         inline-block;
+    background:      var(--vm-signal);
+    color:           var(--vm-ink);
+    text-decoration: none;
+    font-family:     var(--vm-sans);
+    font-size:       13px;
+    font-weight:     800;
+    text-transform:  uppercase;
+    letter-spacing:  0.08em;
+    padding:         14px 32px;
+  }
+  .hero__cta-primary:hover { background: #ebd48a; }
+  .hero__cta-secondary {
+    display:         inline-block;
+    color:           rgba(245,241,232,0.7);
+    text-decoration: none;
+    font-family:     var(--vm-mono);
+    font-size:       11px;
+    font-weight:     700;
+    text-transform:  uppercase;
+    letter-spacing:  0.12em;
+    border-bottom:   1px solid rgba(245,241,232,0.35);
+    padding-bottom:  2px;
+  }
+
+  /* ── COMPARISON STRIP ─────────────────────────────────────────────────── */
+
+  .compare {
+    padding:    64px 48px;
+    background: #111110;
+  }
+  .compare__title {
+    font-family:    var(--vm-mono);
+    font-size:      10px;
+    font-weight:    700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color:          var(--vm-sage);
+    margin-bottom:  32px;
+  }
+  .compare__grid {
+    display:               grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:                   24px;
+  }
+  .compare__item {
+    position: relative;
+    cursor:   pointer;
+    border:   2px solid transparent;
+    transition: border-color 200ms ease;
+  }
+  .compare__item:hover { border-color: var(--vm-sage); }
+  .compare__item--recommended { border-color: var(--vm-signal) !important; }
+
+  .compare__thumb {
+    aspect-ratio: 4/3;
+    overflow:     hidden;
+    position:     relative;
+  }
+  .compare__thumb-bg {
+    width:   100%;
+    height:  100%;
+    background-size:     cover;
+    background-position: center;
+  }
+  .compare__thumb-overlay {
+    position: absolute;
+    inset:    0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(20,24,14,0.8) 100%);
+  }
+
+  .compare__label {
+    padding:     16px 16px 14px;
+    background:  #1a1a18;
+  }
+  .compare__num {
+    font-family:    var(--vm-mono);
+    font-size:      9px;
+    font-weight:    700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color:          var(--vm-sage);
+    margin-bottom:  5px;
+    display:        flex;
+    align-items:    center;
+    justify-content: space-between;
+  }
+  .compare__badge {
+    background:      var(--vm-signal);
+    color:           var(--vm-ink);
+    font-size:       8px;
+    font-weight:     800;
+    text-transform:  uppercase;
+    letter-spacing:  0.1em;
+    padding:         2px 8px;
+  }
+  .compare__desc {
+    font-size:   12px;
+    line-height: 1.45;
+    color:       rgba(245,241,232,0.55);
+  }
+
+  /* ── HOW-TO NOTE ─────────────────────────────────────────────────────── */
+  .note {
+    padding:     32px 48px;
+    background:  #0e0e0d;
+    border-top:  1px solid rgba(255,255,255,0.06);
+  }
+  .note p {
+    font-family: var(--vm-mono);
+    font-size:   11px;
+    color:       rgba(245,241,232,0.35);
+    line-height: 1.7;
+  }
+  .note code {
+    background: rgba(255,255,255,0.08);
+    padding:    1px 6px;
+    font-size:  11px;
+    color:      var(--vm-signal);
+  }
+
+  /* ── SIMULATED BACKGROUNDS ────────────────────────────────────────────── */
+  /* Approximations of the 3 photo moods via CSS — replace with real images */
+
+  .bg--img1 {
+    /* Bild 1: warm golden morning, bright */
+    background-color: #8B7355;
+    background-image:
+      radial-gradient(ellipse at 50% 60%, rgba(255,210,120,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse at 30% 40%, rgba(180,140,80,0.4) 0%, transparent 50%),
+      linear-gradient(160deg, #3a3020 0%, #8B7355 40%, #C4A06A 70%, #E8C87A 100%);
+  }
+  .bg--img2 {
+    /* Bild 2: rainy blue-grey city, moody — RECOMMENDED */
+    background-color: #2B3040;
+    background-image:
+      radial-gradient(ellipse at 50% 70%, rgba(180,160,120,0.35) 0%, transparent 45%),
+      radial-gradient(ellipse at 70% 30%, rgba(220,160,60,0.18) 0%, transparent 35%),
+      linear-gradient(175deg, #1a1d28 0%, #2B3040 35%, #3a3d50 60%, #2a2820 100%);
+  }
+  .bg--img3 {
+    /* Bild 3: tunnel/underpass, dark + architectural */
+    background-color: #1a1d20;
+    background-image:
+      radial-gradient(ellipse at 50% 55%, rgba(160,140,100,0.3) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 0%, rgba(40,40,35,0.8) 0%, transparent 60%),
+      linear-gradient(180deg, #0d0e0c 0%, #1a1d20 30%, #252822 60%, #1a1a16 100%);
+  }
+
+  @media (max-width: 768px) {
+    .hero__nav { padding: 20px 24px; }
+    .hero__nav-links { display: none; }
+    .hero__content { padding: 0 24px 40px; }
+    .compare { padding: 48px 24px; }
+    .compare__grid { grid-template-columns: 1fr; }
+    .note { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HERO — Bild 2 (Regen, blau-grau) — EMPFOHLEN
+     Ersetze .hero__bg background-image mit deinem Foto:
+       background-image: url('dein-foto.jpg');
+══════════════════════════════════════════════════════════════════════════ -->
+
+<section class="hero">
+
+  <div class="hero__bg bg--img2"
+       style="filter: saturate(0.75) brightness(0.9);"
+       aria-hidden="true"></div>
+  <div class="hero__overlay"></div>
+
+  <nav class="hero__nav">
+    <a href="#" class="hero__logo">velo<span>match</span></a>
+    <ul class="hero__nav-links">
+      <li><a href="#">Bikes</a></li>
+      <li><a href="#">VM Pro</a></li>
+      <li><a href="#">Wartung</a></li>
+      <li><a href="#">Über uns</a></li>
+    </ul>
+    <a href="#" style="font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--vm-signal);text-decoration:none;border:1px solid rgba(228,201,126,0.4);padding:8px 18px">
+      Login →
+    </a>
+  </nav>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow">velomatch PRO</p>
+    <h1 class="hero__headline">
+      Dein Rad.<br>
+      Deine <em>Daten.</em><br>
+      Deine Leistung.
+    </h1>
+    <p class="hero__sub">
+      Verschleißtracking, Strava-Integration und smarte Kaufvorschläge —
+      alles in einem Dashboard. Für Fahrer, die es ernst meinen.
+    </p>
+    <div class="hero__cta-group">
+      <a href="#" class="hero__cta-primary">Jetzt Mitglied werden</a>
+      <a href="#" class="hero__cta-secondary">Mehr erfahren</a>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     BILDVERGLEICH
+══════════════════════════════════════════════════════════════════════════ -->
+
+<div class="compare">
+  <p class="compare__title">Bildvergleich — welches passt zum VeloMatch Look?</p>
+
+  <div class="compare__grid">
+
+    <!-- Bild 1 -->
+    <div class="compare__item">
+      <div class="compare__thumb">
+        <div class="compare__thumb-bg bg--img1" style="filter:saturate(0.8)"></div>
+        <div class="compare__thumb-overlay"></div>
+        <div style="position:absolute;bottom:12px;left:14px;right:14px">
+          <div style="font-family:var(--vm-mono);font-size:28px;font-weight:400;letter-spacing:-0.04em;color:var(--vm-paper)">
+            velo<span style="color:var(--vm-signal)">match</span>
+          </div>
+          <div style="font-family:var(--vm-mono);font-size:9px;letter-spacing:0.15em;color:rgba(245,241,232,0.6);text-transform:uppercase;margin-top:2px">
+            Dein Rad. Deine Daten.
+          </div>
+        </div>
+      </div>
+      <div class="compare__label">
+        <div class="compare__num">Bild 01 · Sonnig / Warm</div>
+        <div class="compare__desc">
+          Motivierend, golden. Aber Texte brauchen stärkeren Overlay — helles Bild konkurriert mit der Schrift. Stimmung eher "Lifestyle" als "Premium-Tool".
+        </div>
+      </div>
+    </div>
+
+    <!-- Bild 2 — EMPFOHLEN -->
+    <div class="compare__item compare__item--recommended">
+      <div class="compare__thumb">
+        <div class="compare__thumb-bg bg--img2" style="filter:saturate(0.7) brightness(0.95)"></div>
+        <div class="compare__thumb-overlay"></div>
+        <div style="position:absolute;bottom:12px;left:14px;right:14px">
+          <div style="font-family:var(--vm-mono);font-size:28px;font-weight:400;letter-spacing:-0.04em;color:var(--vm-paper)">
+            velo<span style="color:var(--vm-signal)">match</span>
+          </div>
+          <div style="font-family:var(--vm-mono);font-size:9px;letter-spacing:0.15em;color:rgba(245,241,232,0.7);text-transform:uppercase;margin-top:2px">
+            Dein Rad. Deine Daten.
+          </div>
+        </div>
+      </div>
+      <div class="compare__label">
+        <div class="compare__num">
+          Bild 02 · Regen / Blau-grau
+          <span class="compare__badge">Empfehlung</span>
+        </div>
+        <div class="compare__desc">
+          Editorial und moodisch — passt exakt zum dunklen Ink-Ton. Text lesbar ohne schwere Overlay-Maske. Nasse Strassen unterstreichen den "alle Bedingungen"-Anspruch von VM Pro.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bild 3 -->
+    <div class="compare__item">
+      <div class="compare__thumb">
+        <div class="compare__thumb-bg bg--img3"></div>
+        <div class="compare__thumb-overlay"></div>
+        <div style="position:absolute;bottom:12px;left:14px;right:14px">
+          <div style="font-family:var(--vm-mono);font-size:28px;font-weight:400;letter-spacing:-0.04em;color:var(--vm-paper)">
+            velo<span style="color:var(--vm-signal)">match</span>
+          </div>
+          <div style="font-family:var(--vm-mono);font-size:9px;letter-spacing:0.15em;color:rgba(245,241,232,0.55);text-transform:uppercase;margin-top:2px">
+            Dein Rad. Deine Daten.
+          </div>
+        </div>
+      </div>
+      <div class="compare__label">
+        <div class="compare__num">Bild 03 · Tunnel / Sehr dunkel</div>
+        <div class="compare__desc">
+          Cinematisch und dramatisch, aber als Homepage-Einstieg sehr schwer. Könnte Besucher einschüchtern — besser für eine Kampagnenseite oder Scrollabschnitt.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── ANLEITUNG ─────────────────────────────────────────────────────────── -->
+<div class="note">
+  <p>
+    <strong style="color:rgba(245,241,232,0.6)">So einbauen (Shopify):</strong><br>
+    In der Shopify Section das <code>&lt;div class="hero__bg"&gt;</code> mit
+    <code>background-image: url('{{ section.settings.hero_image | img_url: "2000x" }}')</code> versehen.<br>
+    Overlay-Stärke via <code>rgba(20,24,14, X)</code> anpassen — bei Bild 2 empfehle ich X = 0.10–0.55 (Gradient unten stärker).
+    Filter: <code>saturate(0.75) brightness(0.9)</code> dämpft das Bild dezent und harmoniert mit dem Ink-Farbton.
+  </p>
+</div>
+
+</body>
+</html>
