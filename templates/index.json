@@ -12,16 +12,18 @@
     "intro": {
       "type": "vm-intro",
       "settings": {
-        "headline": "Nur Teile, die wirklich passen.",
-        "subtext": "Wähle dein Fahrrad in drei Schritten — Marke, Modell, Ausstattung. VeloMatch zeigt dir danach ausschließlich die Komponenten, die mit deinem konkreten Aufbau kompatibel sind.",
+        "eyebrow": "velomatch PRO",
+        "headline": "Dein Rad.\nDeine Daten.\nDeine Teile.",
+        "subtext": "Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen.",
+        "cta_text": "Jetzt Mitglied werden",
+        "saturation": 70,
+        "brightness": 88,
         "stat1_num": "12",
         "stat1_lbl": "Marken",
         "stat2_num": "88",
         "stat2_lbl": "Modellreihen",
         "stat3_num": "247",
-        "stat3_lbl": "Varianten",
-        "stat4_num": "9",
-        "stat4_lbl": "Komponenten"
+        "stat3_lbl": "Varianten"
       }
     },
     "selector": {
