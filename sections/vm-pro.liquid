@@ -60,27 +60,28 @@
   align-items:     center;
   justify-content: center;
   gap:             0;
-  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-family:     var(--vm-sans);
   font-size:       clamp(44px, 7.5vw, 88px);
   line-height:     1;
   margin:          0 0 28px;
-  letter-spacing:  -0.045em;
+  letter-spacing:  -0.04em;
+  text-transform:  uppercase;
 }
 .vm-pro-wordmark__velo  { font-weight: 400; color: var(--vm-ink); }
-.vm-pro-wordmark__match { font-weight: 700; color: var(--vm-ink); }
+.vm-pro-wordmark__match { font-weight: 800; color: var(--vm-ink); }
 .vm-pro-wordmark__tag {
   background:     var(--vm-signal);
   color:          var(--vm-ink);
-  font-family:    'Helvetica Neue', Arial, sans-serif;
-  font-size:      0.22em;
+  font-family:    var(--vm-sans);
+  font-size:      0.20em;
   font-weight:    800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  padding:        0.3em 0.65em 0.25em;
+  padding:        0.35em 0.7em 0.3em;
   line-height:    1.4;
   align-self:     center;
   flex-shrink:    0;
-  margin-left:    0.5em;
+  margin-left:    0.55em;
 }
 
 .vm-pro-page__hero-tagline {
@@ -470,7 +471,7 @@
         <span class="vm-pro-wordmark__tag" aria-hidden="true">PRO</span>
       </h1>
       <p class="vm-pro-page__hero-tagline">
-        Dein Rad. <span class="vm-pro-page__hero-accent">Dauerhaft gespeichert.</span>
+        Dein Rad. Deine Fahrdaten. <span class="vm-pro-page__hero-accent">Dein Verschleiß im Blick.</span>
       </p>
     </div>
 
@@ -494,25 +495,9 @@
           </p>
         </div>
 
-        <!-- Card 2: Kaufhistorie -->
-        <div class="vm-pro-page__card" role="listitem">
+        <!-- Card 2: Strava & Fahrdaten -->
+        <div class="vm-pro-page__card vm-pro-page__card--active" role="listitem">
           <span class="vm-pro-page__card-num">02</span>
-          <div class="vm-pro-page__card-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <h2 class="vm-pro-page__card-title">Kaufhistorie</h2>
-          <p class="vm-pro-page__card-desc">
-            Alle Ersatzteile und Upgrades für dein Rad auf einen Blick —
-            nachvollziehbar, sortiert, jederzeit abrufbar.
-          </p>
-        </div>
-
-        <!-- Card 3: Strava verknüpfen (coming soon) -->
-        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem">
-          <span class="vm-pro-page__card-num">03</span>
           <div class="vm-pro-page__card-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -520,28 +505,43 @@
           </div>
           <h2 class="vm-pro-page__card-title">Strava verknüpfen</h2>
           <p class="vm-pro-page__card-desc">
-            Verbinde deinen Strava-Account und erhalte automatisch Nachschub:
-            Verschleißteile und Reinigungsmittel werden dir zugesendet, sobald
-            deine Fahrdaten zeigen, dass es Zeit wird.
+            Verbinde deinen Strava-Account. Deine Fahrdaten — Kilometer,
+            Fahrbedingungen, Höhenmeter — fließen direkt in die
+            Verschleißberechnung ein.
           </p>
-          <span class="vm-pro-page__card-badge">Demnächst</span>
         </div>
 
-        <!-- Card 4: Benachrichtigungen (coming soon) -->
-        <div class="vm-pro-page__card vm-pro-page__card--muted" role="listitem">
+        <!-- Card 3: Bike Gesundheit -->
+        <div class="vm-pro-page__card vm-pro-page__card--active" role="listitem">
+          <span class="vm-pro-page__card-num">03</span>
+          <div class="vm-pro-page__card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <h2 class="vm-pro-page__card-title">Bike Gesundheit</h2>
+          <p class="vm-pro-page__card-desc">
+            8 Verschleißteile und Verbrauchsmittel werden laufend überwacht:
+            Kette, Kassette, Bremsbeläge, Züge, Reifen und mehr — angepasst
+            an deine tatsächlichen Fahrbedingungen.
+          </p>
+        </div>
+
+        <!-- Card 4: Smarte Kaufvorschläge -->
+        <div class="vm-pro-page__card vm-pro-page__card--active" role="listitem">
           <span class="vm-pro-page__card-num">04</span>
           <div class="vm-pro-page__card-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
             </svg>
           </div>
-          <h2 class="vm-pro-page__card-title">Neue Teile zuerst</h2>
+          <h2 class="vm-pro-page__card-title">Ersatzempfehlung</h2>
           <p class="vm-pro-page__card-desc">
-            Sobald neue Komponenten für dein gespeichertes Rad verfügbar sind,
-            wirst du als Erster informiert.
+            Sobald eine Komponente die Verschleißschwelle erreicht, erscheint
+            direkt im Dashboard ein Kaufvorschlag — mit dem richtigen Produkt
+            für dein Rad, zur richtigen Zeit.
           </p>
-          <span class="vm-pro-page__card-badge">Demnächst</span>
         </div>
 
       </div>
@@ -551,12 +551,12 @@
     <div class="vm-pro-page__benefits">
       <span class="vm-pro-page__benefits-label">Inklusive in deiner Mitgliedschaft</span>
       <ul class="vm-pro-page__benefits-list">
-        <li>Kein erneutes Konfigurieren</li>
-        <li>Geräteübergreifend verfügbar</li>
-        <li>Kompatibilitäts-Garantie</li>
-        <li>Jederzeit kündbar</li>
-        <li>Sichere Zahlung via Shopify</li>
-        <li>Zugang zu neuen Features zuerst</li>
+        <li>Rad dauerhaft gespeichert</li>
+        <li>Strava-Fahrdaten live synchronisiert</li>
+        <li>Verschleiß-Monitoring für 8 Komponenten</li>
+        <li>Kaufvorschläge auf Basis echter km-Daten</li>
+        <li>Fahrbedingungen (Nässe, Watt, Höhenmeter) eingerechnet</li>
+        <li>Jederzeit kündbar — kein Restrisiko</li>
       </ul>
     </div>
 
@@ -596,8 +596,9 @@
             </div>
             <div class="vm-pro-page__pricing-right">
               <p class="vm-pro-page__pricing-desc">
-                Upgrade auf Pro und speichere dein Rad dauerhaft — damit du
-                jederzeit die passenden Teile findest, ohne von vorne anzufangen.
+                Verbinde Strava, speichere dein Rad und lass VM Pro den
+                Verschleiß für dich im Auge behalten — mit Kaufvorschlägen
+                genau dann, wenn sie gebraucht werden.
               </p>
               <a class="vm-pro-page__cta-btn"
                  href="{{ section.settings.pro_product_url | default: '/products/velomatch-pro' }}">
@@ -618,8 +619,9 @@
           </div>
           <div class="vm-pro-page__pricing-right">
             <p class="vm-pro-page__pricing-desc">
-              Speichere dein Fahrrad dauerhaft in deinem Konto und finde
-              jederzeit die passenden Komponenten — schnell, präzise, ohne Umwege.
+              Verbinde Strava, speichere dein Rad und lass VM Pro den
+              Verschleiß für dich im Auge behalten — mit Kaufvorschlägen
+              genau dann, wenn sie gebraucht werden.
             </p>
             <a class="vm-pro-page__cta-btn"
                href="{{ section.settings.pro_product_url | default: '/products/velomatch-pro' }}">
@@ -639,9 +641,10 @@
         <div class="vm-pro-page__faq-item" role="listitem">
           <h3 class="vm-pro-page__faq-q">Was ist VM Pro?</h3>
           <p class="vm-pro-page__faq-a">
-            VeloMatch Pro ist eine monatliche Mitgliedschaft, die dein Fahrrad
-            dauerhaft in deinem Konto speichert. Kein erneutes Auswählen — deine
-            Ausstattung ist immer hinterlegt und du findest sofort passende Teile.
+            VeloMatch Pro ist eine monatliche Mitgliedschaft mit persönlichem
+            Dashboard: Rad speichern, Strava verknüpfen, Verschleiß live
+            tracken und automatisch Kaufvorschläge erhalten — basierend auf
+            deinen echten Fahrdaten.
           </p>
         </div>
 
