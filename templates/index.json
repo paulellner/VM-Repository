@@ -12,12 +12,11 @@
     "intro": {
       "type": "vm-intro",
       "settings": {
-        "eyebrow": "velomatch PRO",
-        "headline": "Dein Rad.\nDeine Daten.\nDeine Teile.",
-        "subtext": "Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen.",
-        "cta_text": "Jetzt Mitglied werden",
+        "hero_image": "shopify://shop_images/Copilot_20260616_165139.png",
         "saturation": 70,
         "brightness": 88,
+        "eyebrow": "velomatch PRO",
+        "subtext": "Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen.",
         "stat1_num": "12",
         "stat1_lbl": "Marken",
         "stat2_num": "88",
@@ -28,8 +27,17 @@
     },
     "selector": {
       "type": "bike-selector",
-      "settings": {}
+      "settings": {
+        "heading_step1": "Wähle deine Marke",
+        "heading_step2": "Wähle dein Modell",
+        "heading_step3": "Wähle deine Ausstattung",
+        "parts_collection_url": "",
+        "cta_text": "Passende Teile anzeigen"
+      }
     }
   },
-  "order": ["intro", "selector"]
+  "order": [
+    "intro",
+    "selector"
+  ]
 }
