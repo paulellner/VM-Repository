@@ -1,0 +1,92 @@
+<style>
+.vm-stats {
+  background:  var(--vm-ink);
+  padding:     36px 24px;
+  text-align:  center;
+}
+
+.vm-stats__inner {
+  display:         inline-flex;
+  align-items:     stretch;
+  gap:             0;
+  flex-wrap:       wrap;
+  justify-content: center;
+}
+
+.vm-stats__item {
+  padding:      0 40px;
+  border-right: 1px solid rgba(245,241,232,0.12);
+  text-align:   center;
+}
+.vm-stats__item:last-child { border-right: none; }
+
+.vm-stats__num {
+  display:        block;
+  font-family:    var(--vm-sans);
+  font-size:      clamp(28px, 3.5vw, 44px);
+  font-weight:    800;
+  color:          var(--vm-signal);
+  line-height:    1;
+  letter-spacing: -0.03em;
+}
+
+.vm-stats__lbl {
+  display:        block;
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color:          rgba(242,240,230,0.45);
+  margin-top:     8px;
+}
+
+@media (max-width: 600px) {
+  .vm-stats__inner  { flex-direction: column; gap: 24px; }
+  .vm-stats__item   { border-right: none; padding: 0; }
+}
+</style>
+
+<div class="vm-stats">
+  <div class="vm-stats__inner" role="list">
+    <div class="vm-stats__item" role="listitem">
+      <span class="vm-stats__num">+{{ section.settings.stat1_num | default: '12' }}</span>
+      <span class="vm-stats__lbl">{{ section.settings.stat1_lbl | default: 'Marken' }}</span>
+    </div>
+    <div class="vm-stats__item" role="listitem">
+      <span class="vm-stats__num">+{{ section.settings.stat2_num | default: '88' }}</span>
+      <span class="vm-stats__lbl">{{ section.settings.stat2_lbl | default: 'Modellreihen' }}</span>
+    </div>
+    <div class="vm-stats__item" role="listitem">
+      <span class="vm-stats__num">+{{ section.settings.stat3_num | default: '247' }}</span>
+      <span class="vm-stats__lbl">{{ section.settings.stat3_lbl | default: 'Varianten' }}</span>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "VM Statistiken",
+  "settings": [
+    {
+      "type": "text", "id": "stat1_num", "label": "Stat 1 Zahl", "default": "12"
+    },
+    {
+      "type": "text", "id": "stat1_lbl", "label": "Stat 1 Label", "default": "Marken"
+    },
+    {
+      "type": "text", "id": "stat2_num", "label": "Stat 2 Zahl", "default": "88"
+    },
+    {
+      "type": "text", "id": "stat2_lbl", "label": "Stat 2 Label", "default": "Modellreihen"
+    },
+    {
+      "type": "text", "id": "stat3_num", "label": "Stat 3 Zahl", "default": "247"
+    },
+    {
+      "type": "text", "id": "stat3_lbl", "label": "Stat 3 Label", "default": "Varianten"
+    }
+  ],
+  "presets": [{ "name": "VM Statistiken", "category": "VeloMatch" }]
+}
+{% endschema %}

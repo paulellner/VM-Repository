@@ -42,53 +42,10 @@
 }
 
 /* Content above overlay */
-.vm-intro__upper,
 .vm-intro__content,
 .vm-intro__lower {
   position: relative;
   z-index:  2;
-}
-
-/* ── Stats top bar ──────────────────────────────────────────────────── */
-.vm-intro__upper {
-  display:         flex;
-  justify-content: center;
-  padding:         48px 48px 0;
-}
-
-.vm-intro__stats {
-  display:     flex;
-  flex-wrap:   wrap;
-  gap:         0;
-  align-items: center;
-  justify-content: center;
-}
-
-.vm-intro__stat {
-  padding:      0 40px;
-  text-align:   center;
-  border-right: 1px solid rgba(245,241,232,0.18);
-}
-.vm-intro__stat:last-child { border-right: none; }
-
-.vm-intro__stat-num {
-  display:        block;
-  font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  font-size:      clamp(22px, 2.5vw, 32px);
-  font-weight:    700;
-  color:          var(--vm-signal);
-  line-height:    1;
-  letter-spacing: -0.02em;
-}
-.vm-intro__stat-lbl {
-  display:        block;
-  font-family:    var(--vm-mono);
-  font-size:      9px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color:          rgba(245,241,232,0.5);
-  margin-top:     6px;
 }
 
 /* ── Main Content — pushed to bottom ────────────────────────────────── */
@@ -120,9 +77,9 @@
 }
 
 .vm-intro__headline {
-  font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  font-family:    var(--vm-sans);
   font-size:      clamp(48px, 7vw, 96px);
-  font-weight:    700;
+  font-weight:    800;
   letter-spacing: -0.03em;
   line-height:    1.0;
   text-transform: none;
@@ -175,13 +132,10 @@
 
 /* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
-  .vm-intro__upper   { padding: 32px 24px 0; }
   .vm-intro__content { padding: 0 24px 12px; max-width: 100%; }
   .vm-intro__lower   { padding: 0 24px 20px; }
 }
 @media (max-width: 600px) {
-  .vm-intro__stats  { gap: 0; }
-  .vm-intro__stat   { padding: 0 20px; }
   .vm-intro__scroll { display: none; }
 }
 </style>
@@ -190,24 +144,6 @@
 
   <div class="vm-intro__bg" aria-hidden="true"></div>
   <div class="vm-intro__overlay" aria-hidden="true"></div>
-
-  <!-- ── Stats top bar ────────────────────────────────────────────────── -->
-  <div class="vm-intro__upper">
-    <div class="vm-intro__stats" role="list">
-      <div class="vm-intro__stat" role="listitem">
-        <span class="vm-intro__stat-num">+{{ section.settings.stat1_num | default: '12' }}</span>
-        <span class="vm-intro__stat-lbl">{{ section.settings.stat1_lbl | default: 'Marken' }}</span>
-      </div>
-      <div class="vm-intro__stat" role="listitem">
-        <span class="vm-intro__stat-num">+{{ section.settings.stat2_num | default: '88' }}</span>
-        <span class="vm-intro__stat-lbl">{{ section.settings.stat2_lbl | default: 'Modellreihen' }}</span>
-      </div>
-      <div class="vm-intro__stat" role="listitem">
-        <span class="vm-intro__stat-num">+{{ section.settings.stat3_num | default: '247' }}</span>
-        <span class="vm-intro__stat-lbl">{{ section.settings.stat3_lbl | default: 'Varianten' }}</span>
-      </div>
-    </div>
-  </div>
 
   <!-- ── Hero Copy ─────────────────────────────────────────────────────── -->
   <div class="vm-intro__content">

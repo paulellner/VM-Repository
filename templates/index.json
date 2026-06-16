@@ -25,6 +25,17 @@
         "stat3_lbl": "Varianten"
       }
     },
+    "stats": {
+      "type": "vm-stats",
+      "settings": {
+        "stat1_num": "12",
+        "stat1_lbl": "Marken",
+        "stat2_num": "88",
+        "stat2_lbl": "Modellreihen",
+        "stat3_num": "247",
+        "stat3_lbl": "Varianten"
+      }
+    },
     "selector": {
       "type": "bike-selector",
       "settings": {
@@ -38,6 +49,7 @@
   },
   "order": [
     "intro",
+    "stats",
     "selector"
   ]
 }
