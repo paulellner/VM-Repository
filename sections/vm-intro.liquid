@@ -1,12 +1,12 @@
 <style>
-/* ── VeloMatch Intro — Vollbild-Hero mit Foto-Hintergrund ─────────────── */
+/* ── VeloMatch Intro — Vollbild-Hero ─────────────────────────────────── */
 .vm-intro {
-  position:        relative;
-  overflow:        hidden;
-  min-height:      100svh;
-  display:         flex;
-  flex-direction:  column;
-  color:           var(--vm-bone);
+  position:       relative;
+  overflow:       hidden;
+  min-height:     100svh;
+  display:        flex;
+  flex-direction: column;
+  color:          var(--vm-bone);
 }
 
 /* Background photo */
@@ -14,7 +14,7 @@
   position:            absolute;
   inset:               0;
   background-size:     cover;
-  background-position: center 35%;
+  background-position: center 40%;
   background-repeat:   no-repeat;
   {%- if section.settings.hero_image != blank -%}
   background-image: url("{{ section.settings.hero_image | image_url: width: 2400 }}");
@@ -23,90 +23,36 @@
   {%- endif -%}
   filter:  saturate({{ section.settings.saturation | default: 70 }}%) brightness({{ section.settings.brightness | default: 88 }}%);
   z-index: 0;
-  transition: opacity 800ms ease;
 }
 
-/* Overlay: olive tint top-left + dark fade at bottom */
+/* Overlay */
 .vm-intro__overlay {
   position: absolute;
   inset:    0;
   background:
-    linear-gradient(148deg, rgba(61,74,47,0.55) 0%, rgba(20,22,15,0.0) 45%),
+    linear-gradient(148deg, rgba(61,74,47,0.50) 0%, rgba(20,22,15,0.0) 45%),
     linear-gradient(
       to bottom,
-      rgba(20,22,15,0.22) 0%,
+      rgba(20,22,15,0.20) 0%,
       rgba(20,22,15,0.08) 28%,
-      rgba(20,22,15,0.60) 68%,
-      rgba(20,22,15,0.92) 100%
+      rgba(20,22,15,0.58) 68%,
+      rgba(20,22,15,0.90) 100%
     );
   z-index: 1;
 }
 
-/* All content layers above overlay */
-.vm-intro__nav,
+/* Content above overlay */
 .vm-intro__content,
 .vm-intro__lower {
   position: relative;
   z-index:  2;
 }
 
-/* ── Top Nav ────────────────────────────────────────────────────────────── */
-.vm-intro__nav {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  padding:         28px 48px;
-  flex-shrink:     0;
-}
-
-.vm-intro__logo {
-  font-family:     'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  font-size:       clamp(20px, 2.4vw, 28px);
-  letter-spacing:  -0.04em;
-  line-height:     1;
-  text-decoration: none;
-  color:           var(--vm-bone);
-}
-.vm-intro__logo-velo  { font-weight: 400; }
-.vm-intro__logo-match { font-weight: 700; }
-.vm-intro__logo-dot   { color: var(--vm-signal); }
-
-.vm-intro__nav-links {
-  display:    flex;
-  gap:        32px;
-  list-style: none;
-}
-.vm-intro__nav-links a {
-  font-family:    var(--vm-mono);
-  font-size:      10px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color:          rgba(245,241,232,0.65);
-  text-decoration: none;
-  transition:     color 180ms ease;
-}
-.vm-intro__nav-links a:hover { color: var(--vm-bone); }
-
-.vm-intro__nav-login {
-  font-family:    var(--vm-mono);
-  font-size:      10px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color:          var(--vm-signal);
-  text-decoration: none;
-  border:         1px solid rgba(228,201,126,0.35);
-  padding:        8px 18px;
-  transition:     border-color 180ms ease;
-}
-.vm-intro__nav-login:hover { border-color: var(--vm-signal); }
-
-/* ── Main Content (pushes to bottom) ────────────────────────────────────── */
+/* ── Main Content — pushed to bottom ────────────────────────────────── */
 .vm-intro__content {
   margin-top: auto;
   padding:    0 48px 12px;
-  max-width:  820px;
+  max-width:  860px;
 }
 
 .vm-intro__eyebrow {
@@ -119,7 +65,7 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color:          var(--vm-signal);
-  margin-bottom:  20px;
+  margin-bottom:  22px;
 }
 .vm-intro__eyebrow::before {
   content:    '';
@@ -132,10 +78,10 @@
 
 .vm-intro__headline {
   font-family:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  font-size:      clamp(44px, 6.5vw, 88px);
+  font-size:      clamp(48px, 7vw, 96px);
   font-weight:    400;
   letter-spacing: -0.045em;
-  line-height:    0.97;
+  line-height:    1.0;
   text-transform: none;
   color:          var(--vm-bone);
   margin:         0 0 28px;
@@ -146,90 +92,39 @@
 }
 
 .vm-intro__sub {
-  font-size:   clamp(14px, 1.6vw, 17px);
-  line-height: 1.55;
-  color:       rgba(245,241,232,0.68);
-  max-width:   520px;
-  margin:      0 0 36px;
-  font-weight: 400;
+  font-size:      clamp(14px, 1.6vw, 17px);
+  line-height:    1.55;
+  color:          rgba(245,241,232,0.68);
+  max-width:      520px;
+  margin:         0;
+  font-weight:    400;
   text-transform: none;
   letter-spacing: 0;
 }
 
-.vm-intro__cta-group {
-  display:     flex;
-  gap:         20px;
-  flex-wrap:   wrap;
-  align-items: center;
-}
-
-.vm-intro__cta-primary {
-  display:         inline-block;
-  background:      var(--vm-signal);
-  color:           var(--vm-ink);
-  text-decoration: none;
-  font-family:     var(--vm-sans);
-  font-size:       13px;
-  font-weight:     800;
-  text-transform:  uppercase;
-  letter-spacing:  0.08em;
-  padding:         14px 32px;
-  transition:      transform 200ms ease, box-shadow 200ms ease;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .vm-intro__cta-primary:hover {
-    transform:  translate(-2px,-2px);
-    box-shadow: 4px 4px 0 var(--vm-olive);
-  }
-}
-.vm-intro__cta-primary--disabled {
-  background: var(--vm-olive);
-  color:      var(--vm-signal);
-  cursor:     default;
-}
-
-.vm-intro__cta-secondary {
-  display:         inline-block;
-  color:           rgba(245,241,232,0.65);
-  text-decoration: none;
-  font-family:     var(--vm-mono);
-  font-size:       11px;
-  font-weight:     700;
-  text-transform:  uppercase;
-  letter-spacing:  0.12em;
-  border-bottom:   1px solid rgba(245,241,232,0.3);
-  padding-bottom:  2px;
-  transition:      color 180ms ease, border-color 180ms ease;
-}
-.vm-intro__cta-secondary:hover {
-  color:         var(--vm-bone);
-  border-color:  rgba(245,241,232,0.6);
-}
-
-/* ── Lower bar: Stats ───────────────────────────────────────────────────── */
+/* ── Stats Bar ──────────────────────────────────────────────────────── */
 .vm-intro__lower {
-  border-top: 1px solid rgba(245,241,232,0.1);
-  margin-top: 48px;
-  padding:    22px 48px;
-  display:    flex;
+  border-top:  1px solid rgba(245,241,232,0.1);
+  margin-top:  48px;
+  padding:     22px 48px;
+  display:     flex;
   align-items: center;
-  gap:        0;
 }
 
 .vm-intro__stats {
-  display:    flex;
-  gap:        0;
-  flex-wrap:  wrap;
+  display:  flex;
+  flex-wrap: wrap;
 }
 
 .vm-intro__stat {
-  padding:     0 32px 0 0;
-  margin-right: 32px;
-  border-right: 1px solid rgba(245,241,232,0.14);
+  padding-right:  32px;
+  margin-right:   32px;
+  border-right:   1px solid rgba(245,241,232,0.14);
 }
 .vm-intro__stat:last-child {
   border-right: none;
   margin-right: 0;
+  padding-right: 0;
 }
 
 .vm-intro__stat-num {
@@ -252,18 +147,17 @@
   margin-top:     5px;
 }
 
-/* Scroll cue */
 .vm-intro__scroll {
-  margin-left: auto;
-  display:     flex;
-  align-items: center;
-  gap:         8px;
-  font-family: var(--vm-mono);
-  font-size:   9px;
-  font-weight: 700;
+  margin-left:    auto;
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  font-family:    var(--vm-mono);
+  font-size:      9px;
+  font-weight:    700;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color:       rgba(245,241,232,0.3);
+  color:          rgba(245,241,232,0.3);
 }
 @keyframes vm-bounce {
   0%, 100% { transform: translateY(0); }
@@ -273,18 +167,15 @@
   .vm-intro__scroll-icon { animation: vm-bounce 1.8s infinite ease-in-out; }
 }
 
-/* ── Responsive ─────────────────────────────────────────────────────────── */
+/* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
-  .vm-intro__nav        { padding: 20px 24px; }
-  .vm-intro__nav-links  { display: none; }
-  .vm-intro__content    { padding: 0 24px 12px; max-width: 100%; }
-  .vm-intro__lower      { padding: 18px 24px; }
+  .vm-intro__content { padding: 0 24px 12px; max-width: 100%; }
+  .vm-intro__lower   { padding: 18px 24px; }
 }
-
 @media (max-width: 600px) {
-  .vm-intro__stats      { flex-direction: column; gap: 16px; }
-  .vm-intro__stat       { border-right: none; margin-right: 0; padding: 0; }
-  .vm-intro__scroll     { display: none; }
+  .vm-intro__stats   { flex-direction: column; gap: 16px; }
+  .vm-intro__stat    { border-right: none; margin-right: 0; padding-right: 0; }
+  .vm-intro__scroll  { display: none; }
 }
 </style>
 
@@ -293,40 +184,15 @@
   <div class="vm-intro__bg" aria-hidden="true"></div>
   <div class="vm-intro__overlay" aria-hidden="true"></div>
 
-  <!-- ── Nav ─────────────────────────────────────────────────────────────── -->
-  <nav class="vm-intro__nav">
-    <a href="{{ routes.root_url }}" class="vm-intro__logo" aria-label="VeloMatch Startseite">
-      <span class="vm-intro__logo-velo">velo</span><span
-        class="vm-intro__logo-match">match</span><span
-        class="vm-intro__logo-dot">.</span>
-    </a>
-    <ul class="vm-intro__nav-links">
-      <li><a href="{{ routes.collections_url }}">Bikes</a></li>
-      <li><a href="/pages/velomatch-pro">VM Pro</a></li>
-      <li><a href="{{ routes.collections_url }}/wartung">Wartung</a></li>
-    </ul>
-    {%- if customer -%}
-      <a class="vm-intro__nav-login" href="/pages/velomatch-pro-dashboard">Dashboard →</a>
-    {%- else -%}
-      <a class="vm-intro__nav-login" href="{{ routes.account_login_url }}">Anmelden →</a>
-    {%- endif -%}
-  </nav>
-
   <!-- ── Hero Copy ─────────────────────────────────────────────────────── -->
   <div class="vm-intro__content">
     <p class="vm-intro__eyebrow">{{ section.settings.eyebrow | default: 'velomatch PRO' }}</p>
     <h1 class="vm-intro__headline">
-      {{ section.settings.headline | default: 'Dein Rad.<br>Deine Daten.<br>Deine Teile.' }}
+      Dein Rad.<br>
+      Deine Daten.<br>
+      Deine <em>Teile.</em>
     </h1>
-    <p class="vm-intro__sub">{{ section.settings.subtext | default: 'Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen.' }}</p>
-    <div class="vm-intro__cta-group">
-      {%- if customer and customer.tags contains 'vm-pro' -%}
-        <a href="/pages/velomatch-pro-dashboard" class="vm-intro__cta-primary">Zum Dashboard →</a>
-      {%- else -%}
-        <a href="/pages/velomatch-pro" class="vm-intro__cta-primary">{{ section.settings.cta_text | default: 'Jetzt Mitglied werden' }} →</a>
-      {%- endif -%}
-      <a href="#bike-selector" class="vm-intro__cta-secondary">Teile finden</a>
-    </div>
+    <p class="vm-intro__sub">{{ section.settings.subtext | default: 'Verschlei&szlig;tracking, Strava-Integration und smarte Kaufvorschl&auml;ge &mdash; alles in einem Dashboard. F&uuml;r Fahrer, die es ernst meinen.' }}</p>
   </div>
 
   <!-- ── Stats Bar ─────────────────────────────────────────────────────── -->
@@ -355,66 +221,6 @@
 
 </section>
 
-<script>
-function vmProAddToCart(btn) {
-  btn.disabled = true;
-  var orig = btn.textContent;
-  btn.textContent = '...';
-
-  function addByHandle(handle) {
-    return fetch('/products/' + handle + '.json')
-      .then(function(r) {
-        if (!r.ok) throw new Error('404');
-        return r.json();
-      })
-      .then(function(d) {
-        var variant = d.product.variants[0];
-        var payload = { id: variant.id, quantity: 1 };
-        var spg = d.product.selling_plan_groups;
-        if (spg && spg.length > 0 && spg[0].selling_plans && spg[0].selling_plans.length > 0) {
-          payload.selling_plan = spg[0].selling_plans[0].id;
-        }
-        return fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      })
-      .then(function(r) {
-        if (!r.ok) return r.json().then(function(e) { throw new Error(e.description || 'cart'); });
-        return r.json();
-      });
-  }
-
-  fetch('/cart.js')
-    .then(function(r) { return r.json(); })
-    .then(function(cart) {
-      if (cart.items.some(function(i) { return i.handle === 'velomatch-pro'; })) {
-        window.location.href = '/cart';
-        return Promise.reject('skip');
-      }
-      return addByHandle('velomatch-pro')
-        .catch(function() {
-          return fetch('/search/suggest.json?q=velomatch+pro&resources[type]=product&resources[limit]=1')
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-              var prods = data.resources && data.resources.results && data.resources.results.products;
-              if (!prods || prods.length === 0) throw new Error('not-found');
-              return addByHandle(prods[0].handle);
-            });
-        });
-    })
-    .then(function() { window.location.href = '/cart'; })
-    .catch(function(err) {
-      if (err === 'skip') return;
-      btn.disabled = false;
-      btn.textContent = orig;
-      window.location.href = '/pages/velomatch-pro';
-    });
-}
-window.vmProAddToCart = vmProAddToCart;
-</script>
-
 {% schema %}
 {
   "name": "VeloMatch Intro",
@@ -427,7 +233,7 @@ window.vmProAddToCart = vmProAddToCart;
       "type": "image_picker",
       "id": "hero_image",
       "label": "Hintergrundbild",
-      "info": "Empfohlen: mind. 2000px breit, Querformat. Lade hier dein Hero-Foto hoch."
+      "info": "Mind. 2000px breit, Querformat. Lade hier dein Hero-Foto hoch."
     },
     {
       "type": "range",
@@ -461,22 +267,9 @@ window.vmProAddToCart = vmProAddToCart;
     },
     {
       "type": "textarea",
-      "id": "headline",
-      "label": "Hauptüberschrift",
-      "default": "Dein Rad.\nDeine Daten.\nDeine Teile.",
-      "info": "Zeilenumbrüche werden als <br> gerendert."
-    },
-    {
-      "type": "textarea",
       "id": "subtext",
       "label": "Beschreibungstext",
       "default": "Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen."
-    },
-    {
-      "type": "text",
-      "id": "cta_text",
-      "label": "CTA Button Text",
-      "default": "Jetzt Mitglied werden"
     },
     {
       "type": "header",
