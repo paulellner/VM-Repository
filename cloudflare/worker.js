@@ -383,19 +383,35 @@ export default {
         if (refreshed) { s = refreshed; note.strava = refreshed; }
       }
 
-      const allTimeKm    = s.profile?.all_time_distance_km ?? 0;
-      const allTimeRides = s.profile?.all_time_rides        ?? 0;
-
-      /* Aktivitäten der letzten 90 Tage für Verschleißmultiplikator */
+      /* Aktivitäten (90 Tage) + aktuelle Gesamtstatistik parallel laden —
+         so spiegeln sich neue Fahrten sofort im Verschleißstatus wider. */
       const since90 = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
       let acts = [];
+      let allTimeKm    = s.profile?.all_time_distance_km ?? 0;
+      let allTimeRides = s.profile?.all_time_rides        ?? 0;
       try {
-        const r = await fetch(
-          `${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
-          { headers: { Authorization: `Bearer ${s.access_token}` } }
-        );
-        if (r.ok) { acts = await r.json(); if (!Array.isArray(acts)) acts = []; }
-      } catch (e) { console.error('Activities fetch failed:', e); }
+        const [actsResp, statsResp] = await Promise.all([
+          fetch(`${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
+            { headers: { Authorization: `Bearer ${s.access_token}` } }),
+          fetch(`${STRAVA_API}/athletes/${s.athlete_id}/stats`,
+            { headers: { Authorization: `Bearer ${s.access_token}` } }),
+        ]);
+        if (actsResp.ok) { acts = await actsResp.json(); if (!Array.isArray(acts)) acts = []; }
+        if (statsResp.ok) {
+          const stats = await statsResp.json();
+          if (stats?.all_ride_totals) {
+            allTimeKm    = Math.round((stats.all_ride_totals.distance ?? 0) / 1000);
+            allTimeRides = stats.all_ride_totals.count ?? allTimeRides;
+            /* Cache in customer.note aktualisieren (fire-and-forget) */
+            if (note.strava?.profile) {
+              note.strava.profile.all_time_distance_km = allTimeKm;
+              note.strava.profile.all_time_rides       = allTimeRides;
+              putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note)
+                .catch(e => console.error('Stats cache update failed:', e));
+            }
+          }
+        }
+      } catch (e) { console.error('Strava fetch failed:', e); }
 
       /* vm_bundles beim ersten Aufruf initialisieren */
       if (!note.vm_bundles) {
