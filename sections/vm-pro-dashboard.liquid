@@ -1228,6 +1228,188 @@
 @media (max-width: 480px) {
   .vmpd__modal-box { padding: 28px 20px; }
 }
+
+/* ── SETUP WIZARD ────────────────────────────────────────────────────────── */
+
+.vmpd__wizard {
+  padding: 28px 24px 24px;
+}
+
+.vmpd__wizard-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+
+.vmpd__wizard-step-dot {
+  flex: 1;
+  height: 3px;
+  background: rgba(61,74,47,0.15);
+  transition: background 300ms ease;
+}
+.vmpd__wizard-step-dot--active { background: var(--vm-signal); }
+.vmpd__wizard-step-dot--done   { background: var(--vm-moss); }
+
+.vmpd__wizard-step-label {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  10px;
+}
+
+.vmpd__wizard-question {
+  font-size:      clamp(14px, 2vw, 17px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color:          var(--vm-ink);
+  margin:         0 0 20px;
+  line-height:    1.2;
+}
+
+.vmpd__wizard-options {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   10px;
+  margin-bottom:         24px;
+}
+
+.vmpd__wizard-option { cursor: pointer; }
+.vmpd__wizard-option input[type=radio] { display: none; }
+.vmpd__wizard-option-label {
+  display:     block;
+  padding:     14px 16px;
+  border:      var(--vm-stroke) solid rgba(61,74,47,0.25);
+  background:  var(--vm-paper);
+  cursor:      pointer;
+  transition:  border-color 180ms ease, background 180ms ease;
+  height:      100%;
+  box-sizing:  border-box;
+}
+.vmpd__wizard-option input[type=radio]:checked + .vmpd__wizard-option-label {
+  border-color: var(--vm-signal);
+  background:   rgba(201,228,91,0.10);
+}
+.vmpd__wizard-option:hover .vmpd__wizard-option-label { border-color: var(--vm-ink); }
+
+.vmpd__wizard-option-main {
+  display:        block;
+  font-size:      12px;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color:          var(--vm-ink);
+  margin-bottom:  4px;
+}
+
+.vmpd__wizard-option-sub {
+  display:     block;
+  font-family: var(--vm-mono);
+  font-size:   10px;
+  color:       var(--vm-sage);
+  line-height: 1.4;
+}
+
+.vmpd__wizard-km-wrap {
+  display:     flex;
+  align-items: baseline;
+  gap:         8px;
+  margin-bottom: 12px;
+}
+
+.vmpd__wizard-km-input {
+  width:       180px;
+  padding:     12px 14px;
+  font-family: var(--vm-mono);
+  font-size:   22px;
+  font-weight: 700;
+  color:       var(--vm-ink);
+  background:  var(--vm-paper);
+  border:      var(--vm-stroke) solid rgba(61,74,47,0.3);
+  outline:     none;
+  border-radius: 0;
+  transition:  border-color 180ms ease;
+  -moz-appearance: textfield;
+}
+.vmpd__wizard-km-input::-webkit-outer-spin-button,
+.vmpd__wizard-km-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.vmpd__wizard-km-input:focus { border-color: var(--vm-signal); }
+
+.vmpd__wizard-km-unit {
+  font-family: var(--vm-mono);
+  font-size:   13px;
+  color:       var(--vm-sage);
+}
+
+.vmpd__wizard-hint {
+  font-size:   12px;
+  color:       var(--vm-sage);
+  line-height: 1.55;
+  margin:      0 0 24px;
+  max-width:   400px;
+}
+
+.vmpd__wizard-nav {
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+  gap:         12px;
+}
+
+.vmpd__wizard-back {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--vm-sage);
+  cursor:         pointer;
+  border:         none;
+  background:     none;
+  padding:        0;
+  transition:     color var(--vm-dur) ease;
+}
+.vmpd__wizard-back:hover { color: var(--vm-ink); }
+
+.vmpd__wizard-next {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             8px;
+  background:      var(--vm-signal);
+  color:           var(--vm-ink);
+  font-family:     var(--vm-sans);
+  font-size:       13px;
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  0.04em;
+  padding:         13px 24px;
+  border:          none;
+  cursor:          pointer;
+  flex-shrink:     0;
+  transition:      transform var(--vm-dur) var(--vm-ease),
+                   box-shadow var(--vm-dur) var(--vm-ease),
+                   opacity 180ms ease;
+}
+.vmpd__wizard-next:disabled {
+  opacity: 0.35;
+  cursor:  not-allowed;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vmpd__wizard-next:not(:disabled):hover {
+    transform:  translate(-2px,-2px);
+    box-shadow: 4px 4px 0 var(--vm-olive);
+  }
+}
+
+@media (max-width: 600px) {
+  .vmpd__wizard-options { grid-template-columns: 1fr; }
+  .vmpd__wizard         { padding: 20px 16px; }
+}
 </style>
 
 {%- comment -%} ── AUTH GATE ─────────────────────────────────────────────── {%- endcomment -%}
@@ -1548,6 +1730,8 @@
     var healthAlert = document.getElementById('vmpd-health-alert');
     var healthChip  = document.getElementById('vmpd-health-chip');
 
+    var wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
+
     var STATUS_MSG = {
       green:  'Alles in Ordnung',
       yellow: 'Prüfung empfohlen',
@@ -1719,8 +1903,182 @@
       healthBody.innerHTML = '<div class="vmpd__health-loading">Lade Statusdaten…</div>';
       fetch('/apps/vm-pro/bike/health', { headers: { 'Accept': 'application/json' } })
         .then(function(r) { return r.json(); })
-        .then(function(d) { if (d.ok) renderHealth(d); else renderHealthError(d.error); })
-        .catch(function()  { renderHealthError('connection_error'); });
+        .then(function(d) {
+          if (d.ok) {
+            if (d.needs_setup) { showWizard(); }
+            else { renderHealth(d); }
+          } else {
+            renderHealthError(d.error);
+          }
+        })
+        .catch(function() { renderHealthError('connection_error'); });
+    }
+
+    /* ── SETUP WIZARD ─────────────────────────────────────────────────────── */
+
+    function showWizard() {
+      if (healthChip) healthChip.style.display = 'none';
+      if (healthAlert) healthAlert.style.display = 'none';
+      wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
+      healthBody.innerHTML = buildWizardStep(1);
+      bindWizardEvents();
+    }
+
+    function buildWizardStep(step) {
+      var prog = '';
+      for (var i = 1; i <= 4; i++) {
+        var cls = i < step ? '--done' : i === step ? '--active' : '';
+        prog += '<div class="vmpd__wizard-step-dot' + (cls ? ' vmpd__wizard-step-dot' + cls : '') + '"></div>';
+      }
+
+      var inner = '';
+      if (step === 1) {
+        inner  = '<span class="vmpd__wizard-step-label">Schritt 1 von 4</span>';
+        inner += '<h3 class="vmpd__wizard-question">Wie viele Kilometer hat dein Rad insgesamt?</h3>';
+        inner += '<div class="vmpd__wizard-km-wrap">'
+               + '<input class="vmpd__wizard-km-input" id="wz-km" type="number" min="0" max="999999" placeholder="z. B.&nbsp;3500"'
+               + (wizardState.bikeKm != null ? ' value="' + wizardState.bikeKm + '"' : '') + '>'
+               + '<span class="vmpd__wizard-km-unit">km</span>'
+               + '</div>'
+               + '<p class="vmpd__wizard-hint">Odometer deines Rades oder eine Schätzung. Hilft uns, den Verschleiß präzise zu berechnen.</p>';
+      } else {
+        var configs = [null,
+          null,
+          { lbl: 'Schritt 2 von 4', q: 'Wann hast du deine Kette zuletzt gewechselt?', name: 'wz-chain', sel: wizardState.chainKmSince,
+            opts: [
+              { val: 250,  main: 'Kürzlich',         sub: 'Weniger als 500 km' },
+              { val: 1000, main: 'Vor 500– 1.500 km', sub: 'Mäßige Nutzung' },
+              { val: 2000, main: 'Vor 1.500–2.500 km', sub: 'Bald fällig' },
+              { val: 3000, main: 'Nie / Unbekannt',   sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+            ]
+          },
+          { lbl: 'Schritt 3 von 4', q: 'Wann hast du Kassette und Bremsbelege zuletzt gewechselt?', name: 'wz-cass', sel: wizardState.cassetteBrakepadsKmSince,
+            opts: [
+              { val: 500,  main: 'Kürzlich',          sub: 'Weniger als 1.000 km' },
+              { val: 2000, main: 'Vor 1.000–3.000 km', sub: 'Normale Nutzung' },
+              { val: 4500, main: 'Vor 3.000–6.000 km', sub: 'Prüfung empfohlen' },
+              { val: 8500, main: 'Nie / Unbekannt',    sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+            ]
+          },
+          { lbl: 'Schritt 4 von 4', q: 'Wann hast du Züge, Reifen und Kettensterne zuletzt gewechselt?', name: 'wz-cables', sel: wizardState.cablesTiresChainringsKmSince,
+            opts: [
+              { val: 1000,  main: 'Kürzlich',            sub: 'Weniger als 2.000 km' },
+              { val: 3500,  main: 'Vor 2.000–5.000 km', sub: 'Normale Nutzung' },
+              { val: 7500,  main: 'Vor 5.000–10.000 km', sub: 'Auf dem Radar behalten' },
+              { val: 12000, main: 'Nie / Unbekannt',      sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+            ]
+          }
+        ];
+        var c = configs[step];
+        inner = '<span class="vmpd__wizard-step-label">' + c.lbl + '</span>'
+              + '<h3 class="vmpd__wizard-question">' + c.q + '</h3>'
+              + '<div class="vmpd__wizard-options">';
+        c.opts.forEach(function(opt) {
+          var chk = c.sel === opt.val ? ' checked' : '';
+          inner += '<label class="vmpd__wizard-option">'
+                 + '<input type="radio" name="' + c.name + '" value="' + opt.val + '"' + chk + '>'
+                 + '<span class="vmpd__wizard-option-label">'
+                 + '<span class="vmpd__wizard-option-main">' + escH(opt.main) + '</span>'
+                 + '<span class="vmpd__wizard-option-sub">'  + escH(opt.sub)  + '</span>'
+                 + '</span></label>';
+        });
+        inner += '</div>';
+      }
+
+      var backBtn = step > 1
+        ? '<button class="vmpd__wizard-back" id="wz-back" type="button">← Zurück</button>'
+        : '<span></span>';
+      var nextLbl = step === 4 ? 'Analyse starten →' : 'Weiter →';
+
+      return '<div class="vmpd__wizard">'
+           + '<div class="vmpd__wizard-progress">' + prog + '</div>'
+           + inner
+           + '<div class="vmpd__wizard-nav">' + backBtn
+           + '<button class="vmpd__wizard-next" id="wz-next" type="button" disabled>' + nextLbl + '</button>'
+           + '</div></div>';
+    }
+
+    function bindWizardEvents() {
+      var nextBtn = document.getElementById('wz-next');
+      var backBtn = document.getElementById('wz-back');
+
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+          wizardState.step--;
+          healthBody.innerHTML = buildWizardStep(wizardState.step);
+          bindWizardEvents();
+        });
+      }
+
+      function refreshNext() {
+        if (nextBtn) nextBtn.disabled = !validateStep(wizardState.step);
+      }
+
+      var inputs = healthBody.querySelectorAll('input');
+      inputs.forEach(function(inp) {
+        inp.addEventListener('change', refreshNext);
+        inp.addEventListener('input',  refreshNext);
+      });
+
+      if (nextBtn) {
+        refreshNext();
+        nextBtn.addEventListener('click', function() {
+          if (!validateStep(wizardState.step)) return;
+          saveStep(wizardState.step);
+          if (wizardState.step === 4) {
+            submitWizard();
+          } else {
+            wizardState.step++;
+            healthBody.innerHTML = buildWizardStep(wizardState.step);
+            bindWizardEvents();
+          }
+        });
+      }
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        var inp = document.getElementById('wz-km');
+        if (!inp || inp.value === '') return false;
+        var v = parseInt(inp.value, 10);
+        return !isNaN(v) && v >= 0;
+      }
+      var name = step === 2 ? 'wz-chain' : step === 3 ? 'wz-cass' : 'wz-cables';
+      return !!healthBody.querySelector('input[name="' + name + '"]:checked');
+    }
+
+    function saveStep(step) {
+      if (step === 1) {
+        var inp = document.getElementById('wz-km');
+        wizardState.bikeKm = inp ? (parseInt(inp.value, 10) || 0) : 0;
+      } else {
+        var name = step === 2 ? 'wz-chain' : step === 3 ? 'wz-cass' : 'wz-cables';
+        var chk  = healthBody.querySelector('input[name="' + name + '"]:checked');
+        var val  = chk ? parseInt(chk.value, 10) : 0;
+        if (step === 2) wizardState.chainKmSince = val;
+        else if (step === 3) wizardState.cassetteBrakepadsKmSince = val;
+        else wizardState.cablesTiresChainringsKmSince = val;
+      }
+    }
+
+    function submitWizard() {
+      healthBody.innerHTML = '<div class="vmpd__health-loading">Kalibrierung wird gespeichert…</div>';
+      fetch('/apps/vm-pro/bike/setup', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify({
+          bikeKm:                       wizardState.bikeKm,
+          chainKmSince:                 wizardState.chainKmSince,
+          cassetteBrakepadsKmSince:     wizardState.cassetteBrakepadsKmSince,
+          cablesTiresChainringsKmSince: wizardState.cablesTiresChainringsKmSince,
+        }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok) { renderHealth(d); }
+        else { renderHealthError(d.error || 'setup_failed'); }
+      })
+      .catch(function() { renderHealthError('connection_error'); });
     }
 
     loadHealth();

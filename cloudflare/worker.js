@@ -409,6 +409,11 @@ export default {
           .catch(e => console.error('vm_bundles init save failed:', e));
       }
 
+      /* Noch keine Kalibrierung → Setup-Wizard im Client anzeigen */
+      if (!note.vm_bundles.setup_done) {
+        return Response.json({ ok: true, needs_setup: true, odometer_km: allTimeKm });
+      }
+
       const cond   = computeConditions(acts);
       const health = computeHealth(allTimeKm, allTimeRides, cond, note.vm_bundles);
 
@@ -456,6 +461,80 @@ export default {
 
       await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
       return Response.json({ ok: true, component_id, reset_at: resetAt });
+    }
+
+    /* ── POST /bike/setup — Erstkalibrierung speichern ─────────────────────── */
+    if (url.pathname === '/bike/setup') {
+      if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405 });
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ error: 'not_authenticated' }, { status: 401 });
+
+      let body;
+      try { body = await request.json(); } catch {
+        return Response.json({ error: 'bad_request' }, { status: 400 });
+      }
+      const { bikeKm, chainKmSince, cassetteBrakepadsKmSince, cablesTiresChainringsKmSince } = body || {};
+
+      const shop = url.searchParams.get('shop');
+      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+
+      if (!note.strava?.profile) {
+        return Response.json({ ok: false, error: 'strava_not_connected' });
+      }
+
+      let s = note.strava;
+      if (s.token_expires_at && Date.now() / 1000 > s.token_expires_at - 120) {
+        const refreshed = await refreshAndStore(env, shop, customerId, note);
+        if (refreshed) { s = refreshed; note.strava = refreshed; }
+      }
+
+      const allTimeKm    = s.profile?.all_time_distance_km ?? 0;
+      const allTimeRides = s.profile?.all_time_rides        ?? 0;
+      const today        = new Date().toISOString().split('T')[0];
+
+      const mkReset = km => ({ reset_km: Math.max(0, allTimeKm - (km || 0)), reset_at: today });
+
+      if (!note.vm_bundles) note.vm_bundles = {};
+      note.vm_bundles.setup_done        = true;
+      note.vm_bundles.bike_total_km     = bikeKm ?? null;
+      note.vm_bundles.strava_baseline_km = allTimeKm;
+      note.vm_bundles.components = {
+        chain:      mkReset(chainKmSince),
+        cassette:   mkReset(cassetteBrakepadsKmSince),
+        brakepads:  mkReset(cassetteBrakepadsKmSince),
+        cables:     mkReset(cablesTiresChainringsKmSince),
+        tires:      mkReset(cablesTiresChainringsKmSince),
+        chainrings: mkReset(cablesTiresChainringsKmSince),
+        chain_lube: mkReset(Math.min(Math.round((chainKmSince || 0) / 5), 400)),
+        cleaner:    { reset_rides: Math.max(0, allTimeRides - 3), reset_at: today },
+      };
+
+      await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
+
+      /* Aktivitäten für Verschleißmultiplikator laden */
+      const since90 = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
+      let acts = [];
+      try {
+        const r = await fetch(
+          `${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
+          { headers: { Authorization: `Bearer ${s.access_token}` } }
+        );
+        if (r.ok) { acts = await r.json(); if (!Array.isArray(acts)) acts = []; }
+      } catch (e) { console.error('Activities fetch failed:', e); }
+
+      const cond   = computeConditions(acts);
+      const health = computeHealth(allTimeKm, allTimeRides, cond, note.vm_bundles);
+
+      return Response.json({
+        ok:             true,
+        odometer_km:    allTimeKm,
+        odometer_rides: allTimeRides,
+        conditions:     cond,
+        ...health,
+      });
     }
 
     /* ── Bike lesen (App Proxy GET /bike) ─────────────────────────────────── */
