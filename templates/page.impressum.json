@@ -2,21 +2,7 @@
   "sections": {
     "main": {
       "type": "impressum",
-      "settings": {
-        "company_name": "Paul Ellner",
-        "company_addition": "",
-        "street": "BITTE ERGÄNZEN",
-        "zip": "BITTE ERGÄNZEN",
-        "city": "BITTE ERGÄNZEN",
-        "country": "Deutschland",
-        "phone": "",
-        "email": "BITTE ERGÄNZEN",
-        "vat_id": "",
-        "register_court": "",
-        "register_number": "",
-        "responsible_person": "Paul Ellner",
-        "responsible_address": ""
-      }
+      "settings": {}
     }
   },
   "order": ["main"]
