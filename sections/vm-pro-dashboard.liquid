@@ -1829,16 +1829,13 @@
       }
 
       /* Gesamt-Statuszeile */
-      var condInfo = '';
       var cond = data.conditions || {};
-      if (cond.avg_watts) condInfo += ' · Ø ' + cond.avg_watts + ' W';
-      if (cond.wet_pct != null) condInfo += ' · ' + cond.wet_pct + '% nass';
 
       var html = '<div class="vmpd__health-statusbar">'
                +   lamp(data.overall_status, 12)
                +   '<span class="vmpd__health-status-label">Gesamt </span>'
                +   '<span class="vmpd__health-status-val">' + STATUS_MSG[data.overall_status] + '</span>'
-               +   '<span class="vmpd__health-odo">' + fmtNum(data.odometer_km) + ' km gesamt' + condInfo + '</span>'
+               +   '<span class="vmpd__health-odo">' + fmtNum(data.odometer_km) + ' km gesamt</span>'
                + '</div>';
 
       /* Verschleißteile */
@@ -1857,13 +1854,6 @@
       cons.forEach(function(c) { html += compRow(c); });
       html += '</div>';
 
-      /* Bedingungs-Fußzeile */
-      var condHtml = '';
-      if (cond.wet_pct != null) condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Nasse Fahrten</span><span class="vmpd__health-cond-val">' + cond.wet_pct + '%</span></div>';
-      if (cond.avg_watts)       condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Ø Leistung</span><span class="vmpd__health-cond-val">' + cond.avg_watts + ' W</span></div>';
-      if (cond.elev_per_km != null) condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Ø Hm/km</span><span class="vmpd__health-cond-val">' + cond.elev_per_km + ' m</span></div>';
-      if (cond.overall)         condHtml += '<div class="vmpd__health-cond-item"><span class="vmpd__health-cond-lbl">Verschleißfaktor</span><span class="vmpd__health-cond-val">' + cond.overall + '×</span></div>';
-      if (condHtml) html += '<div class="vmpd__health-cond">' + condHtml + '</div>';
 
       healthBody.innerHTML = html;
 
