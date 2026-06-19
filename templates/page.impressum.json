@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "impressum",
-      "settings": {}
-    }
-  },
-  "order": ["main"]
-}
