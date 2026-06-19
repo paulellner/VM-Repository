@@ -1,8 +1,31 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "impressum",
-      "settings": {}
+      "settings": {
+        "company_name": "Paul Ellner",
+        "company_addition": "",
+        "street": "BITTE ERGÄNZEN",
+        "zip": "BITTE ERGÄNZEN",
+        "city": "BITTE ERGÄNZEN",
+        "country": "Deutschland",
+        "phone": "",
+        "email": "BITTE ERGÄNZEN",
+        "vat_id": "",
+        "register_court": "",
+        "register_number": "",
+        "responsible_person": "Paul Ellner",
+        "responsible_address": ""
+      }
     }
   },
   "order": ["main"]

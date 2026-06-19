@@ -1511,7 +1511,7 @@
         <!-- PANEL 3: Strava -->
         <article class="vmpd__panel" aria-labelledby="vmpd-strava-heading">
           <div class="vmpd__panel-hd">
-            <span class="vmpd__panel-num">03</span>
+            <span class="vmpd__panel-num">02</span>
             <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
           </div>
           <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
@@ -1530,7 +1530,7 @@
 
       <article class="vmpd__panel" style="margin-bottom:32px" aria-labelledby="vmpd-health-heading">
         <div class="vmpd__panel-hd">
-          <span class="vmpd__panel-num">00</span>
+          <span class="vmpd__panel-num">03</span>
           <h2 class="vmpd__panel-title" id="vmpd-health-heading">Bike Gesundheit</h2>
           <span id="vmpd-health-chip" style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span>
         </div>
@@ -1542,10 +1542,10 @@
       <!-- ── UNTERES GRID: Kaufhistorie + Konto ────────────────────────── -->
       <div class="vmpd__grid">
 
-        <!-- PANEL 2: Kaufhistorie -->
+        <!-- PANEL 4: Kaufhistorie -->
         <article class="vmpd__panel" aria-labelledby="vmpd-orders-heading">
           <div class="vmpd__panel-hd">
-            <span class="vmpd__panel-num">02</span>
+            <span class="vmpd__panel-num">04</span>
             <h2 class="vmpd__panel-title" id="vmpd-orders-heading">Kaufhistorie</h2>
             {%- if customer.orders_count > 5 -%}
               <a class="vmpd__panel-action" href="{{ routes.account_url }}" aria-label="Alle Bestellungen ansehen">
@@ -1614,7 +1614,7 @@
         <!-- PANEL 4: Konto-Einstellungen -->
         <article class="vmpd__panel" aria-labelledby="vmpd-account-heading">
           <div class="vmpd__panel-hd">
-            <span class="vmpd__panel-num">04</span>
+            <span class="vmpd__panel-num">05</span>
             <h2 class="vmpd__panel-title" id="vmpd-account-heading">Konto</h2>
           </div>
           <div class="vmpd__panel-body" style="padding-top: 8px; padding-bottom: 8px;">
@@ -1833,7 +1833,6 @@
       var cond = data.conditions || {};
       if (cond.avg_watts) condInfo += ' · Ø ' + cond.avg_watts + ' W';
       if (cond.wet_pct != null) condInfo += ' · ' + cond.wet_pct + '% nass';
-      if (cond.overall) condInfo += ' · Faktor ' + cond.overall + '×';
 
       var html = '<div class="vmpd__health-statusbar">'
                +   lamp(data.overall_status, 12)
