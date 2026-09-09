@@ -1,7 +1,7 @@
 {%- comment -%}
-  sections/bike-selector.liquid — VeloMatch 3-Step Bike Selector
-  Space Grotesk wird via layout/theme.liquid geladen.
-  Bike-Katalog: BIKES-Array im <script>-Block (aus rennrad_datenbank_nur_master.xlsx).
+  sections/bike-selector.liquid — VeloMatch 4-Step Bike Selector
+  Ablauf: Kategorie (Road/Gravel) → Marke → Modell → Variante → Ergebnis.
+  Kataloge: ROAD_BIKES + GRAVEL_BIKES im Script-Block; Kategorie-Ebene via CATEGORIES.
 {%- endcomment -%}
 
 <style>
@@ -653,14 +653,18 @@
     <div class="vm-stepper" role="list" aria-label="Auswahlschritte">
       <div class="vm-step-seg" data-seg="1" data-state="active" role="listitem">
         <span class="vm-step-seg__num" aria-hidden="true">1</span>
-        <span class="vm-step-seg__label">Marke</span>
+        <span class="vm-step-seg__label">Kategorie</span>
       </div>
       <div class="vm-step-seg" data-seg="2" data-state="idle" role="listitem">
         <span class="vm-step-seg__num" aria-hidden="true">2</span>
-        <span class="vm-step-seg__label">Modell</span>
+        <span class="vm-step-seg__label">Marke</span>
       </div>
       <div class="vm-step-seg" data-seg="3" data-state="idle" role="listitem">
         <span class="vm-step-seg__num" aria-hidden="true">3</span>
+        <span class="vm-step-seg__label">Modell</span>
+      </div>
+      <div class="vm-step-seg" data-seg="4" data-state="idle" role="listitem">
+        <span class="vm-step-seg__num" aria-hidden="true">4</span>
         <span class="vm-step-seg__label">Variante</span>
       </div>
     </div>
@@ -671,28 +675,37 @@
       <span data-bc-trail></span>
     </div>
 
-    <!-- STEP 1: Marke -->
+    <!-- STEP 1: Kategorie -->
     <div class="vm-step" data-step="1" aria-hidden="false">
       <div class="vm-step__hd">
         <span class="vm-step__n" aria-hidden="true">01</span>
+        <h2 class="vm-step__h2">{{ section.settings.heading_cat | default: 'Wähle deine Fahrrad-Art' }}</h2>
+      </div>
+      <div class="vm-grid vm-grid--3" data-grid="cats" role="list" aria-label="Kategorieauswahl"></div>
+    </div>
+
+    <!-- STEP 2: Marke -->
+    <div class="vm-step" data-step="2" aria-hidden="true">
+      <div class="vm-step__hd">
+        <span class="vm-step__n" aria-hidden="true">02</span>
         <h2 class="vm-step__h2">{{ section.settings.heading_step1 | default: 'Wähle deine Marke' }}</h2>
       </div>
       <div class="vm-grid" data-grid="brands" role="list" aria-label="Markenauswahl"></div>
     </div>
 
-    <!-- STEP 2: Modell -->
-    <div class="vm-step" data-step="2" aria-hidden="true">
+    <!-- STEP 3: Modell -->
+    <div class="vm-step" data-step="3" aria-hidden="true">
       <div class="vm-step__hd">
-        <span class="vm-step__n" aria-hidden="true">02</span>
+        <span class="vm-step__n" aria-hidden="true">03</span>
         <h2 class="vm-step__h2">{{ section.settings.heading_step2 | default: 'Wähle dein Modell' }}</h2>
       </div>
       <div class="vm-grid vm-grid--3" data-grid="models" role="list" aria-label="Modellauswahl"></div>
     </div>
 
-    <!-- STEP 3: Variante -->
-    <div class="vm-step" data-step="3" aria-hidden="true">
+    <!-- STEP 4: Variante -->
+    <div class="vm-step" data-step="4" aria-hidden="true">
       <div class="vm-step__hd">
-        <span class="vm-step__n" aria-hidden="true">03</span>
+        <span class="vm-step__n" aria-hidden="true">04</span>
         <h2 class="vm-step__h2">{{ section.settings.heading_step3 | default: 'Wähle deine Ausstattung' }}</h2>
       </div>
       <div class="vm-grid vm-grid--3" data-grid="variants" role="list" aria-label="Variantenauswahl"></div>
@@ -701,7 +714,7 @@
     <!-- STEP CUSTOM: Selbst zusammenstellen -->
     <div class="vm-step" data-step="custom" aria-hidden="true">
       <div class="vm-step__hd">
-        <span class="vm-step__n" aria-hidden="true">02</span>
+        <span class="vm-step__n" aria-hidden="true">03</span>
         <h2 class="vm-step__h2">Konfiguriere dein Rad</h2>
       </div>
       <p class="vm-custom-intro">Kein Markenbike oder individuelle Komponenten? Wähle deine Spezifikationen — wir finden die passenden Varianten aus unserer Datenbank.</p>
@@ -864,6 +877,7 @@
   var $steps   = root.querySelectorAll('.vm-step');
   var $back    = root.querySelector('[data-back]');
   var $trail   = root.querySelector('[data-bc-trail]');
+  var $gCats   = root.querySelector('[data-grid="cats"]');
   var $gBrands = root.querySelector('[data-grid="brands"]');
   var $gModels = root.querySelector('[data-grid="models"]');
   var $gVars   = root.querySelector('[data-grid="variants"]');
@@ -872,12 +886,17 @@
   var $cta     = root.querySelector('[data-cta]');
   var SK = 'vm_selection'; /* site-wide key — shared with collection page */
 
+  /* Teile-Kollektions-URLs je Kategorie (Liquid-gerendert) */
+  var ROAD_COLL   = '{{ section.settings.parts_collection_url | default: "/collections/all" }}';
+  var GRAVEL_COLL = '{{ section.settings.gravel_parts_collection_url | default: section.settings.parts_collection_url | default: "/collections/all" }}';
+  function collectionBase() { return S.category === 'gravel' ? GRAVEL_COLL : ROAD_COLL; }
+
   /* ── BIKE CATALOG ─────────────────────────────────────────────────────────
      Generiert aus rennrad_datenbank_nur_master.xlsx
      12 Marken · 88 Modellreihen · 247 Varianten
      collectionTag wird als ?filter.p.tag=<tag> an die Teile-URL angehängt.
   ─────────────────────────────────────────────────────────────────────────── */
-  var BIKES = [
+  var ROAD_BIKES = [
     {
       id: "cube", name: "Cube", meta: "Waldershof \u00b7 DE", type: "Carbon",
       models: [
@@ -1624,12 +1643,57 @@
           ]
         }
       ]
-    },
-    {
-      id: "selbst-zusammenstellen", name: "Selbst zusammenstellen", meta: "Kein Markenbike?", type: "Konfigurieren",
-      models: []
     }
   ];
+
+  /* ── GRAVEL CATALOG ───────────────────────────────────────────────────────
+     PLATZHALTER-STARTDATENSATZ — bitte durch die echten Gravel-Bikes ersetzen.
+     Gleiche Struktur wie ROAD_BIKES: Marke → models[] → variants[].
+     collectionTag = Shopify-Tag für den Teilefilter der Gravel-Kollektion.
+  ─────────────────────────────────────────────────────────────────────────── */
+  var GRAVEL_BIKES = [
+    {
+      id: "canyon", name: "Canyon", meta: "Koblenz · DE", type: "Carbon",
+      models: [
+        {
+          id: "canyon-grizl-cf", name: "Grizl CF", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grizl-cf-8-axs", name: "Grizl CF 8 AXS", meta: "SRAM Rival eTap AXS XPLR 1x12", schaltgruppe: "SRAM Rival eTap AXS XPLR 1x12", modelljahre: "2024–2026", collectionTag: "canyon-grizl-cf-8-axs" },
+            { id: "canyon-grizl-cf-7-grx", name: "Grizl CF 7 GRX", meta: "Shimano GRX RX822 1x12", schaltgruppe: "Shimano GRX RX822 1x12", modelljahre: "2024–2026", collectionTag: "canyon-grizl-cf-7-grx" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "rose", name: "Rose", meta: "Bocholt · DE", type: "Carbon",
+      models: [
+        {
+          id: "rose-backroad", name: "Backroad", meta: "Allroad Gravel", type: "Carbon",
+          variants: [
+            { id: "rose-backroad-grx-820", name: "Backroad GRX 820", meta: "Shimano GRX RX820 2x12", schaltgruppe: "Shimano GRX RX820 2x12", modelljahre: "2025–2026", collectionTag: "rose-backroad-grx-820" }
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* Sonderkarte „Selbst zusammenstellen" — erscheint in beiden Kategorien */
+  var CUSTOM_CARD = {
+    id: "selbst-zusammenstellen", name: "Selbst zusammenstellen", meta: "Kein Markenbike?", type: "Konfigurieren",
+    models: []
+  };
+
+  /* ── KATEGORIEN (Oberkategorie) ───────────────────────────────────────────── */
+  var CATEGORIES = [
+    { id: "road",   name: "Road",   meta: "Rennrad · Asphalt",   type: "" },
+    { id: "gravel", name: "Gravel", meta: "Schotter · Allroad",  type: "" }
+  ];
+
+  /* Aktive Markenliste je nach gewählter Kategorie (inkl. Custom-Karte) */
+  function brandsForCategory(catId) {
+    var base = catId === 'gravel' ? GRAVEL_BIKES : ROAD_BIKES;
+    return base.concat([CUSTOM_CARD]);
+  }
 
   /* Fixed component list per spec */
   var COMPS = [
@@ -1645,11 +1709,17 @@
   ];
 
   /* ── STATE ──────────────────────────────────────────────────────────────── */
-  var S = { step: 1, brand: null, model: null, variant: null };
+  var S = { step: 1, category: null, brand: null, model: null, variant: null };
 
   /* ── LOOKUPS ────────────────────────────────────────────────────────────── */
+  function activeBrands() {
+    return brandsForCategory(S.category);
+  }
+  function findCategory(id) {
+    return CATEGORIES.find(function (c) { return c.id === id; });
+  }
   function findBrand(id) {
-    return BIKES.find(function (b) { return b.id === id; });
+    return activeBrands().find(function (b) { return b.id === id; });
   }
   function findModel(bid, mid) {
     var b = findBrand(bid);
@@ -1710,7 +1780,8 @@
     $segs.forEach(function (seg) {
       var n = parseInt(seg.dataset.seg, 10);
       if (S.step === 'custom') {
-        seg.dataset.state = n === 1 ? 'done' : n === 2 ? 'active' : 'idle';
+        /* Kategorie + Marke erledigt, Konfiguration aktiv */
+        seg.dataset.state = n <= 2 ? 'done' : n === 3 ? 'active' : 'idle';
       } else {
         seg.dataset.state = n < S.step ? 'done' : n === S.step ? 'active' : 'idle';
       }
@@ -1721,10 +1792,13 @@
   function updateBreadcrumb() {
     if (S.step === 'custom') {
       $back.hidden = false;
-      $trail.innerHTML = '<span class="vm-bc__crumb vm-bc__crumb--active">Konfiguration</span>';
+      var cc  = findCategory(S.category);
+      var pfx = cc ? '<span class="vm-bc__crumb">' + esc(cc.name) + '</span><span class="vm-bc__sep"> › </span>' : '';
+      $trail.innerHTML = pfx + '<span class="vm-bc__crumb vm-bc__crumb--active">Konfiguration</span>';
       return;
     }
     var parts = [];
+    if (S.category) { var c = findCategory(S.category); if (c) parts.push(c.name); }
     if (S.brand && S.brand !== 'selbst-zusammenstellen') {
       var b = findBrand(S.brand); if (b) parts.push(b.name);
     }
@@ -1746,7 +1820,7 @@
       var match = (n === 'custom') ? (step === 'custom') : (parseInt(step, 10) === n);
       el.setAttribute('aria-hidden', match ? 'false' : 'true');
     });
-    $result.setAttribute('aria-hidden', n === 4 ? 'false' : 'true');
+    $result.setAttribute('aria-hidden', n === 5 ? 'false' : 'true');
   }
 
   /* ── SCROLL ─────────────────────────────────────────────────────────────── */
@@ -1757,76 +1831,135 @@
   }
 
   /* ── GO TO STEP ─────────────────────────────────────────────────────────── */
+  /* 1 = Kategorie · 2 = Marke · 3 = Modell · 4 = Variante · 5 = Ergebnis */
   function goTo(n) {
     S.step = n;
     showStep(n);
     updateStepper();
     updateBreadcrumb();
     save();
-    if (n === 2) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel, true);
-    if (n === 3) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
-    if (n === 4) {
-      renderResult();
-    }
+    if (n === 2) renderCards($gBrands, activeBrands(), S.brand, pickBrand, false);
+    if (n === 3) renderCards($gModels, findBrand(S.brand).models, S.model, pickModel, true);
+    if (n === 4) renderCards($gVars, findModel(S.brand, S.model).variants, S.variant, pickVariant, true);
+    if (n === 5) renderResult();
   }
 
   /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
   function back() {
-    if      (S.step === 2)        { S.model = null; S.variant = null; goTo(1); }
-    else if (S.step === 3)        { S.variant = null;                 goTo(2); }
-    else if (S.step === 4 && !S.fromCustom) { S.variant = null;      goTo(3); }
-    else if (S.step === 4 && S.fromCustom)  { S.variant = null; S.model = null; S.brand = 'selbst-zusammenstellen'; S.fromCustom = false; goToCustom(); }
-    else if (S.step === 'custom') { S.brand = null;                   goTo(1); }
+    if      (S.step === 2)        { S.brand = null; S.model = null; S.variant = null; goTo(1); }
+    else if (S.step === 3)        { S.model = null; S.variant = null;                 goTo(2); }
+    else if (S.step === 4)        { S.variant = null;                                 goTo(3); }
+    else if (S.step === 5 && !S.fromCustom) { S.variant = null;                       goTo(4); }
+    else if (S.step === 5 && S.fromCustom)  { S.variant = null; S.model = null; S.brand = 'selbst-zusammenstellen'; S.fromCustom = false; goToCustom(); }
+    else if (S.step === 'custom') { S.brand = null;                                   goTo(2); }
     scrollToSelector();
   }
 
   function reset() {
-    S = { step: 1, brand: null, model: null, variant: null, fromCustom: false };
+    S = { step: 1, category: null, brand: null, model: null, variant: null, fromCustom: false };
     showStep(1);
     updateStepper();
     updateBreadcrumb();
-    renderCards($gBrands, BIKES, null, pickBrand, false);
+    renderCards($gCats, CATEGORIES, null, pickCategory, false);
     clearSave();
     scrollToSelector();
   }
 
   /* ── PICKERS ────────────────────────────────────────────────────────────── */
+  function pickCategory(id) {
+    S.category = id; S.brand = null; S.model = null; S.variant = null; S.fromCustom = false;
+    renderCards($gCats, CATEGORIES, id, pickCategory, false);
+    setTimeout(function () {
+      renderCards($gBrands, activeBrands(), null, pickBrand, false);
+      goTo(2); scrollToSelector();
+    }, 160);
+  }
+
   function pickBrand(id) {
     S.brand = id; S.model = null; S.variant = null; S.fromCustom = false;
-    renderCards($gBrands, BIKES, id, pickBrand, false);
+    renderCards($gBrands, activeBrands(), id, pickBrand, false);
     if (id === 'selbst-zusammenstellen') {
       setTimeout(function () { goToCustom(); scrollToSelector(); }, 160);
     } else {
-      setTimeout(function () { goTo(2); scrollToSelector(); }, 160);
+      setTimeout(function () { goTo(3); scrollToSelector(); }, 160);
     }
   }
 
   function pickModel(id) {
     S.model = id; S.variant = null;
     renderCards($gModels, findBrand(S.brand).models, id, pickModel, true);
-    setTimeout(function () { goTo(3); scrollToSelector(); }, 160);
+    setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
   }
 
   function pickVariant(id) {
     S.variant = id;
     renderCards($gVars, findModel(S.brand, S.model).variants, id, pickVariant, true);
-    setTimeout(function () { goTo(4); scrollToSelector(); }, 160);
+    setTimeout(function () { goTo(5); scrollToSelector(); }, 160);
   }
 
   /* ── CUSTOM CONFIG ─────────────────────────────────────────────────────── */
   var $customSearch = document.getElementById('vm-custom-search');
   var $customError  = document.getElementById('vm-custom-error');
 
+  /* ── Kategorie-spezifische Konfigurator-Optionen ─────────────────────────
+     Werte pro Kategorie frei anpassbar. Gravel bei Bedarf hier feinjustieren. */
+  var CUSTOM_CONFIG = {
+    road: {
+      material:   [ {v:'',l:'Alle Materialien'}, {v:'Carbon',l:'Carbon'}, {v:'Aluminium',l:'Aluminium'}, {v:'Stahl',l:'Stahl'} ],
+      hersteller: [ {v:'',l:'Alle Hersteller'}, {v:'shimano',l:'Shimano'}, {v:'sram',l:'SRAM'}, {v:'campagnolo',l:'Campagnolo'} ],
+      niveau:     [ {v:'',l:'Alle Niveaus'}, {v:'race',l:'Race — Dura-Ace / Red / Super Record'}, {v:'performance',l:'Performance — Ultegra / Force'}, {v:'sport',l:'Sport — 105 / Rival'}, {v:'einsteiger',l:'Einsteiger — Tiagra / Claris / CUES'} ],
+      antrieb:    [ {v:'',l:'Alle Typen'}, {v:'di2',l:'Di2 — Shimano elektronisch'}, {v:'axs',l:'AXS — SRAM eTap'}, {v:'mechanisch',l:'Mechanisch'} ],
+      bremsen:    [ {v:'',l:'Alle Bremsarten'}, {v:'hydraulisch',l:'Hydraulisch Scheibe'}, {v:'felge',l:'Felgenbremse'}, {v:'mechanisch-scheibe',l:'Mechanisch Scheibe'} ],
+      gaenge:     [ {v:'',l:'Alle'}, {v:'12',l:'12-fach (2x12)'}, {v:'11',l:'11-fach (2x11)'}, {v:'10',l:'10-fach (2x10)'}, {v:'1x',l:'1-fach (1x)'} ]
+    },
+    gravel: {
+      material:   [ {v:'',l:'Alle Materialien'}, {v:'Carbon',l:'Carbon'}, {v:'Aluminium',l:'Aluminium'}, {v:'Stahl',l:'Stahl'}, {v:'Titan',l:'Titan'} ],
+      hersteller: [ {v:'',l:'Alle Hersteller'}, {v:'shimano',l:'Shimano GRX'}, {v:'sram',l:'SRAM XPLR / AXS'}, {v:'campagnolo',l:'Campagnolo Ekar'} ],
+      niveau:     [ {v:'',l:'Alle Niveaus'}, {v:'race',l:'Race — GRX RX820 / Force XPLR'}, {v:'performance',l:'Performance — GRX RX610 / Rival XPLR'}, {v:'sport',l:'Sport — Apex XPLR / Ekar'} ],
+      antrieb:    [ {v:'',l:'Alle Typen'}, {v:'1x',l:'1-fach (1x)'}, {v:'2x',l:'2-fach (2x)'}, {v:'di2',l:'Di2 — elektronisch'}, {v:'axs',l:'AXS — SRAM eTap'}, {v:'mechanisch',l:'Mechanisch'} ],
+      bremsen:    [ {v:'',l:'Alle Bremsarten'}, {v:'hydraulisch',l:'Hydraulisch Scheibe'}, {v:'mechanisch-scheibe',l:'Mechanisch Scheibe'} ],
+      gaenge:     [ {v:'',l:'Alle'}, {v:'13',l:'13-fach (Ekar)'}, {v:'12',l:'12-fach'}, {v:'11',l:'11-fach'}, {v:'1x',l:'1-fach (1x)'} ]
+    }
+  };
+
+  function fillSelect(el, opts) {
+    if (!el || !opts) return;
+    el.innerHTML = opts.map(function (o) {
+      return '<option value="' + esc(o.v) + '">' + esc(o.l) + '</option>';
+    }).join('');
+  }
+
+  function populateCustomForm(cat) {
+    var cfg = CUSTOM_CONFIG[cat] || CUSTOM_CONFIG.road;
+    fillSelect(document.getElementById('vm-cfg-material'),   cfg.material);
+    fillSelect(document.getElementById('vm-cfg-hersteller'), cfg.hersteller);
+    fillSelect(document.getElementById('vm-cfg-niveau'),     cfg.niveau);
+    fillSelect(document.getElementById('vm-cfg-antrieb'),    cfg.antrieb);
+    fillSelect(document.getElementById('vm-cfg-bremsen'),    cfg.bremsen);
+    fillSelect(document.getElementById('vm-cfg-gaenge'),     cfg.gaenge);
+  }
+
   function goToCustom() {
     S.step = 'custom';
+    populateCustomForm(S.category);
     showStep('custom');
     updateStepper();
     updateBreadcrumb();
   }
 
   /* Maps form values → a single custom collectionTag stored in vm_selection */
-  function buildCustomTag(hersteller, niveau, antrieb) {
+  function buildCustomTag(cat, hersteller, niveau, antrieb) {
     if (!hersteller) return null;
+
+    if (cat === 'gravel') {
+      /* Generisches Gravel-Tag-Schema: custom-gravel-<hersteller>-<niveau>-<antrieb> */
+      var gp = ['custom', 'gravel', hersteller];
+      if (niveau)  gp.push(niveau);
+      if (antrieb) gp.push(antrieb);
+      return gp.join('-');
+    }
+
+    /* Road (unverändert) */
     var tier = '';
     if (hersteller === 'shimano') {
       if (niveau === 'race')             tier = 'dura-ace-';
@@ -1849,8 +1982,22 @@
     return null;
   }
 
-  function buildCustomLabel(hersteller, niveau, antrieb) {
+  function buildCustomLabel(cat, hersteller, niveau, antrieb) {
     var parts = [];
+    if (cat === 'gravel') {
+      if      (hersteller === 'shimano')    parts.push('Shimano GRX');
+      else if (hersteller === 'sram')       parts.push('SRAM XPLR');
+      else if (hersteller === 'campagnolo') parts.push('Campagnolo Ekar');
+      if      (niveau === 'race')        parts.push('RX820 / Force');
+      else if (niveau === 'performance') parts.push('RX610 / Rival');
+      else if (niveau === 'sport')       parts.push('Apex / Ekar');
+      if      (antrieb === '1x')         parts.push('1x');
+      else if (antrieb === '2x')         parts.push('2x');
+      else if (antrieb === 'di2')        parts.push('Di2');
+      else if (antrieb === 'axs')        parts.push('AXS');
+      else if (antrieb === 'mechanisch') parts.push('Mechanisch');
+      return parts.join(' ');
+    }
     if      (hersteller === 'shimano')    parts.push('Shimano');
     else if (hersteller === 'sram')       parts.push('SRAM');
     else if (hersteller === 'campagnolo') parts.push('Campagnolo');
@@ -1876,21 +2023,21 @@
       }
       if ($customError) $customError.style.display = 'none';
 
-      var customTag = buildCustomTag(hersteller, niveau, antrieb);
-      var label     = buildCustomLabel(hersteller, niveau, antrieb);
+      var customTag = buildCustomTag(S.category, hersteller, niveau, antrieb);
+      var label     = buildCustomLabel(S.category, hersteller, niveau, antrieb);
       if (!customTag) return;
 
       try {
         localStorage.setItem('vm_selection', JSON.stringify({
-          brand:   'custom',
-          model:   'Konfiguriertes Rad',
-          variant: customTag,
-          label:   label
+          category: S.category,
+          brand:    'custom',
+          model:    'Konfiguriertes Rad',
+          variant:  customTag,
+          label:    label
         }));
       } catch(e) {}
 
-      var collUrl = '{{ section.settings.parts_collection_url | default: "/collections/all" }}';
-      window.location.href = collUrl;
+      window.location.href = collectionBase();
     });
   }
 
@@ -1907,9 +2054,9 @@
     root.querySelector('[data-r-schalt]').textContent  = v.schaltgruppe;
     root.querySelector('[data-r-jahre]').textContent   = v.modelljahre;
 
-    /* Update CTA href with collection filter tag */
+    /* Update CTA href with collection filter tag (kategorie-abhängige Kollektion) */
     if ($cta) {
-      var base = $cta.getAttribute('href').split('?')[0];
+      var base = collectionBase();
       $cta.setAttribute('href', base + '?filter.p.tag=' + encodeURIComponent(v.collectionTag));
     }
 
@@ -1918,7 +2065,7 @@
   /* ── PERSISTENCE ───────────────────────────────────────────────────────── */
   function save() {
     try {
-      localStorage.setItem(SK, JSON.stringify({ brand: S.brand, model: S.model, variant: S.variant }));
+      localStorage.setItem(SK, JSON.stringify({ category: S.category, brand: S.brand, model: S.model, variant: S.variant }));
     } catch (e) {}
   }
 
@@ -1933,6 +2080,7 @@
       if (!d || !d.vm_bike) return false;
       var bike = d.vm_bike;
       if (!bike.brand || bike.brand === 'custom') return false;
+      S.category = bike.category || 'road';   /* Legacy-Räder ohne Kategorie → Road */
       var b = findBrand(bike.brand);
       if (!b) return false;
       S.brand = bike.brand;
@@ -1942,10 +2090,11 @@
           S.variant = bike.variant;
         }
       }
-      var target = S.variant ? 4 : S.model ? 3 : 2;
-      renderCards($gBrands, BIKES, S.brand, pickBrand);
-      if (target >= 3) renderCards($gModels, b.models, S.model, pickModel);
-      if (target >= 4) {
+      var target = S.variant ? 5 : S.model ? 4 : 3;
+      renderCards($gCats, CATEGORIES, S.category, pickCategory);
+      renderCards($gBrands, activeBrands(), S.brand, pickBrand);
+      if (target >= 4) renderCards($gModels, b.models, S.model, pickModel);
+      if (target >= 5) {
         var mm = findModel(S.brand, S.model);
         if (mm) renderCards($gVars, mm.variants, S.variant, pickVariant);
       }
@@ -1970,7 +2119,10 @@
 
       var bObj = findBrand(S.brand);
       var mObj = findModel(S.brand, S.model);
+      var cObj = findCategory(S.category);
       var bikeData = {
+        category:      S.category,
+        categoryName:  cObj ? cObj.name : S.category,
         brand:         S.brand,
         brandName:     bObj ? bObj.name : S.brand,
         model:         S.model,
@@ -2015,7 +2167,7 @@
   clearSave(); /* always clear localStorage — free users start fresh every time */
   var restored = IS_PRO && loadFromAccount();
   if (!restored) {
-    renderCards($gBrands, BIKES, null, pickBrand);
+    renderCards($gCats, CATEGORIES, null, pickCategory);
   }
 
 })();
@@ -2091,8 +2243,14 @@ window.vmProAddToCart = vmProAddToCart;
     },
     {
       "type": "text",
+      "id": "heading_cat",
+      "label": "Schritt 0 — Kategorie",
+      "default": "Wähle deine Fahrrad-Art"
+    },
+    {
+      "type": "text",
       "id": "heading_step1",
-      "label": "Schritt 1",
+      "label": "Schritt 1 — Marke",
       "default": "Wähle deine Marke"
     },
     {
@@ -2114,8 +2272,14 @@ window.vmProAddToCart = vmProAddToCart;
     {
       "type": "url",
       "id": "parts_collection_url",
-      "label": "Teile-Kollektion URL",
-      "info": "Basis-URL deiner Teile-Kollektion, z.B. /collections/teile. Der Bike-Tag wird automatisch als ?filter.p.tag=… angehängt."
+      "label": "Teile-Kollektion URL (Road)",
+      "info": "Basis-URL der Road-Teile-Kollektion, z.B. /collections/teile. Der Bike-Tag wird automatisch als ?filter.p.tag=… angehängt."
+    },
+    {
+      "type": "url",
+      "id": "gravel_parts_collection_url",
+      "label": "Teile-Kollektion URL (Gravel)",
+      "info": "Eigene Kollektion für Gravel-Teile. Leer lassen → fällt auf die Road-Kollektion zurück."
     },
     {
       "type": "text",
