@@ -1647,30 +1647,626 @@
   ];
 
   /* ── GRAVEL CATALOG ───────────────────────────────────────────────────────
-     PLATZHALTER-STARTDATENSATZ — bitte durch die echten Gravel-Bikes ersetzen.
-     Gleiche Struktur wie ROAD_BIKES: Marke → models[] → variants[].
+     Generiert aus gravel_datenbank_master.xlsx
+     21 Marken · 72 Modellreihen · 154 Varianten
      collectionTag = Shopify-Tag für den Teilefilter der Gravel-Kollektion.
   ─────────────────────────────────────────────────────────────────────────── */
   var GRAVEL_BIKES = [
     {
-      id: "canyon", name: "Canyon", meta: "Koblenz · DE", type: "Carbon",
+      id: "3t", name: "3T", meta: "Gravel", type: "",
       models: [
         {
-          id: "canyon-grizl-cf", name: "Grizl CF", meta: "Adventure Gravel", type: "Carbon",
+          id: "3t-racemax2-italia", name: "Racemax\u00b2 ITALIA", meta: "Race Gravel (Aero)", type: "Carbon",
           variants: [
-            { id: "canyon-grizl-cf-8-axs", name: "Grizl CF 8 AXS", meta: "SRAM Rival eTap AXS XPLR 1x12", schaltgruppe: "SRAM Rival eTap AXS XPLR 1x12", modelljahre: "2024–2026", collectionTag: "canyon-grizl-cf-8-axs" },
-            { id: "canyon-grizl-cf-7-grx", name: "Grizl CF 7 GRX", meta: "Shimano GRX RX822 1x12", schaltgruppe: "Shimano GRX RX822 1x12", modelljahre: "2024–2026", collectionTag: "canyon-grizl-cf-7-grx" }
+            { id: "3t-racemax2-italia-custom-build", name: "Racemax\u00b2 ITALIA (Custom Build)", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "3t-racemax2-italia-custom-build" }
+          ]
+        },
+        {
+          id: "3t-racemax-wpnt", name: "Racemax WPNT", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "3t-racemax-wpnt-custom-build", name: "Racemax WPNT (Custom Build)", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "3t-racemax-wpnt-custom-build" }
+          ]
+        },
+        {
+          id: "3t-ultra2-italia", name: "Ultra\u00b2 ITALIA", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "3t-ultra2-italia-custom-build", name: "Ultra\u00b2 ITALIA (Custom Build)", meta: "SRAM Force XPLR eTap AXS 1x13 / Eagle Mullet", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13 / Eagle Mullet", modelljahre: "2026", collectionTag: "3t-ultra2-italia-custom-build" }
+          ]
+        },
+        {
+          id: "3t-extrema-italia", name: "Extrema ITALIA", meta: "Adventure Gravel (Grobes Terrain)", type: "Carbon",
+          variants: [
+            { id: "3t-extrema-italia-custom-build", name: "Extrema ITALIA (Custom Build)", meta: "SRAM Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Eagle AXS Mullet 1x12", modelljahre: "2026", collectionTag: "3t-extrema-italia-custom-build" }
+          ]
+        },
+        {
+          id: "3t-primo2-wpnt", name: "Primo\u00b2 WPNT", meta: "Allroad / Gravel", type: "Carbon",
+          variants: [
+            { id: "3t-primo2-wpnt-custom-build", name: "Primo\u00b2 WPNT (Custom Build)", meta: "SRAM Force eTap AXS 2x12 / Rival AXS", schaltgruppe: "SRAM Force eTap AXS 2x12 / Rival AXS", modelljahre: "2026", collectionTag: "3t-primo2-wpnt-custom-build" }
+          ]
+        },
+        {
+          id: "3t-exploro-ultra-vorgaenger", name: "Exploro Ultra (Vorg\u00e4nger)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "3t-exploro-ultra-custom-build", name: "Exploro Ultra (Custom Build)", meta: "SRAM Force AXS + Eagle XX1 AXS Mullet 1x12", schaltgruppe: "SRAM Force AXS + Eagle XX1 AXS Mullet 1x12", modelljahre: "2024", collectionTag: "3t-exploro-ultra-custom-build" }
           ]
         }
       ]
     },
     {
-      id: "rose", name: "Rose", meta: "Bocholt · DE", type: "Carbon",
+      id: "bmc", name: "BMC", meta: "Gravel", type: "",
       models: [
         {
-          id: "rose-backroad", name: "Backroad", meta: "Allroad Gravel", type: "Carbon",
+          id: "bmc-kaius-01-gen2", name: "Kaius 01 (Gen2)", meta: "Race Gravel (Aero)", type: "Carbon",
           variants: [
-            { id: "rose-backroad-grx-820", name: "Backroad GRX 820", meta: "Shimano GRX RX820 2x12", schaltgruppe: "Shimano GRX RX820 2x12", modelljahre: "2025–2026", collectionTag: "rose-backroad-grx-820" }
+            { id: "bmc-kaius-01-one", name: "Kaius 01 ONE", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "bmc-kaius-01-one" },
+            { id: "bmc-kaius-01-two", name: "Kaius 01 TWO", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "bmc-kaius-01-two" },
+            { id: "bmc-kaius-01-three", name: "Kaius 01 THREE", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "bmc-kaius-01-three" }
+          ]
+        },
+        {
+          id: "bmc-kaius-01-gen1", name: "Kaius 01 (Gen1)", meta: "Race Gravel (auslaufend)", type: "Carbon",
+          variants: [
+            { id: "bmc-kaius-01-two-gen1", name: "Kaius 01 TWO (Gen1)", meta: "SRAM Force eTap AXS Wide 2x12", schaltgruppe: "SRAM Force eTap AXS Wide 2x12", modelljahre: "2023", collectionTag: "bmc-kaius-01-two-gen1" },
+            { id: "bmc-kaius-01-three-gen1", name: "Kaius 01 THREE (Gen1)", meta: "SRAM Rival eTap AXS Wide 2x12", schaltgruppe: "SRAM Rival eTap AXS Wide 2x12", modelljahre: "2023", collectionTag: "bmc-kaius-01-three-gen1" }
+          ]
+        },
+        {
+          id: "bmc-urs", name: "URS", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "bmc-urs-01", name: "URS 01", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "bmc-urs-01" }
+          ]
+        },
+        {
+          id: "bmc-urs-lt", name: "URS LT", meta: "Adventure Gravel (Federgabel)", type: "Carbon",
+          variants: [
+            { id: "bmc-urs-lt-one", name: "URS LT ONE", meta: "SRAM Force / GX Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Force / GX Eagle AXS Mullet 1x12", modelljahre: "2025", collectionTag: "bmc-urs-lt-one" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "cannondale", name: "Cannondale", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "cannondale-superx", name: "SuperX", meta: "Race Gravel / CX", type: "Carbon",
+          variants: [
+            { id: "cannondale-superx-lab71", name: "SuperX LAB71", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "cannondale-superx-lab71" },
+            { id: "cannondale-superx-1", name: "SuperX 1", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "cannondale-superx-1" },
+            { id: "cannondale-superx-2", name: "SuperX 2", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "cannondale-superx-2" }
+          ]
+        },
+        {
+          id: "cannondale-topstone-carbon-gen3", name: "Topstone Carbon (Gen3)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "cannondale-topstone-carbon-ltd-di2", name: "Topstone Carbon LTD Di2", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2025", collectionTag: "cannondale-topstone-carbon-ltd-di2" },
+            { id: "cannondale-topstone-carbon-1-lefty-axs", name: "Topstone Carbon 1 Lefty AXS", meta: "SRAM Rival AXS + GX Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Rival AXS + GX Eagle AXS Mullet 1x12", modelljahre: "2025", collectionTag: "cannondale-topstone-carbon-1-lefty-axs" },
+            { id: "cannondale-topstone-carbon-2-axs-1x", name: "Topstone Carbon 2 AXS 1x", meta: "SRAM Apex AXS + GX Eagle T-Type AXS Mullet 1x12", schaltgruppe: "SRAM Apex AXS + GX Eagle T-Type AXS Mullet 1x12", modelljahre: "2025", collectionTag: "cannondale-topstone-carbon-2-axs-1x" },
+            { id: "cannondale-topstone-carbon-3", name: "Topstone Carbon 3", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "cannondale-topstone-carbon-3" }
+          ]
+        },
+        {
+          id: "cannondale-topstone-alloy", name: "Topstone Alloy", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "cannondale-topstone-1", name: "Topstone 1", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "cannondale-topstone-1" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "canyon", name: "Canyon", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "canyon-grail-cfr", name: "Grail CFR", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grail-cfr-xplr", name: "Grail CFR XPLR", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "canyon-grail-cfr-xplr" },
+            { id: "canyon-grail-cfr-axs", name: "Grail CFR AXS", meta: "SRAM Red eTap AXS 1x12", schaltgruppe: "SRAM Red eTap AXS 1x12", modelljahre: "2026", collectionTag: "canyon-grail-cfr-axs" }
+          ]
+        },
+        {
+          id: "canyon-grail-cf-slx", name: "Grail CF SLX", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grail-cf-slx-8-axs", name: "Grail CF SLX 8 AXS", meta: "SRAM Force eTap AXS 1x12", schaltgruppe: "SRAM Force eTap AXS 1x12", modelljahre: "2025", collectionTag: "canyon-grail-cf-slx-8-axs" },
+            { id: "canyon-grail-cf-slx-8-w-rift", name: "Grail CF SLX 8 w/ RIFT", meta: "SRAM Force eTap AXS 1x12", schaltgruppe: "SRAM Force eTap AXS 1x12", modelljahre: "2026", collectionTag: "canyon-grail-cf-slx-8-w-rift" }
+          ]
+        },
+        {
+          id: "canyon-grail-cf-sl", name: "Grail CF SL", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grail-cf-sl-7-aero", name: "Grail CF SL 7 Aero", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "canyon-grail-cf-sl-7-aero" }
+          ]
+        },
+        {
+          id: "canyon-grail-cf", name: "Grail CF", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grail-cf-8-1by", name: "Grail CF 8 1by", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "canyon-grail-cf-8-1by" },
+            { id: "canyon-grail-cf-7", name: "Grail CF 7", meta: "Shimano GRX 2x12 mech.", schaltgruppe: "Shimano GRX 2x12 mech.", modelljahre: "2025", collectionTag: "canyon-grail-cf-7" }
+          ]
+        },
+        {
+          id: "canyon-grizl-cf-gen2", name: "Grizl CF (Gen2)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "canyon-grizl-cf-8-w-rift", name: "Grizl CF 8 w/ RIFT", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "canyon-grizl-cf-8-w-rift" },
+            { id: "canyon-grizl-cf-8-escape-eclips", name: "Grizl CF 8 ESCAPE ECLIPS", meta: "Shimano GRX 1x12 mech. / SRAM (je nach Markt)", schaltgruppe: "Shimano GRX 1x12 mech. / SRAM (je nach Markt)", modelljahre: "2026", collectionTag: "canyon-grizl-cf-8-escape-eclips" },
+            { id: "canyon-grizl-cf-7", name: "Grizl CF 7", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "canyon-grizl-cf-7" },
+            { id: "canyon-grizl-cf-6", name: "Grizl CF 6", meta: "SRAM Apex XPLR 1x12 mech.", schaltgruppe: "SRAM Apex XPLR 1x12 mech.", modelljahre: "2026", collectionTag: "canyon-grizl-cf-6" }
+          ]
+        },
+        {
+          id: "canyon-grizl-al-2026", name: "Grizl AL (2026)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "canyon-grizl-6-al", name: "Grizl 6 AL", meta: "SRAM Apex XPLR 1x12 mech.", schaltgruppe: "SRAM Apex XPLR 1x12 mech.", modelljahre: "2026", collectionTag: "canyon-grizl-6-al" }
+          ]
+        },
+        {
+          id: "canyon-grizl-al", name: "Grizl AL", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "canyon-grizl-5", name: "Grizl 5", meta: "Shimano CUES 1x10 mech.", schaltgruppe: "Shimano CUES 1x10 mech.", modelljahre: "2025", collectionTag: "canyon-grizl-5" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "cervelo", name: "Cerv\u00e9lo", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "cervelo-aspero-5-gen2", name: "\u00c1spero-5 (Gen2)", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "cervelo-aspero-5-red-xplr-axs", name: "\u00c1spero-5 Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "cervelo-aspero-5-red-xplr-axs" },
+            { id: "cervelo-aspero-5-force-axs-xo-mullet", name: "\u00c1spero-5 Force AXS / XO Mullet", meta: "SRAM Force AXS + XO Eagle Mullet 1x12", schaltgruppe: "SRAM Force AXS + XO Eagle Mullet 1x12", modelljahre: "2026", collectionTag: "cervelo-aspero-5-force-axs-xo-mullet" },
+            { id: "cervelo-aspero-5-frameset", name: "\u00c1spero-5 Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "cervelo-aspero-5-frameset" }
+          ]
+        },
+        {
+          id: "cervelo-aspero", name: "\u00c1spero", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "cervelo-aspero-rival-xplr-axs", name: "\u00c1spero Rival XPLR AXS", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "cervelo-aspero-rival-xplr-axs" },
+            { id: "cervelo-aspero-grx", name: "\u00c1spero GRX", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "cervelo-aspero-grx" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "colnago", name: "Colnago", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "colnago-g4-x", name: "G4-X", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "colnago-g4-x-sram-red-xplr-axs", name: "G4-X SRAM Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "colnago-g4-x-sram-red-xplr-axs" },
+            { id: "colnago-g4-x-sram-force-xplr-1x13", name: "G4-X SRAM Force XPLR 1x13", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "colnago-g4-x-sram-force-xplr-1x13" },
+            { id: "colnago-g4-x-shimano-grx-1x12", name: "G4-X Shimano GRX 1x12", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "colnago-g4-x-shimano-grx-1x12" },
+            { id: "colnago-g4-x-shimano-grx-2x12", name: "G4-X Shimano GRX 2x12", meta: "Shimano GRX 2x12 mech.", schaltgruppe: "Shimano GRX 2x12 mech.", modelljahre: "2026", collectionTag: "colnago-g4-x-shimano-grx-2x12" },
+            { id: "colnago-g4-x-frameset", name: "G4-X Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "colnago-g4-x-frameset" }
+          ]
+        },
+        {
+          id: "colnago-g3-x-auslaufend", name: "G3-X (auslaufend)", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "colnago-g3-x-shimano-grx", name: "G3-X Shimano GRX", meta: "Shimano GRX 2x11 / 1x11 mech.", schaltgruppe: "Shimano GRX 2x11 / 1x11 mech.", modelljahre: "2023", collectionTag: "colnago-g3-x-shimano-grx" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "cube", name: "Cube", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "cube-nuroad-c-62", name: "Nuroad C:62", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "cube-nuroad-c-62-slt", name: "Nuroad C:62 SLT", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "cube-nuroad-c-62-slt" },
+            { id: "cube-nuroad-c-62-sl", name: "Nuroad C:62 SL", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "cube-nuroad-c-62-sl" },
+            { id: "cube-nuroad-c-62-pro", name: "Nuroad C:62 Pro", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "cube-nuroad-c-62-pro" }
+          ]
+        },
+        {
+          id: "cube-nuroad-alu", name: "Nuroad (Alu)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "cube-nuroad-slx", name: "Nuroad SLX", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "cube-nuroad-slx" },
+            { id: "cube-nuroad-race", name: "Nuroad Race", meta: "Shimano GRX 2x12 mech.", schaltgruppe: "Shimano GRX 2x12 mech.", modelljahre: "2026", collectionTag: "cube-nuroad-race" },
+            { id: "cube-nuroad-pro", name: "Nuroad Pro", meta: "Shimano GRX 2x10 mech.", schaltgruppe: "Shimano GRX 2x10 mech.", modelljahre: "2025", collectionTag: "cube-nuroad-pro" },
+            { id: "cube-nuroad-one", name: "Nuroad ONE", meta: "Microshift Sword 1x10 mech.", schaltgruppe: "Microshift Sword 1x10 mech.", modelljahre: "2025", collectionTag: "cube-nuroad-one" },
+            { id: "cube-nuroad-one-fe", name: "Nuroad ONE FE", meta: "Shimano Claris R2000 2x8 mech.", schaltgruppe: "Shimano Claris R2000 2x8 mech.", modelljahre: "2025", collectionTag: "cube-nuroad-one-fe" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "factor", name: "Factor", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "factor-ostro-gravel", name: "Ostro Gravel", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "factor-ostro-gravel-red-xplr-axs", name: "Ostro Gravel Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "factor-ostro-gravel-red-xplr-axs" },
+            { id: "factor-ostro-gravel-force-xplr-axs", name: "Ostro Gravel Force XPLR AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "factor-ostro-gravel-force-xplr-axs" },
+            { id: "factor-ostro-gravel-grx-di2-1x", name: "Ostro Gravel GRX Di2 1x", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "factor-ostro-gravel-grx-di2-1x" },
+            { id: "factor-ostro-gravel-frameset", name: "Ostro Gravel Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "factor-ostro-gravel-frameset" }
+          ]
+        },
+        {
+          id: "factor-ls", name: "LS", meta: "All-Road / Light Gravel", type: "Carbon",
+          variants: [
+            { id: "factor-ls-custom-build", name: "LS (Custom Build)", meta: "SRAM Force eTap AXS 2x12 / Shimano GRX", schaltgruppe: "SRAM Force eTap AXS 2x12 / Shimano GRX", modelljahre: "2026", collectionTag: "factor-ls-custom-build" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "focus", name: "Focus", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "focus-atlas-8-carbon-my2026", name: "Atlas 8 (Carbon, MY2026)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "focus-atlas-8-9", name: "Atlas 8.9", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "focus-atlas-8-9" },
+            { id: "focus-atlas-8-8", name: "Atlas 8.8", meta: "SRAM Apex AXS + SRAM Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Apex AXS + SRAM Eagle AXS Mullet 1x12", modelljahre: "2026", collectionTag: "focus-atlas-8-8" },
+            { id: "focus-atlas-8-7", name: "Atlas 8.7", meta: "Shimano GRX 610/820 Mix 1x12 mech.", schaltgruppe: "Shimano GRX 610/820 Mix 1x12 mech.", modelljahre: "2026", collectionTag: "focus-atlas-8-7" }
+          ]
+        },
+        {
+          id: "focus-atlas-6-alu-my2026", name: "Atlas 6 (Alu, MY2026)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "focus-atlas-6-9", name: "Atlas 6.9", meta: "Shimano GRX 820 1x12 mech.", schaltgruppe: "Shimano GRX 820 1x12 mech.", modelljahre: "2026", collectionTag: "focus-atlas-6-9" },
+            { id: "focus-atlas-6-8", name: "Atlas 6.8", meta: "Shimano GRX 610 1x12 mech.", schaltgruppe: "Shimano GRX 610 1x12 mech.", modelljahre: "2026", collectionTag: "focus-atlas-6-8" }
+          ]
+        },
+        {
+          id: "focus-atlas-vorgaenger", name: "Atlas (Vorg\u00e4nger)", meta: "Adventure Gravel (auslaufend)", type: "Carbon",
+          variants: [
+            { id: "focus-atlas-8-8-8-7-bis-my2025", name: "Atlas 8.8 / 8.7 (bis MY2025)", meta: "Shimano GRX 820 Mix 1x12 / 2x12 mech.", schaltgruppe: "Shimano GRX 820 Mix 1x12 / 2x12 mech.", modelljahre: "2025", collectionTag: "focus-atlas-8-8-8-7-bis-my2025" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "giant", name: "Giant", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "giant-revolt-advanced-pro", name: "Revolt Advanced Pro", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "giant-revolt-advanced-pro-0", name: "Revolt Advanced Pro 0", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "giant-revolt-advanced-pro-0" },
+            { id: "giant-revolt-advanced-pro-1", name: "Revolt Advanced Pro 1", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "giant-revolt-advanced-pro-1" }
+          ]
+        },
+        {
+          id: "giant-revolt-advanced", name: "Revolt Advanced", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "giant-revolt-advanced-0", name: "Revolt Advanced 0", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "giant-revolt-advanced-0" },
+            { id: "giant-revolt-advanced-2", name: "Revolt Advanced 2", meta: "Shimano GRX 2x12 mech.", schaltgruppe: "Shimano GRX 2x12 mech.", modelljahre: "2026", collectionTag: "giant-revolt-advanced-2" }
+          ]
+        },
+        {
+          id: "giant-revolt-alu", name: "Revolt (Alu)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "giant-revolt-1", name: "Revolt 1", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "giant-revolt-1" },
+            { id: "giant-revolt-2", name: "Revolt 2", meta: "Shimano GRX 2x10 / CUES mech.", schaltgruppe: "Shimano GRX 2x10 / CUES mech.", modelljahre: "2026", collectionTag: "giant-revolt-2" }
+          ]
+        },
+        {
+          id: "giant-revolt-x-advanced-pro", name: "Revolt X Advanced Pro", meta: "Gravel mit Federung", type: "Carbon",
+          variants: [
+            { id: "giant-revolt-x-advanced-pro", name: "Revolt X Advanced Pro", meta: "Shimano GRX 1x12 mech. / SRAM (je nach Markt)", schaltgruppe: "Shimano GRX 1x12 mech. / SRAM (je nach Markt)", modelljahre: "2026", collectionTag: "giant-revolt-x-advanced-pro" }
+          ]
+        },
+        {
+          id: "giant-revolt-x-alu", name: "Revolt X (Alu)", meta: "Gravel mit Federung (Alu)", type: "Aluminium",
+          variants: [
+            { id: "giant-revolt-x", name: "Revolt X", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "giant-revolt-x" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "look", name: "Look", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "look-765-gravel-rs", name: "765 Gravel RS", meta: "Allroad / Gravel", type: "Carbon",
+          variants: [
+            { id: "look-765-gravel-rs-rival-axs", name: "765 Gravel RS Rival AXS", meta: "SRAM Rival eTap AXS 2x12", schaltgruppe: "SRAM Rival eTap AXS 2x12", modelljahre: "2025", collectionTag: "look-765-gravel-rs-rival-axs" },
+            { id: "look-765-gravel-rs-force-axs", name: "765 Gravel RS Force AXS", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "look-765-gravel-rs-force-axs" },
+            { id: "look-765-gravel-rs-grx", name: "765 Gravel RS GRX", meta: "Shimano GRX 2x12 mech.", schaltgruppe: "Shimano GRX 2x12 mech.", modelljahre: "2025", collectionTag: "look-765-gravel-rs-grx" },
+            { id: "look-765-gravel-rs-frameset", name: "765 Gravel RS Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2025", collectionTag: "look-765-gravel-rs-frameset" }
+          ]
+        },
+        {
+          id: "look-765-gravel", name: "765 Gravel", meta: "Gravel (Einstieg)", type: "Carbon",
+          variants: [
+            { id: "look-765-gravel-apex", name: "765 Gravel Apex", meta: "SRAM Apex 1x12 mech.", schaltgruppe: "SRAM Apex 1x12 mech.", modelljahre: "2025", collectionTag: "look-765-gravel-apex" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "merida", name: "M\u00e9rida", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "merida-silex-cf2", name: "Silex CF2", meta: "Adventure / Race Gravel", type: "Carbon",
+          variants: [
+            { id: "merida-silex-10k", name: "Silex 10K", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2025", collectionTag: "merida-silex-10k" },
+            { id: "merida-silex-9000", name: "Silex 9000", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "merida-silex-9000" },
+            { id: "merida-silex-8000-2025", name: "Silex 8000 (2025)", meta: "Shimano GRX Di2 2x12", schaltgruppe: "Shimano GRX Di2 2x12", modelljahre: "2025", collectionTag: "merida-silex-8000-2025" },
+            { id: "merida-silex-8000-2026", name: "Silex 8000 (2026)", meta: "SRAM Apex Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Apex Eagle AXS Mullet 1x12", modelljahre: "2026", collectionTag: "merida-silex-8000-2026" },
+            { id: "merida-silex-7000", name: "Silex 7000", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "merida-silex-7000" },
+            { id: "merida-silex-5000", name: "Silex 5000", meta: "SRAM Apex XPLR 1x12 mech.", schaltgruppe: "SRAM Apex XPLR 1x12 mech.", modelljahre: "2026", collectionTag: "merida-silex-5000" }
+          ]
+        },
+        {
+          id: "merida-silex-alu", name: "Silex (Alu)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "merida-silex-700", name: "Silex 700", meta: "Shimano GRX 2x11 / 1x11 mech.", schaltgruppe: "Shimano GRX 2x11 / 1x11 mech.", modelljahre: "2026", collectionTag: "merida-silex-700" },
+            { id: "merida-silex-200", name: "Silex 200", meta: "Shimano ESSA 1x9 mech.", schaltgruppe: "Shimano ESSA 1x9 mech.", modelljahre: "2026", collectionTag: "merida-silex-200" }
+          ]
+        },
+        {
+          id: "merida-scultura-endurance-gr", name: "Scultura Endurance GR", meta: "Gravel-Endurance (neu 2026)", type: "Carbon",
+          variants: [
+            { id: "merida-endurance-gr-8000", name: "Endurance GR 8000", meta: "SRAM Force eTap AXS 1x12", schaltgruppe: "SRAM Force eTap AXS 1x12", modelljahre: "2026", collectionTag: "merida-endurance-gr-8000" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "open", name: "OPEN", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "open-u-p-p-e-r-2-0", name: "U.P.P.E.R. 2.0", meta: "Race Gravel (Leichtgewicht)", type: "Carbon",
+          variants: [
+            { id: "open-u-p-p-e-r-2-0-red-xplr-axs", name: "U.P.P.E.R. 2.0 Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "open-u-p-p-e-r-2-0-red-xplr-axs" },
+            { id: "open-u-p-p-e-r-2-0-frameset", name: "U.P.P.E.R. 2.0 Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "open-u-p-p-e-r-2-0-frameset" }
+          ]
+        },
+        {
+          id: "open-u-p-2-0", name: "U.P. 2.0", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "open-u-p-2-0-force-xplr-axs", name: "U.P. 2.0 Force XPLR AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "open-u-p-2-0-force-xplr-axs" },
+            { id: "open-u-p-2-0-adventure-frameset", name: "U.P. 2.0 Adventure Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "open-u-p-2-0-adventure-frameset" }
+          ]
+        },
+        {
+          id: "open-wi-de-2-0", name: "WI.DE. 2.0", meta: "Extreme Gravel", type: "Carbon",
+          variants: [
+            { id: "open-wi-de-2-0-frameset", name: "WI.DE. 2.0 Frameset", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2026", collectionTag: "open-wi-de-2-0-frameset" }
+          ]
+        },
+        {
+          id: "open-u-p-gen1", name: "U.P. (Gen1)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "open-u-p-grx800-vorgaenger", name: "U.P. GRX800 (Vorg\u00e4nger)", meta: "Shimano GRX 2x11 / 1x11 mech.", schaltgruppe: "Shimano GRX 2x11 / 1x11 mech.", modelljahre: "2024", collectionTag: "open-u-p-grx800-vorgaenger" }
+          ]
+        },
+        {
+          id: "open-wi-de-gen1", name: "WI.DE. (Gen1)", meta: "Extreme Gravel", type: "Carbon",
+          variants: [
+            { id: "open-wi-de-frameset-vorgaenger", name: "WI.DE. Frameset (Vorg\u00e4nger)", meta: "Ohne (Frameset)", schaltgruppe: "Ohne (Frameset)", modelljahre: "2024", collectionTag: "open-wi-de-frameset-vorgaenger" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "orbea", name: "Orbea", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "orbea-terra-race", name: "Terra Race", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "orbea-terra-race-m10-m20ltd", name: "Terra Race M10 / M20LTD", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "orbea-terra-race-m10-m20ltd" },
+            { id: "orbea-terra-race-m20-grx", name: "Terra Race M20 GRX", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "orbea-terra-race-m20-grx" },
+            { id: "orbea-terra-race-m30", name: "Terra Race M30", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "orbea-terra-race-m30" }
+          ]
+        },
+        {
+          id: "orbea-terra-gen3", name: "Terra (Gen3)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "orbea-terra-m20-m21e", name: "Terra M20 / M21e", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "orbea-terra-m20-m21e" },
+            { id: "orbea-terra-m30", name: "Terra M30", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "orbea-terra-m30" },
+            { id: "orbea-terra-m40-grx-mech", name: "Terra M40 GRX mech.", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "orbea-terra-m40-grx-mech" },
+            { id: "orbea-terra-h30-h40", name: "Terra H30 / H40", meta: "Shimano GRX 1x12 / 2x11 mech.", schaltgruppe: "Shimano GRX 1x12 / 2x11 mech.", modelljahre: "2026", collectionTag: "orbea-terra-h30-h40" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "pinarello", name: "Pinarello", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "pinarello-dogma-gr", name: "Dogma GR", meta: "Race Gravel (Flaggschiff)", type: "Carbon",
+          variants: [
+            { id: "pinarello-dogma-gr-red-xplr-axs", name: "Dogma GR Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "pinarello-dogma-gr-red-xplr-axs" }
+          ]
+        },
+        {
+          id: "pinarello-grevil-f", name: "Grevil F", meta: "Adventure/Race Gravel", type: "Carbon",
+          variants: [
+            { id: "pinarello-grevil-f9", name: "Grevil F9", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "pinarello-grevil-f9" },
+            { id: "pinarello-grevil-f7", name: "Grevil F7", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "pinarello-grevil-f7" },
+            { id: "pinarello-grevil-f5", name: "Grevil F5", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "pinarello-grevil-f5" },
+            { id: "pinarello-grevil-f3", name: "Grevil F3", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "pinarello-grevil-f3" },
+            { id: "pinarello-grevil-f1", name: "Grevil F1", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "pinarello-grevil-f1" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "ridley", name: "Ridley", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "ridley-kanzo-fast-2-0", name: "Kanzo Fast 2.0", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "ridley-kanzo-fast-2-0-red-xplr-axs", name: "Kanzo Fast 2.0 Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "ridley-kanzo-fast-2-0-red-xplr-axs" },
+            { id: "ridley-kanzo-fast-2-0-force-xplr-axs", name: "Kanzo Fast 2.0 Force XPLR AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "ridley-kanzo-fast-2-0-force-xplr-axs" }
+          ]
+        },
+        {
+          id: "ridley-kanzo-fast-gen1", name: "Kanzo Fast (Gen1)", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "ridley-kanzo-fast-grx-1x12", name: "Kanzo Fast GRX 1x12", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "ridley-kanzo-fast-grx-1x12" },
+            { id: "ridley-kanzo-fast-rival-axs", name: "Kanzo Fast Rival AXS", meta: "SRAM Rival eTap AXS XPLR 1x12", schaltgruppe: "SRAM Rival eTap AXS XPLR 1x12", modelljahre: "2025", collectionTag: "ridley-kanzo-fast-rival-axs" }
+          ]
+        },
+        {
+          id: "ridley-astr-rs", name: "ASTR RS", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "ridley-astr-rs-red-xplr-axs", name: "ASTR RS Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "ridley-astr-rs-red-xplr-axs" }
+          ]
+        },
+        {
+          id: "ridley-astr", name: "ASTR", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "ridley-astr-grx-di2", name: "ASTR GRX Di2", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "ridley-astr-grx-di2" }
+          ]
+        },
+        {
+          id: "ridley-kanzo-adventure", name: "Kanzo Adventure", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "ridley-kanzo-adventure-rival-xplr-axs", name: "Kanzo Adventure Rival XPLR AXS", meta: "SRAM Rival eTap AXS XPLR 1x12", schaltgruppe: "SRAM Rival eTap AXS XPLR 1x12", modelljahre: "2025", collectionTag: "ridley-kanzo-adventure-rival-xplr-axs" },
+            { id: "ridley-kanzo-adventure-grx-1x12", name: "Kanzo Adventure GRX 1x12", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "ridley-kanzo-adventure-grx-1x12" }
+          ]
+        },
+        {
+          id: "ridley-grifn", name: "Grifn", meta: "All-Road / Light Gravel", type: "Carbon",
+          variants: [
+            { id: "ridley-grifn-grx", name: "Grifn GRX", meta: "Shimano GRX 2x12 / 1x12 mech.", schaltgruppe: "Shimano GRX 2x12 / 1x12 mech.", modelljahre: "2025", collectionTag: "ridley-grifn-grx" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "rose", name: "Rose", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "rose-backroad-ff", name: "Backroad FF", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "rose-backroad-ff-red-xplr-axs", name: "Backroad FF Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "rose-backroad-ff-red-xplr-axs" },
+            { id: "rose-backroad-ff-grx-rx825-di2", name: "Backroad FF GRX RX825 Di2", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "rose-backroad-ff-grx-rx825-di2" },
+            { id: "rose-backroad-ff-force-axs-xplr", name: "Backroad FF Force AXS XPLR", meta: "SRAM Force XPLR eTap AXS 1x12", schaltgruppe: "SRAM Force XPLR eTap AXS 1x12", modelljahre: "2025", collectionTag: "rose-backroad-ff-force-axs-xplr" },
+            { id: "rose-backroad-ff-rival-axs", name: "Backroad FF Rival AXS", meta: "SRAM Rival eTap AXS XPLR 1x12", schaltgruppe: "SRAM Rival eTap AXS XPLR 1x12", modelljahre: "2025", collectionTag: "rose-backroad-ff-rival-axs" },
+            { id: "rose-backroad-ff-classified-2x12", name: "Backroad FF Classified 2x12", meta: "Shimano GRX Di2 + Classified Powershift (2x12 virtuell)", schaltgruppe: "Shimano GRX Di2 + Classified Powershift (2x12 virtuell)", modelljahre: "2025", collectionTag: "rose-backroad-ff-classified-2x12" }
+          ]
+        },
+        {
+          id: "rose-backroad-cf", name: "Backroad CF", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "rose-backroad-cf-grx-rx820", name: "Backroad CF GRX RX820", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "rose-backroad-cf-grx-rx820" },
+            { id: "rose-backroad-cf-grx-di2-force-axs", name: "Backroad CF GRX Di2 / Force AXS", meta: "Shimano GRX Di2 1x12 bzw. SRAM Force AXS XPLR", schaltgruppe: "Shimano GRX Di2 1x12 bzw. SRAM Force AXS XPLR", modelljahre: "2026", collectionTag: "rose-backroad-cf-grx-di2-force-axs" }
+          ]
+        },
+        {
+          id: "rose-backroad-al", name: "Backroad AL", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "rose-backroad-al", name: "Backroad AL", meta: "Shimano GRX 1x12 / 2x12 mech.", schaltgruppe: "Shimano GRX 1x12 / 2x12 mech.", modelljahre: "2026", collectionTag: "rose-backroad-al" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "scott", name: "Scott", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "scott-addict-gravel-rc", name: "Addict Gravel RC", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "scott-addict-gravel-rc", name: "Addict Gravel RC", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "scott-addict-gravel-rc" }
+          ]
+        },
+        {
+          id: "scott-addict-gravel", name: "Addict Gravel", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "scott-addict-gravel-10", name: "Addict Gravel 10", meta: "SRAM Force eTap AXS 2x12", schaltgruppe: "SRAM Force eTap AXS 2x12", modelljahre: "2025", collectionTag: "scott-addict-gravel-10" },
+            { id: "scott-addict-gravel-15", name: "Addict Gravel 15", meta: "Shimano GRX Di2 2x12", schaltgruppe: "Shimano GRX Di2 2x12", modelljahre: "2025", collectionTag: "scott-addict-gravel-15" },
+            { id: "scott-addict-gravel-20", name: "Addict Gravel 20", meta: "SRAM Rival XPLR eTap AXS 1x12", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x12", modelljahre: "2026", collectionTag: "scott-addict-gravel-20" },
+            { id: "scott-addict-gravel-30", name: "Addict Gravel 30", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "scott-addict-gravel-30" },
+            { id: "scott-addict-gravel-40", name: "Addict Gravel 40", meta: "Shimano GRX 1x11 / CUES mech.", schaltgruppe: "Shimano GRX 1x11 / CUES mech.", modelljahre: "2025", collectionTag: "scott-addict-gravel-40" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "specialized", name: "Specialized", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "specialized-crux-2026", name: "Crux (2026)", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "specialized-s-works-crux", name: "S-Works Crux", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "specialized-s-works-crux" },
+            { id: "specialized-crux-pro", name: "Crux Pro", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "specialized-crux-pro" },
+            { id: "specialized-crux-comp", name: "Crux Comp", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "specialized-crux-comp" }
+          ]
+        },
+        {
+          id: "specialized-crux-dsw", name: "Crux DSW", meta: "Race Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "specialized-crux-dsw-comp", name: "Crux DSW Comp", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "specialized-crux-dsw-comp" }
+          ]
+        },
+        {
+          id: "specialized-diverge-4-2026", name: "Diverge 4 (2026)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "specialized-diverge-pro-ltd", name: "Diverge Pro LTD", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "specialized-diverge-pro-ltd" },
+            { id: "specialized-diverge-expert-axs", name: "Diverge Expert AXS", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "specialized-diverge-expert-axs" },
+            { id: "specialized-diverge-comp", name: "Diverge Comp", meta: "SRAM Apex AXS / S-1000 Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Apex AXS / S-1000 Eagle AXS Mullet 1x12", modelljahre: "2026", collectionTag: "specialized-diverge-comp" },
+            { id: "specialized-diverge-sport-grx", name: "Diverge Sport (GRX)", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "specialized-diverge-sport-grx" }
+          ]
+        },
+        {
+          id: "specialized-diverge-e5-2026", name: "Diverge E5 (2026)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "specialized-diverge-e5-comp", name: "Diverge E5 Comp", meta: "SRAM Apex XPLR 1x12 mech.", schaltgruppe: "SRAM Apex XPLR 1x12 mech.", modelljahre: "2026", collectionTag: "specialized-diverge-e5-comp" }
+          ]
+        },
+        {
+          id: "specialized-diverge-str", name: "Diverge STR", meta: "Adventure Gravel (Vollfederung)", type: "Carbon",
+          variants: [
+            { id: "specialized-diverge-str-expert", name: "Diverge STR Expert", meta: "SRAM Rival eTap AXS + GX Eagle AXS Mullet 1x12", schaltgruppe: "SRAM Rival eTap AXS + GX Eagle AXS Mullet 1x12", modelljahre: "2025", collectionTag: "specialized-diverge-str-expert" },
+            { id: "specialized-diverge-str-comp", name: "Diverge STR Comp", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "specialized-diverge-str-comp" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "trek", name: "Trek", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "trek-checkmate-slr", name: "Checkmate SLR", meta: "Race Gravel", type: "Carbon",
+          variants: [
+            { id: "trek-checkmate-slr-9-axs", name: "Checkmate SLR 9 AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "trek-checkmate-slr-9-axs" },
+            { id: "trek-checkmate-slr-7-axs", name: "Checkmate SLR 7 AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "trek-checkmate-slr-7-axs" }
+          ]
+        },
+        {
+          id: "trek-checkpoint-sl-gen3", name: "Checkpoint SL (Gen3)", meta: "Adventure Gravel", type: "Carbon",
+          variants: [
+            { id: "trek-checkpoint-sl-7-axs", name: "Checkpoint SL 7 AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "trek-checkpoint-sl-7-axs" },
+            { id: "trek-checkpoint-sl-6-axs", name: "Checkpoint SL 6 AXS", meta: "SRAM Rival XPLR eTap AXS 1x13", schaltgruppe: "SRAM Rival XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "trek-checkpoint-sl-6-axs" },
+            { id: "trek-checkpoint-sl-5", name: "Checkpoint SL 5", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "trek-checkpoint-sl-5" }
+          ]
+        },
+        {
+          id: "trek-checkpoint-alr-gen3", name: "Checkpoint ALR (Gen3)", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "trek-checkpoint-alr-5", name: "Checkpoint ALR 5", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2025", collectionTag: "trek-checkpoint-alr-5" },
+            { id: "trek-checkpoint-alr-3", name: "Checkpoint ALR 3", meta: "Shimano GRX 2x10 / Tiagra-Klasse mech.", schaltgruppe: "Shimano GRX 2x10 / Tiagra-Klasse mech.", modelljahre: "2025", collectionTag: "trek-checkpoint-alr-3" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "wilier", name: "Wilier", meta: "Gravel", type: "",
+      models: [
+        {
+          id: "wilier-rave-slr-id2", name: "Rave SLR ID2", meta: "Race Gravel (Aero)", type: "Carbon",
+          variants: [
+            { id: "wilier-rave-slr-id2-red-xplr-axs", name: "Rave SLR ID2 Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "wilier-rave-slr-id2-red-xplr-axs" },
+            { id: "wilier-rave-slr-id2-force-xplr-axs", name: "Rave SLR ID2 Force XPLR AXS", meta: "SRAM Force XPLR eTap AXS 1x13", schaltgruppe: "SRAM Force XPLR eTap AXS 1x13", modelljahre: "2026", collectionTag: "wilier-rave-slr-id2-force-xplr-axs" },
+            { id: "wilier-rave-slr-id2-grx-di2-1x", name: "Rave SLR ID2 GRX Di2 1x", meta: "Shimano GRX Di2 1x12", schaltgruppe: "Shimano GRX Di2 1x12", modelljahre: "2026", collectionTag: "wilier-rave-slr-id2-grx-di2-1x" }
+          ]
+        },
+        {
+          id: "wilier-rave-slr-gen1", name: "Rave SLR (Gen1)", meta: "All-Road / Gravel", type: "Carbon",
+          variants: [
+            { id: "wilier-rave-slr-red-xplr-axs", name: "Rave SLR Red XPLR AXS", meta: "SRAM Red XPLR eTap AXS 1x13", schaltgruppe: "SRAM Red XPLR eTap AXS 1x13", modelljahre: "2025", collectionTag: "wilier-rave-slr-red-xplr-axs" },
+            { id: "wilier-rave-slr-force-axs", name: "Rave SLR Force AXS", meta: "SRAM Force eTap AXS 1x12", schaltgruppe: "SRAM Force eTap AXS 1x12", modelljahre: "2025", collectionTag: "wilier-rave-slr-force-axs" }
+          ]
+        },
+        {
+          id: "wilier-jaroon", name: "Jaroon", meta: "Adventure Gravel (Alu)", type: "Aluminium",
+          variants: [
+            { id: "wilier-jaroon-grx-1x12", name: "Jaroon GRX 1x12", meta: "Shimano GRX 1x12 mech.", schaltgruppe: "Shimano GRX 1x12 mech.", modelljahre: "2026", collectionTag: "wilier-jaroon-grx-1x12" },
+            { id: "wilier-jaroon-grx-2x11", name: "Jaroon GRX 2x11", meta: "Shimano GRX 2x11 mech.", schaltgruppe: "Shimano GRX 2x11 mech.", modelljahre: "2025", collectionTag: "wilier-jaroon-grx-2x11" }
           ]
         }
       ]
