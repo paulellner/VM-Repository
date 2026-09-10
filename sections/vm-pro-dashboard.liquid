@@ -448,10 +448,16 @@
    Zeilenhöhe füllt (gleiche Maße in beiden Spalten). */
 .vmpd__cat-panel { display: flex; flex-direction: column; }
 .vmpd__cat-panel-body { flex: 1 1 auto; }
+/* Rad-Kasten: „Passende Teile finden" + „Rad entfernen" ans untere Ende
+   ziehen, damit die Buttons in beiden Spalten auf gleicher Höhe fluchten. */
+.vmpd__cat-panel-body[data-bike] { display: flex; flex-direction: column; }
+.vmpd__cat-panel-body[data-bike] .vmpd__parts-btn { margin-top: auto; align-self: flex-start; }
 
 /* „Rad entfernen" — dezenter Button unter jedem Rad */
 .vmpd__bike-remove {
   display:         block;
+  align-self:      flex-start;
+  text-align:      left;
   margin-top:      12px;
   background:      none;
   border:          none;
