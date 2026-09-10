@@ -1493,52 +1493,23 @@
         </div>
       </div>
 
-      <!-- ── OBERES GRID: Gespeichertes Rad + Strava ──────────────────── -->
-      <div class="vmpd__grid">
-
-        <!-- PANEL 1: Gespeichertes Rad -->
-        <article class="vmpd__panel" aria-labelledby="vmpd-bike-heading">
-          <div class="vmpd__panel-hd">
-            <span class="vmpd__panel-num">01</span>
-            <h2 class="vmpd__panel-title" id="vmpd-bike-heading">Gespeichertes Rad</h2>
-            <a class="vmpd__panel-action" href="/" aria-label="Rad neu konfigurieren">
-              Ändern →
-            </a>
-          </div>
-          <div class="vmpd__panel-body" id="vmpd-bike-body"></div>
-        </article>
-
-        <!-- PANEL 3: Strava -->
-        <article class="vmpd__panel" aria-labelledby="vmpd-strava-heading">
-          <div class="vmpd__panel-hd">
-            <span class="vmpd__panel-num">02</span>
-            <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
-          </div>
-          <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
-          <div class="vmpd__strava-powered">
-            <img src="{{ 'api_logo_pwrdBy_strava_horiz_orange.png' | asset_url }}"
-                 alt="Powered by Strava"
-                 width="128"
-                 loading="lazy">
-          </div>
-        </article>
-
-      </div>
-
-      <!-- ── BIKE GESUNDHEIT (full-width) ──────────────────────────────── -->
-      <div id="vmpd-health-alert" style="margin-bottom:0"></div>
-
-      <article class="vmpd__panel" style="margin-bottom:32px" aria-labelledby="vmpd-health-heading">
+      <!-- ── STRAVA (Account-Ebene) ──────────────────────────────────── -->
+      <article class="vmpd__panel" style="margin-bottom:32px" aria-labelledby="vmpd-strava-heading">
         <div class="vmpd__panel-hd">
-          <span class="vmpd__panel-num">03</span>
-          <h2 class="vmpd__panel-title" id="vmpd-health-heading">Bike Gesundheit</h2>
-          <div id="vmpd-health-cat" role="tablist" aria-label="Rad-Kategorie" style="display:none;gap:4px;margin-left:4px"></div>
-          <span id="vmpd-health-chip" style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span>
+          <span class="vmpd__panel-num">01</span>
+          <h2 class="vmpd__panel-title" id="vmpd-strava-heading">Strava</h2>
         </div>
-        <div id="vmpd-health-body">
-          <div class="vmpd__health-loading">Lade Statusdaten…</div>
+        <div class="vmpd__panel-body" id="vmpd-strava-body"></div>
+        <div class="vmpd__strava-powered">
+          <img src="{{ 'api_logo_pwrdBy_strava_horiz_orange.png' | asset_url }}"
+               alt="Powered by Strava"
+               width="128"
+               loading="lazy">
         </div>
       </article>
+
+      <!-- ── RÄDER + GESUNDHEIT (pro Kategorie, per JS eingefügt) ──────── -->
+      <div id="vmpd-cat-blocks"></div>
 
       <!-- ── UNTERES GRID: Kaufhistorie + Konto ────────────────────────── -->
       <div class="vmpd__grid">
@@ -1727,93 +1698,38 @@
        Reset-Funktion markiert Komponente als "gerade erneuert".
     ─────────────────────────────────────────────────────────────────────── */
 
-    var healthBody  = document.getElementById('vmpd-health-body');
-    var healthAlert = document.getElementById('vmpd-health-alert');
-    var healthChip  = document.getElementById('vmpd-health-chip');
-
-    var wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
-
-    /* ── Kategorie (Road / Gravel) ──────────────────────────────────────────
-       Ein Pro-Kunde kann je ein Road- und ein Gravel-Rad haben. Der Umschalter
-       steuert, welches Rad Gesundheit + Bike-Panel anzeigen. Strava zieht die
-       Verschleißdaten pro Kategorie getrennt (Server: ?category=road|gravel). */
-    var vmNote = null;
-    try { vmNote = typeof window.__vmProNote === 'string' ? JSON.parse(window.__vmProNote) : window.__vmProNote; } catch (e) {}
-    var vmBikes = (vmNote && vmNote.vm_bikes) ? vmNote.vm_bikes : {};
-    if (!vmBikes.road && !vmBikes.gravel && vmNote && vmNote.vm_bike) {
-      vmBikes[(vmNote.vm_bike.category === 'gravel') ? 'gravel' : 'road'] = vmNote.vm_bike;
-    }
-    var availCats  = ['road', 'gravel'].filter(function (c) { return vmBikes[c] && vmBikes[c].collectionTag; });
-    var currentCat = availCats.length ? availCats[0] : 'road';
+    /* ── Geteilte Helfer ────────────────────────────────────────────────── */
+    var STATUS_MSG = { green: 'Alles in Ordnung', yellow: 'Prüfung empfohlen', red: 'Handlungsbedarf' };
     var CAT_LABEL  = { road: 'Road', gravel: 'Gravel' };
-    var catToggleEl = document.getElementById('vmpd-health-cat');
-
-    function buildCatToggle() {
-      if (!catToggleEl) return;
-      if (availCats.length < 2) { catToggleEl.style.display = 'none'; return; }
-      catToggleEl.style.display = 'inline-flex';
-      catToggleEl.innerHTML = availCats.map(function (c) {
-        var active = c === currentCat;
-        return '<button type="button" role="tab" data-cat="' + c + '" aria-selected="' + active + '" '
-          + 'style="font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;'
-          + 'letter-spacing:0.1em;padding:4px 11px;border:1.5px solid var(--vm-ink);cursor:pointer;line-height:1;'
-          + 'background:' + (active ? 'var(--vm-ink)' : 'transparent') + ';'
-          + 'color:' + (active ? 'var(--vm-bone)' : 'var(--vm-ink)') + '">' + CAT_LABEL[c] + '</button>';
-      }).join('');
-      catToggleEl.querySelectorAll('button').forEach(function (b) {
-        b.addEventListener('click', function () { setCat(b.getAttribute('data-cat')); });
-      });
-    }
-
-    function setCat(cat) {
-      if (cat === currentCat) return;
-      currentCat = cat;
-      buildCatToggle();
-      if (window.__vmBikePanelRender) window.__vmBikePanelRender(cat);
-      loadHealth();
-    }
-
-    var STATUS_MSG = {
-      green:  'Alles in Ordnung',
-      yellow: 'Prüfung empfohlen',
-      red:    'Handlungsbedarf',
-    };
+    var CAT_ORDER  = ['road', 'gravel'];
 
     function escH(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
-
-    function fmtNum(n) {
-      return n != null ? Number(n).toLocaleString('de-DE') : '—';
+    function esc(s) { return escH(s); }
+    function fmtNum(n) { return n != null ? Number(n).toLocaleString('de-DE') : '—'; }
+    function deHyphen(s) {
+      if (!s) return '';
+      return s.split('-').map(function(w) { return w ? w.charAt(0).toUpperCase() + w.slice(1) : ''; }).join(' ');
     }
-
     function lamp(status, size) {
       size = size || 10;
       return '<span class="vmpd__health-lamp vmpd__health-lamp--' + status + '"'
            + ' style="width:' + size + 'px;height:' + size + 'px" aria-hidden="true"></span>';
     }
-
     function bar(pct, status) {
       return '<div class="vmpd__comp-bar" role="progressbar" aria-valuenow="' + pct
            + '" aria-valuemin="0" aria-valuemax="100">'
            + '<div class="vmpd__comp-bar-fill vmpd__comp-bar-fill--' + status + '"'
            + ' style="width:' + Math.min(100, pct) + '%"></div></div>';
     }
-
     function compRow(comp) {
-      var remText   = '';
-      var sinceText = '';
       var resetDate = comp.reset_at ? '(zuletzt ' + comp.reset_at + ')' : '';
-
-      /* Buy button — nur bei Warnung oder Kritisch */
       var buyBtn = comp.status !== 'green'
         ? '<a class="vmpd__comp-buy" href="/collections/all?filter.p.tag=vm-wartung-' + escH(comp.id)
-          + '" aria-label="' + escH(comp.name) + ' kaufen">Kaufen →</a>'
+          + '" aria-label="' + escH(comp.name) + ' kaufen">Kaufen →</a>'
         : '';
-
-      /* Percentage color class */
       var pctClass = comp.status !== 'green' ? ' vmpd__comp-pct--' + comp.status : '';
-
       return '<div class="vmpd__comp-row">'
            +   '<span class="vmpd__comp-dot vmpd__comp-dot--' + comp.status + '" aria-hidden="true"></span>'
            +   '<div class="vmpd__comp-main">'
@@ -1835,311 +1751,286 @@
            + '</div>';
     }
 
-    function renderHealth(data) {
-      /* Alert-Leiste */
-      if (healthAlert) {
-        if (data.alerts && data.alerts.length) {
-          var alertColor  = data.overall_status === 'red' ? 'var(--vm-signal)' : '#E4A83B';
-          var alertWarn   = data.overall_status !== 'red' ? ' vmpd__alert-bar--warn' : '';
-          var alertItems  = data.alerts.map(function(a) {
-            return '<li class="vmpd__alert-item vmpd__alert-item--' + a.level + '">' + escH(a.message) + '</li>';
-          }).join('');
-          healthAlert.innerHTML =
-            '<div class="vmpd__alert-bar' + alertWarn + '">'
-            + '<svg class="vmpd__alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"'
-            +   ' stroke="' + alertColor + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'
-            +   ' aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'
-            +   '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-            + '<ul class="vmpd__alert-list">' + alertItems + '</ul>'
-            + '</div>';
-          healthAlert.style.marginBottom = '0';
-          healthAlert.style.display = 'block';
-        } else {
-          healthAlert.style.display = 'none';
-        }
-      }
-
-      /* Panel-Header-Chip mit Gesamt-Status */
-      if (healthChip) {
-        var chipColor = data.overall_status === 'red'   ? '#D9462A'
-                      : data.overall_status === 'yellow' ? '#C88B20'
-                      : '#5CB85C';
-        healthChip.innerHTML = lamp(data.overall_status, 8) + '<span>' + STATUS_MSG[data.overall_status] + '</span>';
-        healthChip.style.color   = chipColor;
-        healthChip.style.display = 'inline-flex';
-      }
-
-      /* Gesamt-Statuszeile */
-      var cond = data.conditions || {};
-
-      var odoKm = (data.bike_total_km != null) ? data.bike_total_km : data.odometer_km;
-      var html = '<div class="vmpd__health-statusbar">'
-               +   lamp(data.overall_status, 12)
-               +   '<span class="vmpd__health-status-label">Gesamt </span>'
-               +   '<span class="vmpd__health-status-val">' + STATUS_MSG[data.overall_status] + '</span>'
-               +   '<span class="vmpd__health-odo">' + fmtNum(odoKm) + ' km gesamt</span>'
-               + '</div>';
-
-      /* Verschleißteile */
-      var wear = (data.components || []).filter(function(c) { return !c.is_consumable; });
-      wear.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
-      html += '<div class="vmpd__comp-section">'
-            + '<div class="vmpd__comp-section-hd">Verschleißteile</div>';
-      wear.forEach(function(c) { html += compRow(c); });
-      html += '</div>';
-
-      /* Verbrauchsmittel */
-      var cons = (data.components || []).filter(function(c) { return c.is_consumable; });
-      cons.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
-      html += '<div class="vmpd__comp-section">'
-            + '<div class="vmpd__comp-section-hd">Verbrauchsmittel</div>';
-      cons.forEach(function(c) { html += compRow(c); });
-      html += '</div>';
-
-
-      healthBody.innerHTML = html;
-
-      /* Reset-Buttons verknüpfen */
-      healthBody.querySelectorAll('.vmpd__comp-reset-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() { resetComp(btn.getAttribute('data-comp-id'), btn); });
-      });
-    }
-
-    function renderHealthError(error) {
-      if (healthChip) healthChip.style.display = 'none';
-      var msg = error === 'strava_not_connected'
-        ? 'Verbinde deinen Strava-Account, um den Bike-Verschleißstatus zu sehen.'
-        : 'Statusdaten konnten nicht geladen werden. Bitte Seite neu laden.';
-      healthBody.innerHTML = '<div class="vmpd__health-no-strava">' + msg + '</div>';
-    }
-
-    function resetComp(compId, btn) {
-      var prev = btn.textContent;
-      btn.textContent   = 'Wird gespeichert…';
-      btn.style.pointerEvents = 'none';
-      fetch('/apps/vm-pro/bike/health/reset?category=' + currentCat, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body:    JSON.stringify({ component_id: compId }),
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok) { loadHealth(); }
-        else { btn.textContent = 'Fehler — neu laden'; btn.style.pointerEvents = ''; }
-      })
-      .catch(function() { btn.textContent = prev; btn.style.pointerEvents = ''; });
-    }
-
-    function loadHealth() {
-      healthBody.innerHTML = '<div class="vmpd__health-loading">Lade Statusdaten…</div>';
-      fetch('/apps/vm-pro/bike/health?category=' + currentCat, { headers: { 'Accept': 'application/json' } })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d.ok) {
-            if (d.needs_setup) { showWizard(); }
-            else { renderHealth(d); }
-          } else {
-            renderHealthError(d.error);
-          }
-        })
-        .catch(function() { renderHealthError('connection_error'); });
-    }
-
-    /* ── SETUP WIZARD ─────────────────────────────────────────────────────── */
-
-    function showWizard() {
-      if (healthChip) healthChip.style.display = 'none';
-      if (healthAlert) healthAlert.style.display = 'none';
-      wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
-      healthBody.innerHTML = buildWizardStep(1);
-      bindWizardEvents();
-    }
-
-    function buildWizardStep(step) {
-      var prog = '';
-      for (var i = 1; i <= 4; i++) {
-        var cls = i < step ? '--done' : i === step ? '--active' : '';
-        prog += '<div class="vmpd__wizard-step-dot' + (cls ? ' vmpd__wizard-step-dot' + cls : '') + '"></div>';
-      }
-
-      var inner = '';
-      if (step === 1) {
-        inner  = '<span class="vmpd__wizard-step-label">Schritt 1 von 4</span>';
-        inner += '<h3 class="vmpd__wizard-question">Wie viele Kilometer hat dein Rad insgesamt?</h3>';
-        inner += '<div class="vmpd__wizard-km-wrap">'
-               + '<input class="vmpd__wizard-km-input" id="wz-km" type="number" min="0" max="999999" placeholder="z. B.&nbsp;3500"'
-               + (wizardState.bikeKm != null ? ' value="' + wizardState.bikeKm + '"' : '') + '>'
-               + '<span class="vmpd__wizard-km-unit">km</span>'
-               + '</div>'
-               + '<p class="vmpd__wizard-hint">Odometer deines Rades oder eine Schätzung. Hilft uns, den Verschleiß präzise zu berechnen.</p>';
-      } else {
-        var configs = [null,
-          null,
-          { lbl: 'Schritt 2 von 4', q: 'Wann hast du deine Kette zuletzt gewechselt?', name: 'wz-chain', sel: wizardState.chainKmSince,
-            opts: [
-              { val: 250,  main: 'Kürzlich',         sub: 'Weniger als 500 km' },
-              { val: 1000, main: 'Vor 500– 1.500 km', sub: 'Mäßige Nutzung' },
-              { val: 2000, main: 'Vor 1.500–2.500 km', sub: 'Bald fällig' },
-              { val: 3000, main: 'Nie / Unbekannt',   sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
-            ]
-          },
-          { lbl: 'Schritt 3 von 4', q: 'Wann hast du Kassette und Bremsbelege zuletzt gewechselt?', name: 'wz-cass', sel: wizardState.cassetteBrakepadsKmSince,
-            opts: [
-              { val: 500,  main: 'Kürzlich',          sub: 'Weniger als 1.000 km' },
-              { val: 2000, main: 'Vor 1.000–3.000 km', sub: 'Normale Nutzung' },
-              { val: 4500, main: 'Vor 3.000–6.000 km', sub: 'Prüfung empfohlen' },
-              { val: 8500, main: 'Nie / Unbekannt',    sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
-            ]
-          },
-          { lbl: 'Schritt 4 von 4', q: 'Wann hast du Züge, Reifen und Kettensterne zuletzt gewechselt?', name: 'wz-cables', sel: wizardState.cablesTiresChainringsKmSince,
-            opts: [
-              { val: 1000,  main: 'Kürzlich',            sub: 'Weniger als 2.000 km' },
-              { val: 3500,  main: 'Vor 2.000–5.000 km', sub: 'Normale Nutzung' },
-              { val: 7500,  main: 'Vor 5.000–10.000 km', sub: 'Auf dem Radar behalten' },
-              { val: 12000, main: 'Nie / Unbekannt',      sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
-            ]
-          }
-        ];
-        var c = configs[step];
-        inner = '<span class="vmpd__wizard-step-label">' + c.lbl + '</span>'
-              + '<h3 class="vmpd__wizard-question">' + c.q + '</h3>'
-              + '<div class="vmpd__wizard-options">';
-        c.opts.forEach(function(opt) {
-          var chk = c.sel === opt.val ? ' checked' : '';
-          inner += '<label class="vmpd__wizard-option">'
-                 + '<input type="radio" name="' + c.name + '" value="' + opt.val + '"' + chk + '>'
-                 + '<span class="vmpd__wizard-option-label">'
-                 + '<span class="vmpd__wizard-option-main">' + escH(opt.main) + '</span>'
-                 + '<span class="vmpd__wizard-option-sub">'  + escH(opt.sub)  + '</span>'
-                 + '</span></label>';
-        });
-        inner += '</div>';
-      }
-
-      var backBtn = step > 1
-        ? '<button class="vmpd__wizard-back" id="wz-back" type="button">← Zurück</button>'
-        : '<span></span>';
-      var nextLbl = step === 4 ? 'Analyse starten →' : 'Weiter →';
-
-      return '<div class="vmpd__wizard">'
-           + '<div class="vmpd__wizard-progress">' + prog + '</div>'
-           + inner
-           + '<div class="vmpd__wizard-nav">' + backBtn
-           + '<button class="vmpd__wizard-next" id="wz-next" type="button" disabled>' + nextLbl + '</button>'
-           + '</div></div>';
-    }
-
-    function bindWizardEvents() {
-      var nextBtn = document.getElementById('wz-next');
-      var backBtn = document.getElementById('wz-back');
-
-      if (backBtn) {
-        backBtn.addEventListener('click', function() {
-          wizardState.step--;
-          healthBody.innerHTML = buildWizardStep(wizardState.step);
-          bindWizardEvents();
-        });
-      }
-
-      function refreshNext() {
-        if (nextBtn) nextBtn.disabled = !validateStep(wizardState.step);
-      }
-
-      var inputs = healthBody.querySelectorAll('input');
-      inputs.forEach(function(inp) {
-        inp.addEventListener('change', refreshNext);
-        inp.addEventListener('input',  refreshNext);
-      });
-
-      if (nextBtn) {
-        refreshNext();
-        nextBtn.addEventListener('click', function() {
-          if (!validateStep(wizardState.step)) return;
-          saveStep(wizardState.step);
-          if (wizardState.step === 4) {
-            submitWizard();
-          } else {
-            wizardState.step++;
-            healthBody.innerHTML = buildWizardStep(wizardState.step);
-            bindWizardEvents();
-          }
-        });
-      }
-    }
-
-    function validateStep(step) {
-      if (step === 1) {
-        var inp = document.getElementById('wz-km');
-        if (!inp || inp.value === '') return false;
-        var v = parseInt(inp.value, 10);
-        return !isNaN(v) && v >= 0;
-      }
-      var name = step === 2 ? 'wz-chain' : step === 3 ? 'wz-cass' : 'wz-cables';
-      return !!healthBody.querySelector('input[name="' + name + '"]:checked');
-    }
-
-    function saveStep(step) {
-      if (step === 1) {
-        var inp = document.getElementById('wz-km');
-        wizardState.bikeKm = inp ? (parseInt(inp.value, 10) || 0) : 0;
-      } else {
-        var name = step === 2 ? 'wz-chain' : step === 3 ? 'wz-cass' : 'wz-cables';
-        var chk  = healthBody.querySelector('input[name="' + name + '"]:checked');
-        var val  = chk ? parseInt(chk.value, 10) : 0;
-        if (step === 2) wizardState.chainKmSince = val;
-        else if (step === 3) wizardState.cassetteBrakepadsKmSince = val;
-        else wizardState.cablesTiresChainringsKmSince = val;
-      }
-    }
-
-    function submitWizard() {
-      healthBody.innerHTML = '<div class="vmpd__health-loading">Kalibrierung wird gespeichert…</div>';
-      fetch('/apps/vm-pro/bike/setup?category=' + currentCat, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body:    JSON.stringify({
-          bikeKm:                       wizardState.bikeKm,
-          chainKmSince:                 wizardState.chainKmSince,
-          cassetteBrakepadsKmSince:     wizardState.cassetteBrakepadsKmSince,
-          cablesTiresChainringsKmSince: wizardState.cablesTiresChainringsKmSince,
-        }),
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok) { renderHealth(d); }
-        else { renderHealthError(d.error || 'setup_failed'); }
-      })
-      .catch(function() { renderHealthError('connection_error'); });
-    }
-
-    buildCatToggle();
-    loadHealth();
-
-    /* ─────────────────────────────────────────────────────────────────────── */
-
     var SEARCH_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
     var BIKE_SVG   = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
 
-    function esc(s) {
-      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    /* ── Bike-Panel-Inhalt rendern ──────────────────────────────────────── */
+    function renderBikeInto(container, bike) {
+      var displayBrand   = bike.brandName   || bike.brand   || '';
+      var displayModel   = bike.modelName   || deHyphen(bike.model)   || '';
+      var displayVariant = bike.variantName || deHyphen(bike.variant) || '';
+      var specs = '';
+      if (displayVariant)    specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(displayVariant) + '</span></div>';
+      if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
+      if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
+      container.innerHTML =
+        (displayBrand ? '<p class="vmpd__bike-brand">' + esc(displayBrand) + '</p>' : '') +
+        (displayModel ? '<p class="vmpd__bike-model">' + esc(displayModel) + '</p>' : '') +
+        (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
+        '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
+        SEARCH_SVG + ' Passende Teile finden →</a>';
     }
 
-    function deHyphen(s) {
-      if (!s) return '';
-      return s.split('-').map(function(w) {
-        return w ? w.charAt(0).toUpperCase() + w.slice(1) : '';
-      }).join(' ');
+    /* ── Gesundheits-Panel je Kategorie (eigener State + eigenes DOM) ────── */
+    function createHealthPanel(category, els) {
+      var healthBody = els.body, healthAlert = els.alert, healthChip = els.chip;
+      var P = 'wz-' + category + '-';
+      var wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
+
+      function renderHealth(data) {
+        if (healthAlert) {
+          if (data.alerts && data.alerts.length) {
+            var alertColor = data.overall_status === 'red' ? 'var(--vm-signal)' : '#E4A83B';
+            var alertWarn  = data.overall_status !== 'red' ? ' vmpd__alert-bar--warn' : '';
+            var alertItems = data.alerts.map(function(a) {
+              return '<li class="vmpd__alert-item vmpd__alert-item--' + a.level + '">' + escH(a.message) + '</li>';
+            }).join('');
+            healthAlert.innerHTML =
+              '<div class="vmpd__alert-bar' + alertWarn + '">'
+              + '<svg class="vmpd__alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"'
+              +   ' stroke="' + alertColor + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"'
+              +   ' aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'
+              +   '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+              + '<ul class="vmpd__alert-list">' + alertItems + '</ul>'
+              + '</div>';
+            healthAlert.style.marginBottom = '0';
+            healthAlert.style.display = 'block';
+          } else {
+            healthAlert.style.display = 'none';
+          }
+        }
+        if (healthChip) {
+          var chipColor = data.overall_status === 'red' ? '#D9462A'
+                        : data.overall_status === 'yellow' ? '#C88B20' : '#5CB85C';
+          healthChip.innerHTML = lamp(data.overall_status, 8) + '<span>' + STATUS_MSG[data.overall_status] + '</span>';
+          healthChip.style.color   = chipColor;
+          healthChip.style.display = 'inline-flex';
+        }
+
+        var odoKm = (data.bike_total_km != null) ? data.bike_total_km : data.odometer_km;
+        var html = '<div class="vmpd__health-statusbar">'
+                 +   lamp(data.overall_status, 12)
+                 +   '<span class="vmpd__health-status-label">Gesamt </span>'
+                 +   '<span class="vmpd__health-status-val">' + STATUS_MSG[data.overall_status] + '</span>'
+                 +   '<span class="vmpd__health-odo">' + fmtNum(odoKm) + ' km gesamt</span>'
+                 + '</div>';
+
+        var wear = (data.components || []).filter(function(c) { return !c.is_consumable; });
+        wear.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
+        html += '<div class="vmpd__comp-section"><div class="vmpd__comp-section-hd">Verschleißteile</div>';
+        wear.forEach(function(c) { html += compRow(c); });
+        html += '</div>';
+
+        var cons = (data.components || []).filter(function(c) { return c.is_consumable; });
+        cons.sort(function(a, b) { return b.wear_pct - a.wear_pct; });
+        html += '<div class="vmpd__comp-section"><div class="vmpd__comp-section-hd">Verbrauchsmittel</div>';
+        cons.forEach(function(c) { html += compRow(c); });
+        html += '</div>';
+
+        healthBody.innerHTML = html;
+        healthBody.querySelectorAll('.vmpd__comp-reset-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { resetComp(btn.getAttribute('data-comp-id'), btn); });
+        });
+      }
+
+      function renderHealthError(error) {
+        if (healthChip) healthChip.style.display = 'none';
+        if (healthAlert) healthAlert.style.display = 'none';
+        var msg = error === 'strava_not_connected'
+          ? 'Verbinde deinen Strava-Account, um den Bike-Verschleißstatus zu sehen.'
+          : 'Statusdaten konnten nicht geladen werden. Bitte Seite neu laden.';
+        healthBody.innerHTML = '<div class="vmpd__health-no-strava">' + msg + '</div>';
+      }
+
+      function resetComp(compId, btn) {
+        var prev = btn.textContent;
+        btn.textContent = 'Wird gespeichert…';
+        btn.style.pointerEvents = 'none';
+        fetch('/apps/vm-pro/bike/health/reset?category=' + category, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ component_id: compId }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok) { load(); }
+          else { btn.textContent = 'Fehler — neu laden'; btn.style.pointerEvents = ''; }
+        })
+        .catch(function() { btn.textContent = prev; btn.style.pointerEvents = ''; });
+      }
+
+      function load() {
+        healthBody.innerHTML = '<div class="vmpd__health-loading">Lade Statusdaten…</div>';
+        fetch('/apps/vm-pro/bike/health?category=' + category, { headers: { 'Accept': 'application/json' } })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.ok) {
+              if (d.needs_setup) { showWizard(); }
+              else { renderHealth(d); }
+            } else { renderHealthError(d.error); }
+          })
+          .catch(function() { renderHealthError('connection_error'); });
+      }
+
+      function showWizard() {
+        if (healthChip) healthChip.style.display = 'none';
+        if (healthAlert) healthAlert.style.display = 'none';
+        wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
+        healthBody.innerHTML = buildWizardStep(1);
+        bindWizardEvents();
+      }
+
+      function buildWizardStep(step) {
+        var prog = '';
+        for (var i = 1; i <= 4; i++) {
+          var cls = i < step ? '--done' : i === step ? '--active' : '';
+          prog += '<div class="vmpd__wizard-step-dot' + (cls ? ' vmpd__wizard-step-dot' + cls : '') + '"></div>';
+        }
+        var inner = '';
+        if (step === 1) {
+          inner  = '<span class="vmpd__wizard-step-label">Schritt 1 von 4 · ' + CAT_LABEL[category] + '</span>';
+          inner += '<h3 class="vmpd__wizard-question">Wie viele Kilometer hat dein ' + CAT_LABEL[category] + '-Rad insgesamt?</h3>';
+          inner += '<div class="vmpd__wizard-km-wrap">'
+                 + '<input class="vmpd__wizard-km-input" id="' + P + 'km" type="number" min="0" max="999999" placeholder="z. B.&nbsp;3500"'
+                 + (wizardState.bikeKm != null ? ' value="' + wizardState.bikeKm + '"' : '') + '>'
+                 + '<span class="vmpd__wizard-km-unit">km</span>'
+                 + '</div>'
+                 + '<p class="vmpd__wizard-hint">Odometer deines Rades oder eine Schätzung. Hilft uns, den Verschleiß präzise zu berechnen.</p>';
+        } else {
+          var configs = [null, null,
+            { lbl: 'Schritt 2 von 4', q: 'Wann hast du deine Kette zuletzt gewechselt?', name: P + 'chain', sel: wizardState.chainKmSince,
+              opts: [
+                { val: 250,  main: 'Kürzlich',           sub: 'Weniger als 500 km' },
+                { val: 1000, main: 'Vor 500–1.500 km',    sub: 'Mäßige Nutzung' },
+                { val: 2000, main: 'Vor 1.500–2.500 km',  sub: 'Bald fällig' },
+                { val: 3000, main: 'Nie / Unbekannt',     sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+              ] },
+            { lbl: 'Schritt 3 von 4', q: 'Wann hast du Kassette und Bremsbeläge zuletzt gewechselt?', name: P + 'cass', sel: wizardState.cassetteBrakepadsKmSince,
+              opts: [
+                { val: 500,  main: 'Kürzlich',            sub: 'Weniger als 1.000 km' },
+                { val: 2000, main: 'Vor 1.000–3.000 km',  sub: 'Normale Nutzung' },
+                { val: 4500, main: 'Vor 3.000–6.000 km',  sub: 'Prüfung empfohlen' },
+                { val: 8500, main: 'Nie / Unbekannt',     sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+              ] },
+            { lbl: 'Schritt 4 von 4', q: 'Wann hast du Züge, Reifen und Kettensterne zuletzt gewechselt?', name: P + 'cables', sel: wizardState.cablesTiresChainringsKmSince,
+              opts: [
+                { val: 1000,  main: 'Kürzlich',            sub: 'Weniger als 2.000 km' },
+                { val: 3500,  main: 'Vor 2.000–5.000 km',  sub: 'Normale Nutzung' },
+                { val: 7500,  main: 'Vor 5.000–10.000 km', sub: 'Auf dem Radar behalten' },
+                { val: 12000, main: 'Nie / Unbekannt',     sub: 'Wir nehmen vorsichtshalber Verschleiß an' },
+              ] }
+          ];
+          var c = configs[step];
+          inner = '<span class="vmpd__wizard-step-label">' + c.lbl + ' · ' + CAT_LABEL[category] + '</span>'
+                + '<h3 class="vmpd__wizard-question">' + c.q + '</h3>'
+                + '<div class="vmpd__wizard-options">';
+          c.opts.forEach(function(opt) {
+            var chk = c.sel === opt.val ? ' checked' : '';
+            inner += '<label class="vmpd__wizard-option">'
+                   + '<input type="radio" name="' + c.name + '" value="' + opt.val + '"' + chk + '>'
+                   + '<span class="vmpd__wizard-option-label">'
+                   + '<span class="vmpd__wizard-option-main">' + escH(opt.main) + '</span>'
+                   + '<span class="vmpd__wizard-option-sub">'  + escH(opt.sub)  + '</span>'
+                   + '</span></label>';
+          });
+          inner += '</div>';
+        }
+        var backBtn = step > 1
+          ? '<button class="vmpd__wizard-back" id="' + P + 'back" type="button">← Zurück</button>'
+          : '<span></span>';
+        var nextLbl = step === 4 ? 'Analyse starten →' : 'Weiter →';
+        return '<div class="vmpd__wizard">'
+             + '<div class="vmpd__wizard-progress">' + prog + '</div>'
+             + inner
+             + '<div class="vmpd__wizard-nav">' + backBtn
+             + '<button class="vmpd__wizard-next" id="' + P + 'next" type="button" disabled>' + nextLbl + '</button>'
+             + '</div></div>';
+      }
+
+      function bindWizardEvents() {
+        var nextBtn = healthBody.querySelector('#' + P + 'next');
+        var backBtn = healthBody.querySelector('#' + P + 'back');
+        if (backBtn) {
+          backBtn.addEventListener('click', function() {
+            wizardState.step--;
+            healthBody.innerHTML = buildWizardStep(wizardState.step);
+            bindWizardEvents();
+          });
+        }
+        function refreshNext() { if (nextBtn) nextBtn.disabled = !validateStep(wizardState.step); }
+        healthBody.querySelectorAll('input').forEach(function(inp) {
+          inp.addEventListener('change', refreshNext);
+          inp.addEventListener('input',  refreshNext);
+        });
+        if (nextBtn) {
+          refreshNext();
+          nextBtn.addEventListener('click', function() {
+            if (!validateStep(wizardState.step)) return;
+            saveStep(wizardState.step);
+            if (wizardState.step === 4) { submitWizard(); }
+            else {
+              wizardState.step++;
+              healthBody.innerHTML = buildWizardStep(wizardState.step);
+              bindWizardEvents();
+            }
+          });
+        }
+      }
+
+      function validateStep(step) {
+        if (step === 1) {
+          var inp = healthBody.querySelector('#' + P + 'km');
+          if (!inp || inp.value === '') return false;
+          var v = parseInt(inp.value, 10);
+          return !isNaN(v) && v >= 0;
+        }
+        var name = step === 2 ? P + 'chain' : step === 3 ? P + 'cass' : P + 'cables';
+        return !!healthBody.querySelector('input[name="' + name + '"]:checked');
+      }
+
+      function saveStep(step) {
+        if (step === 1) {
+          var inp = healthBody.querySelector('#' + P + 'km');
+          wizardState.bikeKm = inp ? (parseInt(inp.value, 10) || 0) : 0;
+        } else {
+          var name = step === 2 ? P + 'chain' : step === 3 ? P + 'cass' : P + 'cables';
+          var chk  = healthBody.querySelector('input[name="' + name + '"]:checked');
+          var val  = chk ? parseInt(chk.value, 10) : 0;
+          if (step === 2) wizardState.chainKmSince = val;
+          else if (step === 3) wizardState.cassetteBrakepadsKmSince = val;
+          else wizardState.cablesTiresChainringsKmSince = val;
+        }
+      }
+
+      function submitWizard() {
+        healthBody.innerHTML = '<div class="vmpd__health-loading">Kalibrierung wird gespeichert…</div>';
+        fetch('/apps/vm-pro/bike/setup?category=' + category, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            bikeKm:                       wizardState.bikeKm,
+            chainKmSince:                 wizardState.chainKmSince,
+            cassetteBrakepadsKmSince:     wizardState.cassetteBrakepadsKmSince,
+            cablesTiresChainringsKmSince: wizardState.cablesTiresChainringsKmSince,
+          }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok) { renderHealth(d); }
+          else { renderHealthError(d.error || 'setup_failed'); }
+        })
+        .catch(function() { renderHealthError('connection_error'); });
+      }
+
+      return { load: load };
     }
 
-    /* ── Parse customer.note ───────────────────────────────────────────────── */
+    /* ── customer.note parsen ───────────────────────────────────────────── */
     var noteData = null;
     try {
-      noteData = typeof window.__vmProNote === 'string'
-        ? JSON.parse(window.__vmProNote)
-        : window.__vmProNote;
+      noteData = typeof window.__vmProNote === 'string' ? JSON.parse(window.__vmProNote) : window.__vmProNote;
     } catch (e) {}
 
-    /* Clean ?strava= URL param after OAuth redirect */
     var stravaDenied = false;
     try {
       var urlParams = new URLSearchParams(window.location.search);
@@ -2148,75 +2039,72 @@
         history.replaceState({}, '', window.location.pathname);
       }
     } catch (e) {}
-
-    /* Alte browser-weite Bruecke entfernen (war accountuebergreifend - Datenleck). */
     try { localStorage.removeItem('vm_pro_saved_bike'); } catch (e) {}
 
-    /* BIKE PANEL - pro Account, Live-Abruf via App Proxy */
-    var bikeBody = document.getElementById('vmpd-bike-body');
-    if (bikeBody) {
-      var renderBike = function (bike) {
-        var displayBrand   = bike.brandName   || bike.brand   || '';
-        var displayModel   = bike.modelName   || deHyphen(bike.model)   || '';
-        var displayVariant = bike.variantName || deHyphen(bike.variant) || '';
+    /* ── Kategorie-Blöcke (Rad + Gesundheit) stapeln ────────────────────── */
+    var catBlocks = document.getElementById('vmpd-cat-blocks');
 
-        var specs = '';
-        if (displayVariant)    specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Variante</span><span class="vmpd__bike-spec-value">' + esc(displayVariant) + '</span></div>';
-        if (bike.schaltgruppe) specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Schaltgruppe</span><span class="vmpd__bike-spec-value">' + esc(bike.schaltgruppe) + '</span></div>';
-        if (bike.modelljahre)  specs += '<div class="vmpd__bike-spec"><span class="vmpd__bike-spec-label">Modelljahre</span><span class="vmpd__bike-spec-value">' + esc(bike.modelljahre) + '</span></div>';
+    function buildCatBlock(cat, bike, num) {
+      var sec = document.createElement('section');
+      sec.className = 'vmpd-cat-block';
+      sec.style.marginBottom = '32px';
+      sec.innerHTML =
+        '<article class="vmpd__panel" style="margin-bottom:16px">'
+        + '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + '</span>'
+        + '<h2 class="vmpd__panel-title">' + CAT_LABEL[cat] + '-Rad</h2>'
+        + '<a class="vmpd__panel-action" href="/" aria-label="Rad neu konfigurieren">Ändern →</a></div>'
+        + '<div class="vmpd__panel-body" data-bike></div></article>'
+        + '<div data-health-alert style="margin-bottom:0"></div>'
+        + '<article class="vmpd__panel" aria-label="Bike Gesundheit ' + CAT_LABEL[cat] + '">'
+        + '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + 'b</span>'
+        + '<h2 class="vmpd__panel-title">Bike Gesundheit — ' + CAT_LABEL[cat] + '</h2>'
+        + '<span data-health-chip style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span></div>'
+        + '<div data-health-body><div class="vmpd__health-loading">Lade Statusdaten…</div></div></article>';
+      catBlocks.appendChild(sec);
+      renderBikeInto(sec.querySelector('[data-bike]'), bike);
+      var panel = createHealthPanel(cat, {
+        body:  sec.querySelector('[data-health-body]'),
+        alert: sec.querySelector('[data-health-alert]'),
+        chip:  sec.querySelector('[data-health-chip]'),
+      });
+      panel.load();
+    }
 
-        bikeBody.innerHTML =
-          (displayBrand ? '<p class="vmpd__bike-brand">' + esc(displayBrand) + '</p>' : '') +
-          (displayModel ? '<p class="vmpd__bike-model">' + esc(displayModel) + '</p>' : '') +
-          (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
-          '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
-          SEARCH_SVG + ' Passende Teile finden →</a>';
-      };
-
-      var CAT_LABEL = { road: 'Road', gravel: 'Gravel' };
-      var renderBikeEmpty = function (cat) {
-        var what = cat ? (CAT_LABEL[cat] + '-Rad') : 'Rad';
-        bikeBody.innerHTML =
-          '<div class="vmpd__empty" role="status">' + BIKE_SVG +
-          '<p class="vmpd__empty-label">Noch kein ' + what + ' gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>' +
-          '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
-      };
-
-      /* Räder pro Kategorie aus der Note (Legacy-Einzelrad → road) */
-      var bikesByCat = (noteData && noteData.vm_bikes) ? noteData.vm_bikes : {};
-      if (!bikesByCat.road && !bikesByCat.gravel && noteData && noteData.vm_bike) {
-        bikesByCat[(noteData.vm_bike.category === 'gravel') ? 'gravel' : 'road'] = noteData.vm_bike;
+    function renderAllBlocks(bikesByCat) {
+      if (!catBlocks) return;
+      catBlocks.innerHTML = '';
+      var num = 2, any = false;
+      CAT_ORDER.forEach(function(cat) {
+        var b = bikesByCat[cat];
+        if (b && b.collectionTag) { any = true; buildCatBlock(cat, b, ('0' + num).slice(-2)); num++; }
+      });
+      if (!any) {
+        catBlocks.innerHTML =
+          '<article class="vmpd__panel"><div class="vmpd__panel-body">'
+          + '<div class="vmpd__empty" role="status">' + BIKE_SVG
+          + '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>'
+          + '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div></div></article>';
       }
-      var defaultCat = (bikesByCat.road && bikesByCat.road.collectionTag) ? 'road'
-                     : (bikesByCat.gravel && bikesByCat.gravel.collectionTag) ? 'gravel' : 'road';
+    }
 
-      /* Vom Kategorie-Umschalter (Gesundheits-Panel) aufgerufen */
-      window.__vmBikePanelRender = function (cat) {
-        var bike = bikesByCat[cat];
-        if (bike && bike.collectionTag) renderBike(bike);
-        else renderBikeEmpty(cat);
-      };
-
-      var haveAny = (bikesByCat.road && bikesByCat.road.collectionTag) ||
-                    (bikesByCat.gravel && bikesByCat.gravel.collectionTag);
-      if (haveAny) {
-        window.__vmBikePanelRender(defaultCat);
-      } else {
-        bikeBody.innerHTML = '<div class="vmpd__strava-pending">Lade dein Rad…</div>';
-        fetch('/apps/vm-pro/bike', { headers: { 'Accept': 'application/json' } })
-          .then(function (r) { return r.json(); })
-          .then(function (d) {
-            var b = (d && d.bikes) ? d.bikes : {};
-            if (d && d.bike && !b.road && !b.gravel) {
-              b[(d.bike.category === 'gravel') ? 'gravel' : 'road'] = d.bike;
-            }
-            bikesByCat = b;
-            var dc = (b.road && b.road.collectionTag) ? 'road'
-                   : (b.gravel && b.gravel.collectionTag) ? 'gravel' : 'road';
-            window.__vmBikePanelRender(dc);
-          })
-          .catch(function () { renderBikeEmpty(); });
-      }
+    var bikesByCat = (noteData && noteData.vm_bikes) ? noteData.vm_bikes : {};
+    if (!bikesByCat.road && !bikesByCat.gravel && noteData && noteData.vm_bike) {
+      bikesByCat[(noteData.vm_bike.category === 'gravel') ? 'gravel' : 'road'] = noteData.vm_bike;
+    }
+    if ((bikesByCat.road && bikesByCat.road.collectionTag) || (bikesByCat.gravel && bikesByCat.gravel.collectionTag)) {
+      renderAllBlocks(bikesByCat);
+    } else {
+      if (catBlocks) catBlocks.innerHTML = '<div class="vmpd__strava-pending">Lade dein Rad…</div>';
+      fetch('/apps/vm-pro/bike', { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var b = (d && d.bikes) ? d.bikes : {};
+          if (d && d.bike && !b.road && !b.gravel) {
+            b[(d.bike.category === 'gravel') ? 'gravel' : 'road'] = d.bike;
+          }
+          renderAllBlocks(b);
+        })
+        .catch(function () { renderAllBlocks({}); });
     }
 
     /* STRAVA PANEL - Live-Daten via App Proxy */
