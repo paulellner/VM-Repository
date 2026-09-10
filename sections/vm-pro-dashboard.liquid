@@ -431,6 +431,37 @@
   }
 }
 
+/* Zwei Räder nebeneinander (mobil untereinander) */
+.vmpd__cat-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   24px;
+  align-items:           start;
+}
+@media (max-width: 860px) {
+  .vmpd__cat-grid { grid-template-columns: 1fr; }
+}
+
+/* „Rad entfernen" — dezenter Button unter jedem Rad */
+.vmpd__bike-remove {
+  display:         block;
+  margin-top:      12px;
+  background:      none;
+  border:          none;
+  padding:         2px 0;
+  font-family:     var(--vm-mono);
+  font-size:       11px;
+  font-weight:     700;
+  text-transform:  uppercase;
+  letter-spacing:  0.08em;
+  color:           var(--vm-sage);
+  cursor:          pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition:      color var(--vm-dur) var(--vm-ease);
+}
+.vmpd__bike-remove:hover { color: #D9462A; }
+
 .vmpd__selector-link {
   font-size:       13px;
   font-weight:     700;
@@ -1755,7 +1786,7 @@
     var BIKE_SVG   = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--vm-sage);opacity:.45"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h3.5"/><path d="M5.5 14L9 10"/></svg>';
 
     /* ── Bike-Panel-Inhalt rendern ──────────────────────────────────────── */
-    function renderBikeInto(container, bike) {
+    function renderBikeInto(container, bike, cat) {
       var displayBrand   = bike.brandName   || bike.brand   || '';
       var displayModel   = bike.modelName   || deHyphen(bike.model)   || '';
       var displayVariant = bike.variantName || deHyphen(bike.variant) || '';
@@ -1768,7 +1799,25 @@
         (displayModel ? '<p class="vmpd__bike-model">' + esc(displayModel) + '</p>' : '') +
         (specs ? '<div class="vmpd__bike-specs">' + specs + '</div>' : '') +
         '<a class="vmpd__parts-btn" href="/collections/all?filter.p.tag=' + encodeURIComponent(bike.collectionTag) + '">' +
-        SEARCH_SVG + ' Passende Teile finden →</a>';
+        SEARCH_SVG + ' Passende Teile finden →</a>' +
+        '<button type="button" class="vmpd__bike-remove" data-remove-cat="' + esc(cat) + '">Rad entfernen</button>';
+    }
+
+    /* Rad + Kalibrierung dieser Kategorie zurücksetzen, dann Ansicht neu laden. */
+    function removeBike(cat, btn) {
+      if (!window.confirm('Dieses ' + (CAT_LABEL[cat] || '') + '-Rad entfernen? Die gespeicherte Auswahl und die Verschleiß-Kalibrierung dieses Rades werden zurückgesetzt.')) return;
+      if (btn) { btn.textContent = 'Wird entfernt…'; btn.style.pointerEvents = 'none'; }
+      fetch('/apps/vm-pro/bike/remove?category=' + cat, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body:    JSON.stringify({ category: cat }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.ok) { window.location.reload(); }
+        else if (btn) { btn.textContent = 'Fehler — erneut versuchen'; btn.style.pointerEvents = ''; }
+      })
+      .catch(function() { if (btn) { btn.textContent = 'Fehler — erneut versuchen'; btn.style.pointerEvents = ''; } });
     }
 
     /* ── Gesundheits-Panel je Kategorie (eigener State + eigenes DOM) ────── */
@@ -2047,7 +2096,6 @@
     function buildCatBlock(cat, bike, num) {
       var sec = document.createElement('section');
       sec.className = 'vmpd-cat-block';
-      sec.style.marginBottom = '32px';
       sec.innerHTML =
         '<article class="vmpd__panel" style="margin-bottom:16px">'
         + '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + '</span>'
@@ -2061,7 +2109,9 @@
         + '<span data-health-chip style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span></div>'
         + '<div data-health-body><div class="vmpd__health-loading">Lade Statusdaten…</div></div></article>';
       catBlocks.appendChild(sec);
-      renderBikeInto(sec.querySelector('[data-bike]'), bike);
+      renderBikeInto(sec.querySelector('[data-bike]'), bike, cat);
+      var rmBtn = sec.querySelector('[data-remove-cat]');
+      if (rmBtn) rmBtn.addEventListener('click', function() { removeBike(cat, rmBtn); });
       var panel = createHealthPanel(cat, {
         body:  sec.querySelector('[data-health-body]'),
         alert: sec.querySelector('[data-health-alert]'),
@@ -2073,12 +2123,17 @@
     function renderAllBlocks(bikesByCat) {
       if (!catBlocks) return;
       catBlocks.innerHTML = '';
-      var num = 2, any = false;
-      CAT_ORDER.forEach(function(cat) {
+      var cats = CAT_ORDER.filter(function(cat) {
         var b = bikesByCat[cat];
-        if (b && b.collectionTag) { any = true; buildCatBlock(cat, b, ('0' + num).slice(-2)); num++; }
+        return b && b.collectionTag;
       });
-      if (!any) {
+      /* Bei zwei Rädern nebeneinander (responsive: mobil untereinander) */
+      catBlocks.className = cats.length >= 2 ? 'vmpd__cat-grid' : '';
+      var num = 2;
+      cats.forEach(function(cat) {
+        buildCatBlock(cat, bikesByCat[cat], ('0' + num).slice(-2)); num++;
+      });
+      if (!cats.length) {
         catBlocks.innerHTML =
           '<article class="vmpd__panel"><div class="vmpd__panel-body">'
           + '<div class="vmpd__empty" role="status">' + BIKE_SVG

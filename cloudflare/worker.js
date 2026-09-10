@@ -648,6 +648,45 @@ export default {
       });
     }
 
+    /* ── Rad entfernen (App Proxy POST /bike/remove?category=) ─────────────── */
+    if (url.pathname === '/bike/remove') {
+      if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405 });
+      const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
+      if (!valid) return Response.json({ error: 'Invalid signature' }, { status: 403 });
+
+      const customerId = url.searchParams.get('logged_in_customer_id');
+      if (!customerId) return Response.json({ error: 'not_authenticated' }, { status: 401 });
+
+      const category = CATEGORIES.includes(url.searchParams.get('category'))
+        ? url.searchParams.get('category') : 'road';
+
+      const shop = url.searchParams.get('shop');
+      const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
+
+      /* Rad + Kalibrierung + Kilometerzähler dieser Kategorie zurücksetzen */
+      delete note.vm_bikes[category];
+      if (note.vm_bundles_cat) delete note.vm_bundles_cat[category];
+      if (note.vm_odo)         delete note.vm_odo[category];
+
+      /* Legacy-Feld nachziehen */
+      note.vm_bike = note.vm_bikes.road || note.vm_bikes.gravel || null;
+      if (!note.vm_bike) delete note.vm_bike;
+
+      const apiResp = await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
+      if (!apiResp.ok) {
+        console.error('Bike remove save failed:', apiResp.status, await apiResp.text());
+        return Response.json({ error: 'save_failed' }, { status: 500 });
+      }
+
+      return Response.json({
+        ok: true, category,
+        bikes: {
+          road:   note.vm_bikes.road   || null,
+          gravel: note.vm_bikes.gravel || null,
+        },
+      });
+    }
+
     /* ── C0: Strava-Profil lesen (App Proxy GET /strava/profile) ──────────── */
     if (url.pathname === '/strava/profile') {
       const valid = await verifyProxySignature(url.searchParams, env.SHOPIFY_CLIENT_SECRET);
