@@ -431,16 +431,23 @@
   }
 }
 
-/* Zwei Räder nebeneinander (mobil untereinander) */
+/* Rad- & Gesundheits-Kästen im Raster; jede Zeile gleiche Höhe → ausgerichtet.
+   Eine Spalte bei einem Rad, zwei Spalten (nebeneinander) bei zweien. */
 .vmpd__cat-grid {
   display:               grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap:                   24px;
-  align-items:           start;
+  align-items:           stretch;
+  margin-bottom:         32px;
 }
+.vmpd__cat-grid--two { grid-template-columns: 1fr 1fr; }
 @media (max-width: 860px) {
-  .vmpd__cat-grid { grid-template-columns: 1fr; }
+  .vmpd__cat-grid--two { grid-template-columns: 1fr; }
 }
+/* Panel als Flex-Spalte, damit Inhalt oben sitzt und der Kasten die
+   Zeilenhöhe füllt (gleiche Maße in beiden Spalten). */
+.vmpd__cat-panel { display: flex; flex-direction: column; }
+.vmpd__cat-panel-body { flex: 1 1 auto; }
 
 /* „Rad entfernen" — dezenter Button unter jedem Rad */
 .vmpd__bike-remove {
@@ -2093,31 +2100,37 @@
     /* ── Kategorie-Blöcke (Rad + Gesundheit) stapeln ────────────────────── */
     var catBlocks = document.getElementById('vmpd-cat-blocks');
 
-    function buildCatBlock(cat, bike, num) {
-      var sec = document.createElement('section');
-      sec.className = 'vmpd-cat-block';
-      sec.innerHTML =
-        '<article class="vmpd__panel" style="margin-bottom:16px">'
-        + '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + '</span>'
+    function makeBikePanel(cat, bike, num) {
+      var art = document.createElement('article');
+      art.className = 'vmpd__panel vmpd__cat-panel';
+      art.innerHTML =
+        '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + '</span>'
         + '<h2 class="vmpd__panel-title">' + CAT_LABEL[cat] + '-Rad</h2>'
         + '<a class="vmpd__panel-action" href="/" aria-label="Rad neu konfigurieren">Ändern →</a></div>'
-        + '<div class="vmpd__panel-body" data-bike></div></article>'
-        + '<div data-health-alert style="margin-bottom:0"></div>'
-        + '<article class="vmpd__panel" aria-label="Bike Gesundheit ' + CAT_LABEL[cat] + '">'
-        + '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + 'b</span>'
+        + '<div class="vmpd__panel-body vmpd__cat-panel-body" data-bike></div>';
+      renderBikeInto(art.querySelector('[data-bike]'), bike, cat);
+      var rmBtn = art.querySelector('[data-remove-cat]');
+      if (rmBtn) rmBtn.addEventListener('click', function() { removeBike(cat, rmBtn); });
+      return art;
+    }
+
+    function makeHealthPanel(cat, num) {
+      var art = document.createElement('article');
+      art.className = 'vmpd__panel vmpd__cat-panel';
+      art.setAttribute('aria-label', 'Bike Gesundheit ' + CAT_LABEL[cat]);
+      art.innerHTML =
+        '<div class="vmpd__panel-hd"><span class="vmpd__panel-num">' + num + 'b</span>'
         + '<h2 class="vmpd__panel-title">Bike Gesundheit — ' + CAT_LABEL[cat] + '</h2>'
         + '<span data-health-chip style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span></div>'
-        + '<div data-health-body><div class="vmpd__health-loading">Lade Statusdaten…</div></div></article>';
-      catBlocks.appendChild(sec);
-      renderBikeInto(sec.querySelector('[data-bike]'), bike, cat);
-      var rmBtn = sec.querySelector('[data-remove-cat]');
-      if (rmBtn) rmBtn.addEventListener('click', function() { removeBike(cat, rmBtn); });
+        + '<div data-health-alert style="margin-bottom:0"></div>'
+        + '<div class="vmpd__cat-panel-body" data-health-body><div class="vmpd__health-loading">Lade Statusdaten…</div></div>';
       var panel = createHealthPanel(cat, {
-        body:  sec.querySelector('[data-health-body]'),
-        alert: sec.querySelector('[data-health-alert]'),
-        chip:  sec.querySelector('[data-health-chip]'),
+        body:  art.querySelector('[data-health-body]'),
+        alert: art.querySelector('[data-health-alert]'),
+        chip:  art.querySelector('[data-health-chip]'),
       });
       panel.load();
+      return art;
     }
 
     function renderAllBlocks(bikesByCat) {
@@ -2127,19 +2140,24 @@
         var b = bikesByCat[cat];
         return b && b.collectionTag;
       });
-      /* Bei zwei Rädern nebeneinander (responsive: mobil untereinander) */
-      catBlocks.className = cats.length >= 2 ? 'vmpd__cat-grid' : '';
-      var num = 2;
-      cats.forEach(function(cat) {
-        buildCatBlock(cat, bikesByCat[cat], ('0' + num).slice(-2)); num++;
-      });
+
       if (!cats.length) {
+        catBlocks.className = '';
         catBlocks.innerHTML =
           '<article class="vmpd__panel"><div class="vmpd__panel-body">'
           + '<div class="vmpd__empty" role="status">' + BIKE_SVG
           + '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>'
           + '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div></div></article>';
+        return;
       }
+
+      /* Zwei-Zeilen-Raster: Zeile 1 = Rad-Kästen, Zeile 2 = Gesundheits-Kästen.
+         Jede Zeile hat gleiche Höhe → Räder und Gesundheiten sind ausgerichtet. */
+      catBlocks.className = cats.length >= 2 ? 'vmpd__cat-grid vmpd__cat-grid--two' : 'vmpd__cat-grid';
+      var num = 2, numByCat = {};
+      cats.forEach(function(cat) { numByCat[cat] = ('0' + num).slice(-2); num++; });
+      cats.forEach(function(cat) { catBlocks.appendChild(makeBikePanel(cat, bikesByCat[cat], numByCat[cat])); });
+      cats.forEach(function(cat) { catBlocks.appendChild(makeHealthPanel(cat, numByCat[cat])); });
     }
 
     var bikesByCat = (noteData && noteData.vm_bikes) ? noteData.vm_bikes : {};
