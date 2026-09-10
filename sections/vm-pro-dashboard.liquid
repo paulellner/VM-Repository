@@ -451,6 +451,9 @@
 /* Rad-Kasten: „Passende Teile finden" + „Rad entfernen" ans untere Ende
    ziehen, damit die Buttons in beiden Spalten auf gleicher Höhe fluchten. */
 .vmpd__cat-panel-body[data-bike] { display: flex; flex-direction: column; }
+/* Spec-Feld (Variante/Schaltgruppe/Modelljahre) füllt den Platz → in beiden
+   Spalten gleich groß; Zeilen strecken gleichmäßig mit. */
+.vmpd__cat-panel-body[data-bike] .vmpd__bike-specs { flex: 1 1 auto; align-content: stretch; }
 .vmpd__cat-panel-body[data-bike] .vmpd__parts-btn { margin-top: auto; align-self: flex-start; }
 
 /* „Rad entfernen" — dezenter Button unter jedem Rad */
