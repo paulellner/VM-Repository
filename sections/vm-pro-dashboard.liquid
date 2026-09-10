@@ -1532,6 +1532,7 @@
         <div class="vmpd__panel-hd">
           <span class="vmpd__panel-num">03</span>
           <h2 class="vmpd__panel-title" id="vmpd-health-heading">Bike Gesundheit</h2>
+          <div id="vmpd-health-cat" role="tablist" aria-label="Rad-Kategorie" style="display:none;gap:4px;margin-left:4px"></div>
           <span id="vmpd-health-chip" style="display:none;align-items:center;gap:7px;font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em"></span>
         </div>
         <div id="vmpd-health-body">
@@ -1732,6 +1733,46 @@
 
     var wizardState = { step: 1, bikeKm: null, chainKmSince: null, cassetteBrakepadsKmSince: null, cablesTiresChainringsKmSince: null };
 
+    /* ── Kategorie (Road / Gravel) ──────────────────────────────────────────
+       Ein Pro-Kunde kann je ein Road- und ein Gravel-Rad haben. Der Umschalter
+       steuert, welches Rad Gesundheit + Bike-Panel anzeigen. Strava zieht die
+       Verschleißdaten pro Kategorie getrennt (Server: ?category=road|gravel). */
+    var vmNote = null;
+    try { vmNote = typeof window.__vmProNote === 'string' ? JSON.parse(window.__vmProNote) : window.__vmProNote; } catch (e) {}
+    var vmBikes = (vmNote && vmNote.vm_bikes) ? vmNote.vm_bikes : {};
+    if (!vmBikes.road && !vmBikes.gravel && vmNote && vmNote.vm_bike) {
+      vmBikes[(vmNote.vm_bike.category === 'gravel') ? 'gravel' : 'road'] = vmNote.vm_bike;
+    }
+    var availCats  = ['road', 'gravel'].filter(function (c) { return vmBikes[c] && vmBikes[c].collectionTag; });
+    var currentCat = availCats.length ? availCats[0] : 'road';
+    var CAT_LABEL  = { road: 'Road', gravel: 'Gravel' };
+    var catToggleEl = document.getElementById('vmpd-health-cat');
+
+    function buildCatToggle() {
+      if (!catToggleEl) return;
+      if (availCats.length < 2) { catToggleEl.style.display = 'none'; return; }
+      catToggleEl.style.display = 'inline-flex';
+      catToggleEl.innerHTML = availCats.map(function (c) {
+        var active = c === currentCat;
+        return '<button type="button" role="tab" data-cat="' + c + '" aria-selected="' + active + '" '
+          + 'style="font-family:var(--vm-mono);font-size:10px;font-weight:700;text-transform:uppercase;'
+          + 'letter-spacing:0.1em;padding:4px 11px;border:1.5px solid var(--vm-ink);cursor:pointer;line-height:1;'
+          + 'background:' + (active ? 'var(--vm-ink)' : 'transparent') + ';'
+          + 'color:' + (active ? 'var(--vm-bone)' : 'var(--vm-ink)') + '">' + CAT_LABEL[c] + '</button>';
+      }).join('');
+      catToggleEl.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () { setCat(b.getAttribute('data-cat')); });
+      });
+    }
+
+    function setCat(cat) {
+      if (cat === currentCat) return;
+      currentCat = cat;
+      buildCatToggle();
+      if (window.__vmBikePanelRender) window.__vmBikePanelRender(cat);
+      loadHealth();
+    }
+
     var STATUS_MSG = {
       green:  'Alles in Ordnung',
       yellow: 'Prüfung empfohlen',
@@ -1831,11 +1872,12 @@
       /* Gesamt-Statuszeile */
       var cond = data.conditions || {};
 
+      var odoKm = (data.bike_total_km != null) ? data.bike_total_km : data.odometer_km;
       var html = '<div class="vmpd__health-statusbar">'
                +   lamp(data.overall_status, 12)
                +   '<span class="vmpd__health-status-label">Gesamt </span>'
                +   '<span class="vmpd__health-status-val">' + STATUS_MSG[data.overall_status] + '</span>'
-               +   '<span class="vmpd__health-odo">' + fmtNum(data.odometer_km) + ' km gesamt</span>'
+               +   '<span class="vmpd__health-odo">' + fmtNum(odoKm) + ' km gesamt</span>'
                + '</div>';
 
       /* Verschleißteile */
@@ -1875,7 +1917,7 @@
       var prev = btn.textContent;
       btn.textContent   = 'Wird gespeichert…';
       btn.style.pointerEvents = 'none';
-      fetch('/apps/vm-pro/bike/health/reset', {
+      fetch('/apps/vm-pro/bike/health/reset?category=' + currentCat, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body:    JSON.stringify({ component_id: compId }),
@@ -1890,7 +1932,7 @@
 
     function loadHealth() {
       healthBody.innerHTML = '<div class="vmpd__health-loading">Lade Statusdaten…</div>';
-      fetch('/apps/vm-pro/bike/health', { headers: { 'Accept': 'application/json' } })
+      fetch('/apps/vm-pro/bike/health?category=' + currentCat, { headers: { 'Accept': 'application/json' } })
         .then(function(r) { return r.json(); })
         .then(function(d) {
           if (d.ok) {
@@ -2052,7 +2094,7 @@
 
     function submitWizard() {
       healthBody.innerHTML = '<div class="vmpd__health-loading">Kalibrierung wird gespeichert…</div>';
-      fetch('/apps/vm-pro/bike/setup', {
+      fetch('/apps/vm-pro/bike/setup?category=' + currentCat, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body:    JSON.stringify({
@@ -2070,6 +2112,7 @@
       .catch(function() { renderHealthError('connection_error'); });
     }
 
+    buildCatToggle();
     loadHealth();
 
     /* ─────────────────────────────────────────────────────────────────────── */
@@ -2130,24 +2173,49 @@
           SEARCH_SVG + ' Passende Teile finden →</a>';
       };
 
-      var renderBikeEmpty = function () {
+      var CAT_LABEL = { road: 'Road', gravel: 'Gravel' };
+      var renderBikeEmpty = function (cat) {
+        var what = cat ? (CAT_LABEL[cat] + '-Rad') : 'Rad';
         bikeBody.innerHTML =
           '<div class="vmpd__empty" role="status">' + BIKE_SVG +
-          '<p class="vmpd__empty-label">Noch kein Rad gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>' +
+          '<p class="vmpd__empty-label">Noch kein ' + what + ' gespeichert. Wähle dein Fahrrad im Konfigurator aus.</p>' +
           '<a class="vmpd__selector-link" href="/">Rad konfigurieren →</a></div>';
       };
 
-      if (noteData && noteData.vm_bike && noteData.vm_bike.collectionTag) {
-        renderBike(noteData.vm_bike);
+      /* Räder pro Kategorie aus der Note (Legacy-Einzelrad → road) */
+      var bikesByCat = (noteData && noteData.vm_bikes) ? noteData.vm_bikes : {};
+      if (!bikesByCat.road && !bikesByCat.gravel && noteData && noteData.vm_bike) {
+        bikesByCat[(noteData.vm_bike.category === 'gravel') ? 'gravel' : 'road'] = noteData.vm_bike;
+      }
+      var defaultCat = (bikesByCat.road && bikesByCat.road.collectionTag) ? 'road'
+                     : (bikesByCat.gravel && bikesByCat.gravel.collectionTag) ? 'gravel' : 'road';
+
+      /* Vom Kategorie-Umschalter (Gesundheits-Panel) aufgerufen */
+      window.__vmBikePanelRender = function (cat) {
+        var bike = bikesByCat[cat];
+        if (bike && bike.collectionTag) renderBike(bike);
+        else renderBikeEmpty(cat);
+      };
+
+      var haveAny = (bikesByCat.road && bikesByCat.road.collectionTag) ||
+                    (bikesByCat.gravel && bikesByCat.gravel.collectionTag);
+      if (haveAny) {
+        window.__vmBikePanelRender(defaultCat);
       } else {
         bikeBody.innerHTML = '<div class="vmpd__strava-pending">Lade dein Rad…</div>';
         fetch('/apps/vm-pro/bike', { headers: { 'Accept': 'application/json' } })
           .then(function (r) { return r.json(); })
           .then(function (d) {
-            if (d && d.bike && d.bike.collectionTag) renderBike(d.bike);
-            else renderBikeEmpty();
+            var b = (d && d.bikes) ? d.bikes : {};
+            if (d && d.bike && !b.road && !b.gravel) {
+              b[(d.bike.category === 'gravel') ? 'gravel' : 'road'] = d.bike;
+            }
+            bikesByCat = b;
+            var dc = (b.road && b.road.collectionTag) ? 'road'
+                   : (b.gravel && b.gravel.collectionTag) ? 'gravel' : 'road';
+            window.__vmBikePanelRender(dc);
           })
-          .catch(renderBikeEmpty);
+          .catch(function () { renderBikeEmpty(); });
       }
     }
 

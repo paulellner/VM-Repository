@@ -320,6 +320,83 @@ function publicStrava(s) {
   };
 }
 
+/* ─── Mehr-Rad-Unterstützung: Road + Gravel getrennt ────────────────────────
+   Ein VM-Pro-Kunde kann je ein Road- und ein Gravel-Rad speichern. Strava
+   liefert keine getrennten Gesamt-km pro Rad-Typ, daher führen wir pro
+   Kategorie einen eigenen Kilometerzähler (vm_odo), der Aktivitäten nach
+   sport_type addiert: „GravelRide" → gravel, sonstige Ride-Typen → road.     */
+
+const CATEGORIES = ['road', 'gravel'];
+
+/* sport_type/type einer Aktivität → unsere Kategorie ('road' | 'gravel' | null) */
+function activityCategory(a) {
+  const t = a.sport_type || a.type || '';
+  if (t === 'GravelRide') return 'gravel';
+  if (['Ride', 'VirtualRide', 'EBikeRide', 'EBikeRideVirtual'].includes(t)) return 'road';
+  return null; /* MTB, Lauf etc. zählen für keinen der beiden Räder */
+}
+
+/* Legacy-Migration: altes Einzelrad (note.vm_bike / note.vm_bundles) → road. */
+function migrateNote(note) {
+  if (!note.vm_bikes) note.vm_bikes = {};
+  if (note.vm_bike && !note.vm_bikes.road && !note.vm_bikes.gravel) {
+    const cat = (note.vm_bike.category === 'gravel') ? 'gravel' : 'road';
+    note.vm_bikes[cat] = note.vm_bike;
+  }
+  if (!note.vm_bundles_cat) note.vm_bundles_cat = {};
+  if (note.vm_bundles && !note.vm_bundles_cat.road && note.vm_bundles.setup_done) {
+    note.vm_bundles_cat.road = note.vm_bundles;
+  }
+  if (!note.vm_odo) note.vm_odo = {};
+  return note;
+}
+
+/* Kilometerzähler einer Kategorie holen (anlegen falls fehlend). */
+function getOdo(note, cat) {
+  if (!note.vm_odo) note.vm_odo = {};
+  if (!note.vm_odo[cat]) note.vm_odo[cat] = { km: 0, rides: 0, cursor_ts: 0 };
+  return note.vm_odo[cat];
+}
+
+/* Neue Aktivitäten in den Kategorie-Kilometerzähler einrechnen (inkrementell).
+   activities: Strava-Aktivitätsliste. Zählt nur Aktivitäten mit start_date-
+   Epoch > cursor_ts der jeweiligen Kategorie. Aktualisiert km/rides/cursor_ts. */
+function applyActivitiesToOdo(note, activities, onlyCat) {
+  const maxTsSeen = {};
+  for (const a of activities) {
+    const cat = activityCategory(a);
+    if (!cat) continue;
+    if (onlyCat && cat !== onlyCat) continue;
+    const odo = getOdo(note, cat);
+    const ts  = Math.floor(new Date(a.start_date).getTime() / 1000);
+    if (ts <= (odo.cursor_ts || 0)) continue;      /* schon gezählt */
+    odo.km    += (a.distance || 0) / 1000;
+    odo.rides += 1;
+    if (!maxTsSeen[cat] || ts > maxTsSeen[cat]) maxTsSeen[cat] = ts;
+  }
+  for (const cat of Object.keys(maxTsSeen)) {
+    const odo = getOdo(note, cat);
+    if (maxTsSeen[cat] > (odo.cursor_ts || 0)) odo.cursor_ts = maxTsSeen[cat];
+  }
+}
+
+/* Aktivitäten ab einem Zeitpunkt laden (paginiert, gedeckelt). */
+async function fetchActivitiesAfter(accessToken, afterEpoch, maxPages = 5) {
+  let all = [];
+  for (let page = 1; page <= maxPages; page++) {
+    const r = await fetch(
+      `${STRAVA_API}/athlete/activities?per_page=100&after=${afterEpoch}&page=${page}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (!r.ok) break;
+    const batch = await r.json();
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    all = all.concat(batch);
+    if (batch.length < 100) break;
+  }
+  return all;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -368,8 +445,11 @@ export default {
       const customerId = url.searchParams.get('logged_in_customer_id');
       if (!customerId) return Response.json({ ok: false, error: 'not_authenticated' }, { status: 401 });
 
+      const category = CATEGORIES.includes(url.searchParams.get('category'))
+        ? url.searchParams.get('category') : 'road';
+
       const shop = url.searchParams.get('shop');
-      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
 
       /* Strava muss verbunden sein — liefert den Kilometerzähler */
       if (!note.strava?.profile) {
@@ -383,60 +463,50 @@ export default {
         if (refreshed) { s = refreshed; note.strava = refreshed; }
       }
 
-      /* Aktivitäten (90 Tage) + aktuelle Gesamtstatistik parallel laden —
-         so spiegeln sich neue Fahrten sofort im Verschleißstatus wider. */
+      const bundles = note.vm_bundles_cat[category];
+
+      /* Noch keine Kalibrierung dieser Kategorie → Setup-Wizard im Client */
+      if (!bundles || !bundles.setup_done) {
+        return Response.json({
+          ok: true, category, needs_setup: true,
+          bike: note.vm_bikes[category] || null,
+        });
+      }
+
+      /* Aktivitäten seit letztem Sync (bzw. 90 Tage) laden — deckt sowohl den
+         Kategorie-Kilometerzähler als auch die 90-Tage-Fahrbedingungen ab. */
       const since90 = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
+      const odo     = getOdo(note, category);
+      const fetchAfter = Math.min(odo.cursor_ts || since90, since90);
       let acts = [];
-      let allTimeKm    = s.profile?.all_time_distance_km ?? 0;
-      let allTimeRides = s.profile?.all_time_rides        ?? 0;
       try {
-        const [actsResp, statsResp] = await Promise.all([
-          fetch(`${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
-            { headers: { Authorization: `Bearer ${s.access_token}` } }),
-          fetch(`${STRAVA_API}/athletes/${s.athlete_id}/stats`,
-            { headers: { Authorization: `Bearer ${s.access_token}` } }),
-        ]);
-        if (actsResp.ok) { acts = await actsResp.json(); if (!Array.isArray(acts)) acts = []; }
-        if (statsResp.ok) {
-          const stats = await statsResp.json();
-          if (stats?.all_ride_totals) {
-            allTimeKm    = Math.round((stats.all_ride_totals.distance ?? 0) / 1000);
-            allTimeRides = stats.all_ride_totals.count ?? allTimeRides;
-            /* Cache in customer.note aktualisieren (fire-and-forget) */
-            if (note.strava?.profile) {
-              note.strava.profile.all_time_distance_km = allTimeKm;
-              note.strava.profile.all_time_rides       = allTimeRides;
-              putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note)
-                .catch(e => console.error('Stats cache update failed:', e));
-            }
-          }
-        }
+        acts = await fetchActivitiesAfter(s.access_token, fetchAfter);
       } catch (e) { console.error('Strava fetch failed:', e); }
 
-      /* vm_bundles beim ersten Aufruf initialisieren */
-      if (!note.vm_bundles) {
-        note.vm_bundles = {
-          initialized_at:    new Date().toISOString(),
-          odometer_start_km: allTimeKm,
-          rides_start:       allTimeRides,
-          components:        {},
-        };
-        putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note)
-          .catch(e => console.error('vm_bundles init save failed:', e));
-      }
+      /* Kategorie-Kilometerzähler mit neuen Fahrten fortschreiben */
+      applyActivitiesToOdo(note, acts, category);
+      putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note)
+        .catch(e => console.error('Odometer save failed:', e));
 
-      /* Noch keine Kalibrierung → Setup-Wizard im Client anzeigen */
-      if (!note.vm_bundles.setup_done) {
-        return Response.json({ ok: true, needs_setup: true, odometer_km: allTimeKm });
-      }
+      const catKm    = Math.round(odo.km);
+      const catRides = odo.rides;
+      const bikeTotalKm = (bundles.bike_total_km_start ?? 0) + catKm;
 
-      const cond   = computeConditions(acts);
-      const health = computeHealth(allTimeKm, allTimeRides, cond, note.vm_bundles);
+      /* Fahrbedingungen nur aus Aktivitäten dieser Kategorie (letzte 90 Tage) */
+      const catActs = acts.filter(a =>
+        activityCategory(a) === category &&
+        (Math.floor(new Date(a.start_date).getTime() / 1000) >= since90)
+      );
+      const cond   = computeConditions(catActs);
+      const health = computeHealth(catKm, catRides, cond, bundles);
 
       return Response.json({
         ok:             true,
-        odometer_km:    allTimeKm,
-        odometer_rides: allTimeRides,
+        category,
+        bike:           note.vm_bikes[category] || null,
+        odometer_km:    catKm,
+        odometer_rides: catRides,
+        bike_total_km:  bikeTotalKm,
         conditions:     cond,
         ...health,
       });
@@ -461,22 +531,26 @@ export default {
       const def = WEAR_COMPONENTS.find(c => c.id === component_id);
       if (!def) return Response.json({ error: 'unknown_component' }, { status: 400 });
 
+      const category = CATEGORIES.includes(url.searchParams.get('category'))
+        ? url.searchParams.get('category') : 'road';
+
       const shop = url.searchParams.get('shop');
-      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
 
-      const allTimeKm    = note.strava?.profile?.all_time_distance_km ?? 0;
-      const allTimeRides = note.strava?.profile?.all_time_rides        ?? 0;
+      const odo = getOdo(note, category);
+      const catKm    = Math.round(odo.km);
+      const catRides = odo.rides;
 
-      if (!note.vm_bundles)            note.vm_bundles            = {};
-      if (!note.vm_bundles.components) note.vm_bundles.components = {};
+      if (!note.vm_bundles_cat[category])            note.vm_bundles_cat[category]            = {};
+      if (!note.vm_bundles_cat[category].components) note.vm_bundles_cat[category].components = {};
 
       const resetAt = new Date().toISOString().split('T')[0];
-      note.vm_bundles.components[component_id] = def.isRideBased
-        ? { reset_rides: allTimeRides, reset_at: resetAt }
-        : { reset_km: allTimeKm,       reset_at: resetAt };
+      note.vm_bundles_cat[category].components[component_id] = def.isRideBased
+        ? { reset_rides: catRides, reset_at: resetAt }
+        : { reset_km: catKm,       reset_at: resetAt };
 
       await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
-      return Response.json({ ok: true, component_id, reset_at: resetAt });
+      return Response.json({ ok: true, category, component_id, reset_at: resetAt });
     }
 
     /* ── POST /bike/setup — Erstkalibrierung speichern ─────────────────────── */
@@ -494,8 +568,11 @@ export default {
       }
       const { bikeKm, chainKmSince, cassetteBrakepadsKmSince, cablesTiresChainringsKmSince } = body || {};
 
+      const category = CATEGORIES.includes(url.searchParams.get('category'))
+        ? url.searchParams.get('category') : 'road';
+
       const shop = url.searchParams.get('shop');
-      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
+      const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
 
       if (!note.strava?.profile) {
         return Response.json({ ok: false, error: 'strava_not_connected' });
@@ -507,47 +584,45 @@ export default {
         if (refreshed) { s = refreshed; note.strava = refreshed; }
       }
 
-      const allTimeKm    = s.profile?.all_time_distance_km ?? 0;
-      const allTimeRides = s.profile?.all_time_rides        ?? 0;
-      const today        = new Date().toISOString().split('T')[0];
+      const nowTs = Math.floor(Date.now() / 1000);
+      const today = new Date().toISOString().split('T')[0];
 
-      const mkReset = km => ({ reset_km: Math.max(0, allTimeKm - (km || 0)), reset_at: today });
+      /* Kilometerzähler dieser Kategorie ab jetzt starten (0 km, Cursor = jetzt).
+         Der Verschleiß „seit letztem Wechsel" kommt aus den Wizard-Angaben:
+         reset_km = aktueller Zählerstand (0) − bereits gefahrene km.           */
+      note.vm_odo[category] = { km: 0, rides: 0, cursor_ts: nowTs };
+      const mkReset = km => ({ reset_km: 0 - (km || 0), reset_at: today });
 
-      if (!note.vm_bundles) note.vm_bundles = {};
-      note.vm_bundles.setup_done        = true;
-      note.vm_bundles.bike_total_km     = bikeKm ?? null;
-      note.vm_bundles.strava_baseline_km = allTimeKm;
-      note.vm_bundles.components = {
-        chain:      mkReset(chainKmSince),
-        cassette:   mkReset(cassetteBrakepadsKmSince),
-        brakepads:  mkReset(cassetteBrakepadsKmSince),
-        cables:     mkReset(cablesTiresChainringsKmSince),
-        tires:      mkReset(cablesTiresChainringsKmSince),
-        chainrings: mkReset(cablesTiresChainringsKmSince),
-        chain_lube: mkReset(Math.min(Math.round((chainKmSince || 0) / 5), 400)),
-        cleaner:    { reset_rides: Math.max(0, allTimeRides - 3), reset_at: today },
+      note.vm_bundles_cat[category] = {
+        setup_done:        true,
+        initialized_at:    new Date().toISOString(),
+        bike_total_km_start: bikeKm ?? 0,
+        odometer_start_km: 0,
+        rides_start:       0,
+        components: {
+          chain:      mkReset(chainKmSince),
+          cassette:   mkReset(cassetteBrakepadsKmSince),
+          brakepads:  mkReset(cassetteBrakepadsKmSince),
+          cables:     mkReset(cablesTiresChainringsKmSince),
+          tires:      mkReset(cablesTiresChainringsKmSince),
+          chainrings: mkReset(cablesTiresChainringsKmSince),
+          chain_lube: mkReset(Math.min(Math.round((chainKmSince || 0) / 5), 400)),
+          cleaner:    { reset_rides: -3, reset_at: today },
+        },
       };
 
       await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
 
-      /* Aktivitäten für Verschleißmultiplikator laden */
-      const since90 = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000);
-      let acts = [];
-      try {
-        const r = await fetch(
-          `${STRAVA_API}/athlete/activities?per_page=100&after=${since90}`,
-          { headers: { Authorization: `Bearer ${s.access_token}` } }
-        );
-        if (r.ok) { acts = await r.json(); if (!Array.isArray(acts)) acts = []; }
-      } catch (e) { console.error('Activities fetch failed:', e); }
-
-      const cond   = computeConditions(acts);
-      const health = computeHealth(allTimeKm, allTimeRides, cond, note.vm_bundles);
+      const cond   = computeConditions([]);   /* frisch kalibriert → neutrale Bedingungen */
+      const health = computeHealth(0, 0, cond, note.vm_bundles_cat[category]);
 
       return Response.json({
         ok:             true,
-        odometer_km:    allTimeKm,
-        odometer_rides: allTimeRides,
+        category,
+        bike:           note.vm_bikes[category] || null,
+        odometer_km:    0,
+        odometer_rides: 0,
+        bike_total_km:  bikeKm ?? 0,
         conditions:     cond,
         ...health,
       });
@@ -562,8 +637,15 @@ export default {
       if (!customerId) return Response.json({ bike: null }, { status: 401 });
 
       const shop = url.searchParams.get('shop');
-      const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
-      return Response.json({ bike: note.vm_bike || null });
+      const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
+      return Response.json({
+        bikes: {
+          road:   note.vm_bikes.road   || null,
+          gravel: note.vm_bikes.gravel || null,
+        },
+        /* Legacy-Feld für ältere Clients */
+        bike: note.vm_bikes.road || note.vm_bikes.gravel || note.vm_bike || null,
+      });
     }
 
     /* ── C0: Strava-Profil lesen (App Proxy GET /strava/profile) ──────────── */
@@ -794,9 +876,14 @@ export default {
     }
     if (!bike || !bike.collectionTag) return Response.json({ error: 'Invalid bike data' }, { status: 400 });
 
+    /* Kategorie aus den Bike-Daten (Selektor sendet category), sonst Road. */
+    const category = (bike.category === 'gravel') ? 'gravel' : 'road';
+
     const shop = url.searchParams.get('shop');
-    const note = await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN);
-    note.vm_bike = bike;
+    const note = migrateNote(await getNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN));
+    note.vm_bikes[category] = bike;
+    /* Legacy-Feld weiter pflegen (Road bevorzugt) */
+    note.vm_bike = note.vm_bikes.road || note.vm_bikes.gravel;
 
     const apiResp = await putNote(shop, customerId, env.SHOPIFY_ADMIN_TOKEN, note);
     if (!apiResp.ok) {
@@ -805,6 +892,6 @@ export default {
       return Response.json({ error: 'Failed to save' }, { status: 500 });
     }
 
-    return Response.json({ success: true });
+    return Response.json({ success: true, category });
   },
 };
