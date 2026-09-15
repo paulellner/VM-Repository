@@ -1,0 +1,67 @@
+{%- comment -%} Batterie- & Elektroaltgeräte-Hinweise (BattG/ElektroG). Reg-Nummern eintragen, sobald vorhanden. {%- endcomment -%}
+{% render 'legal-styles' %}
+
+<div class="vm-legal">
+  <div class="vm-legal__inner">
+
+    <span class="vm-legal__eyebrow">Umwelt &amp; Recht</span>
+    <h1 class="vm-legal__title">Batterie- &amp; Elektroaltgeräte-Hinweise</h1>
+    <p class="vm-legal__intro">
+      Weil wir u. a. elektronische Komponenten (z. B. elektronische Schaltgruppen mit Akku) anbieten, sind
+      wir gesetzlich verpflichtet, dich über die Rückgabe und Entsorgung von Batterien/Akkus und
+      Elektroaltgeräten zu informieren.
+    </p>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Batteriegesetz (BattG)</span>
+      <h2 class="vm-legal__h2">Rückgabe von Batterien und Akkus</h2>
+      <p class="vm-legal__text">
+        Batterien und Akkus dürfen nicht über den Hausmüll entsorgt werden. Du bist zur Rückgabe gebrauchter
+        Batterien als Endnutzer gesetzlich verpflichtet. Du kannst Altbatterien unentgeltlich dort zurückgeben,
+        wo sie erworben wurden, sowie an kommunalen Sammelstellen.
+      </p>
+      <p class="vm-legal__text">
+        Das Symbol der durchgestrichenen Mülltonne bedeutet, dass die Batterie nicht in den Hausmüll gegeben
+        werden darf. Enthaltene Schadstoffe sind unter dem Symbol gekennzeichnet: <strong>Pb</strong> = Blei,
+        <strong>Cd</strong> = Cadmium, <strong>Hg</strong> = Quecksilber.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Elektro- und Elektronikgerätegesetz (ElektroG)</span>
+      <h2 class="vm-legal__h2">Rückgabe von Elektroaltgeräten</h2>
+      <p class="vm-legal__text">
+        Elektro- und Elektronik-Altgeräte gehören nicht in den Hausmüll. Auch sie sind mit dem Symbol der
+        durchgestrichenen Mülltonne gekennzeichnet und über kommunale Sammelstellen bzw. im Rahmen der
+        gesetzlichen Rücknahmepflichten des Handels zu entsorgen. Enthaltene Batterien und Akkus sind vor der
+        Entsorgung zerstörungsfrei zu entnehmen, soweit möglich.
+      </p>
+      <p class="vm-legal__text">
+        WEEE-Registrierungsnummer (Stiftung EAR): {{ section.settings.weee_number | default: 'wird ergänzt, sobald die Registrierung vorliegt' }}.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Verpackungsgesetz (VerpackG)</span>
+      <h2 class="vm-legal__h2">Verpackungen</h2>
+      <p class="vm-legal__text">
+        Wir beteiligen uns an einem dualen System zur Entsorgung von Verkaufsverpackungen. LUCID-Registrierungs­nummer:
+        {{ section.settings.lucid_number | default: 'wird ergänzt, sobald die Registrierung vorliegt' }}.
+      </p>
+    </div>
+
+    <p class="vm-legal__updated">Stand: {{ 'now' | date: '%m/%Y' }} · Registrierungsnummern vor Livegang eintragen; Pflichten mit Fachberatung abklären.</p>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Entsorgung/Hinweise",
+  "settings": [
+    { "type": "text", "id": "weee_number", "label": "WEEE-Reg.-Nr. (Stiftung EAR)" },
+    { "type": "text", "id": "lucid_number", "label": "LUCID-Reg.-Nr. (VerpackG)" }
+  ],
+  "presets": [{ "name": "Entsorgung/Hinweise", "category": "VeloMatch" }]
+}
+{% endschema %}

@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "entsorgung",
+      "disabled": false,
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

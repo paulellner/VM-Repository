@@ -1,0 +1,68 @@
+{%- comment -%} Suchergebnis-Seite {%- endcomment -%}
+<style>
+.vm-search { background: var(--vm-bone, #F2F0E6); color: var(--vm-ink, #14160F);
+  font-family: 'Helvetica Neue', Arial, sans-serif; padding: 56px 24px 96px; }
+.vm-search__inner { max-width: 1200px; margin: 0 auto; }
+.vm-search__title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; text-transform: uppercase;
+  letter-spacing: -0.025em; margin: 0 0 24px; }
+.vm-search__form { display: flex; gap: 10px; max-width: 560px; margin: 0 0 40px; }
+.vm-search__field { flex: 1 1 auto; padding: 13px 16px; font-size: 15px; font-family: inherit;
+  border: 1.5px solid #3D4A2F; background: #fff; color: #14160F; }
+.vm-search__submit { background: #C9E45B; color: #14160F; border: none; cursor: pointer;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; font-size: 13px; padding: 13px 22px; }
+.vm-search__meta { font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 0.06em;
+  color: #9CA982; margin: 0 0 24px; }
+.vm-search__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+@media (max-width: 1000px) { .vm-search__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .vm-search__grid { grid-template-columns: 1fr; } .vm-search__form { flex-wrap: wrap; } }
+.vm-search__other { list-style: none; padding: 0; margin: 16px 0 0; }
+.vm-search__other li { padding: 12px 0; border-bottom: 1px solid rgba(61,74,47,0.15); }
+.vm-search__other a { color: #14160F; text-decoration: none; font-weight: 700; }
+.vm-search__other a:hover { text-decoration: underline; }
+.vm-search__empty { font-size: 16px; color: #3D4A2F; line-height: 1.6; }
+</style>
+
+<section class="vm-search">
+  <div class="vm-search__inner">
+    <h1 class="vm-search__title">Suche</h1>
+
+    <form class="vm-search__form" action="{{ routes.search_url }}" method="get" role="search">
+      <input type="hidden" name="type" value="product,page,article">
+      <input class="vm-search__field" type="search" name="q" value="{{ search.terms | escape }}"
+             placeholder="Wonach suchst du?" aria-label="Suchbegriff">
+      <button class="vm-search__submit" type="submit">Suchen →</button>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="vm-search__meta">
+        {{ search.results_count }} Ergebnis(se){% if search.terms != blank %} für „{{ search.terms | escape }}"{% endif %}
+      </p>
+
+      {%- if search.results_count == 0 -%}
+        <p class="vm-search__empty">Keine Treffer. Versuche einen anderen Suchbegriff oder gehe
+          <a href="{{ routes.root_url }}">zur Startseite</a>.</p>
+      {%- else -%}
+        {%- assign product_results = search.results | where: 'object_type', 'product' -%}
+        {%- if product_results.size > 0 -%}
+          <div class="vm-search__grid">
+            {%- for item in product_results -%}
+              {% render 'card-product', product: item, compatible: false %}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign other_results = search.results | where: 'object_type', 'article' -%}
+        <ul class="vm-search__other">
+          {%- for item in search.results -%}
+            {%- unless item.object_type == 'product' -%}
+              <li><a href="{{ item.url }}">{{ item.title | default: item.name }}</a></li>
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+{% schema %}
+{ "name": "Suche", "settings": [] }
+{% endschema %}
