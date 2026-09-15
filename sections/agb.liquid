@@ -1,0 +1,142 @@
+{%- comment -%} AGB — Standardtext, vor Livegang anwaltlich prüfen lassen. {%- endcomment -%}
+{% render 'legal-styles' %}
+
+{%- assign firma = section.settings.company_name | default: 'Paul Ellner – VeloMatch' -%}
+{%- assign strasse = section.settings.address | default: 'Schneckenhofstr. 17, 60596 Frankfurt am Main' -%}
+{%- assign email = section.settings.email | default: 'Paul.ellner@velomatch.net' -%}
+{%- assign abo_preis = section.settings.abo_price | default: '5,99 € pro Monat' -%}
+
+<div class="vm-legal">
+  <div class="vm-legal__inner">
+
+    <span class="vm-legal__eyebrow">Rechtliches</span>
+    <h1 class="vm-legal__title">Allgemeine Geschäfts&shy;bedingungen</h1>
+    <p class="vm-legal__intro">
+      Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Bestellungen über unseren Online-Shop
+      sowie für die VeloMatch-Pro-Mitgliedschaft.
+    </p>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 1 Geltungsbereich, Anbieter</h2>
+      <p class="vm-legal__text">
+        Anbieter und Vertragspartner ist {{ firma }}, {{ strasse }}, E-Mail:
+        <a href="mailto:{{ email }}">{{ email }}</a>. Es gelten ausschließlich diese AGB in ihrer zum
+        Zeitpunkt der Bestellung gültigen Fassung. Abweichende Bedingungen des Kunden werden nicht
+        anerkannt, es sei denn, wir stimmen ihrer Geltung ausdrücklich zu.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 2 Vertragsschluss</h2>
+      <p class="vm-legal__text">
+        Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern eine
+        Aufforderung zur Bestellung dar. Durch Anklicken des Bestell-Buttons gibst du ein verbindliches
+        Angebot zum Kauf der im Warenkorb enthaltenen Waren ab. Der Vertrag kommt zustande, wenn wir deine
+        Bestellung durch eine Auftragsbestätigung per E-Mail oder durch Auslieferung der Ware annehmen.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 3 Preise und Versandkosten</h2>
+      <p class="vm-legal__text">
+        Alle Preise verstehen sich als Endpreise inklusive der gesetzlichen Umsatzsteuer. Zusätzlich anfallende
+        Versandkosten werden im Bestellprozess gesondert ausgewiesen. Einzelheiten findest du auf der Seite
+        <a href="/pages/versand">Versand &amp; Zahlung</a>.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 4 Zahlung</h2>
+      <p class="vm-legal__text">
+        Die im Bestellprozess angebotenen Zahlungsarten sind maßgeblich. Der Kaufpreis ist mit Vertragsschluss
+        zur Zahlung fällig, soweit nichts anderes vereinbart ist.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 5 Lieferung</h2>
+      <p class="vm-legal__text">
+        Die Lieferung erfolgt an die von dir angegebene Lieferadresse. Angaben zu Lieferzeiten findest du auf
+        der Produktseite bzw. unter <a href="/pages/versand">Versand &amp; Zahlung</a>.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 6 Eigentumsvorbehalt</h2>
+      <p class="vm-legal__text">
+        Die gelieferte Ware bleibt bis zur vollständigen Bezahlung unser Eigentum.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 7 Widerrufsrecht</h2>
+      <p class="vm-legal__text">
+        Verbrauchern steht ein gesetzliches Widerrufsrecht zu. Die Einzelheiten ergeben sich aus unserer
+        <a href="/pages/widerruf">Widerrufsbelehrung</a>.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 8 Gewährleistung / Mängelhaftung</h2>
+      <p class="vm-legal__text">
+        Es gelten die gesetzlichen Vorschriften über die Mängelhaftung. Marken- und Produktnamen dienen der
+        Kompatibilitäts- und Orientierungsbeschreibung; es besteht keine Verbindung zu den jeweiligen
+        Herstellern. Die angezeigten Kompatibilitätshinweise sind unverbindliche Empfehlungen; maßgeblich sind
+        die Angaben der Komponentenhersteller.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Abonnement</span>
+      <h2 class="vm-legal__h2">§ 9 VeloMatch-Pro-Mitgliedschaft</h2>
+      <p class="vm-legal__text">
+        Die VeloMatch-Pro-Mitgliedschaft ist ein kostenpflichtiges Abonnement zum Preis von {{ abo_preis }}.
+        Sie verlängert sich automatisch um jeweils einen weiteren Abrechnungszeitraum, sofern sie nicht
+        rechtzeitig gekündigt wird. Es besteht keine Mindestlaufzeit; die Mitgliedschaft ist jederzeit zum
+        Ende des laufenden Abrechnungszeitraums kündbar.
+      </p>
+      <p class="vm-legal__text">
+        Die Kündigung ist in deinem Konto sowie jederzeit ohne Anmeldung über unsere Seite
+        <a href="/pages/kuendigung">Verträge kündigen</a> möglich. Du erhältst eine Bestätigung des
+        Kündigungseingangs. Das Widerrufsrecht bleibt hiervon unberührt (siehe
+        <a href="/pages/widerruf">Widerrufsbelehrung</a>).
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 10 Streitbeilegung</h2>
+      <p class="vm-legal__text">
+        Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+        <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a>.
+        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+        Verbraucherschlichtungsstelle teilzunehmen.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">§ 11 Schlussbestimmungen</h2>
+      <p class="vm-legal__text">
+        Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Zwingende
+        verbraucherschützende Vorschriften des Staates, in dem der Verbraucher seinen gewöhnlichen Aufenthalt
+        hat, bleiben unberührt. Sollte eine Bestimmung dieser AGB unwirksam sein, bleibt die Wirksamkeit der
+        übrigen Bestimmungen unberührt.
+      </p>
+    </div>
+
+    <p class="vm-legal__updated">Stand: {{ 'now' | date: '%m/%Y' }} · Dieser Text ist ein Muster und vor Verwendung rechtlich zu prüfen.</p>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "AGB",
+  "settings": [
+    { "type": "text", "id": "company_name", "label": "Firma/Name", "default": "Paul Ellner – VeloMatch" },
+    { "type": "text", "id": "address", "label": "Anschrift", "default": "Schneckenhofstr. 17, 60596 Frankfurt am Main" },
+    { "type": "text", "id": "email", "label": "E-Mail", "default": "Paul.ellner@velomatch.net" },
+    { "type": "text", "id": "abo_price", "label": "Abo-Preis", "default": "5,99 € pro Monat" }
+  ],
+  "presets": [{ "name": "AGB", "category": "VeloMatch" }]
+}
+{% endschema %}

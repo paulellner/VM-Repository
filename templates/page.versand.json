@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "versand",
+      "disabled": false,
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

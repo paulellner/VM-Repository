@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "datenschutz",
+      "disabled": false,
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

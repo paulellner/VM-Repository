@@ -1,0 +1,133 @@
+{%- comment -%} Widerrufsbelehrung + Musterformular — Standardtext, vor Livegang anwaltlich prüfen lassen. {%- endcomment -%}
+{% render 'legal-styles' %}
+
+{%- assign firma = section.settings.company_name | default: 'Paul Ellner – VeloMatch' -%}
+{%- assign strasse = section.settings.address | default: 'Schneckenhofstr. 17, 60596 Frankfurt am Main' -%}
+{%- assign email = section.settings.email | default: 'Paul.ellner@velomatch.net' -%}
+
+<div class="vm-legal">
+  <div class="vm-legal__inner">
+
+    <span class="vm-legal__eyebrow">Rechtliches</span>
+    <h1 class="vm-legal__title">Widerrufs&shy;belehrung</h1>
+    <p class="vm-legal__intro">
+      Verbraucher haben bei im Fernabsatz geschlossenen Verträgen ein gesetzliches Widerrufsrecht.
+      Nachstehend informieren wir über die Voraussetzungen und Folgen des Widerrufs.
+    </p>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Widerrufsrecht</h2>
+      <p class="vm-legal__text">
+        Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
+      </p>
+      <p class="vm-legal__text">
+        Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem du oder ein von dir benannter Dritter,
+        der nicht der Beförderer ist, die Waren in Besitz genommen hast bzw. hat. Bei einer Lieferung
+        mehrerer Waren im Rahmen einer einheitlichen Bestellung, die getrennt geliefert werden, beginnt die
+        Frist mit dem Tag, an dem du die letzte Ware in Besitz genommen hast.
+      </p>
+      <p class="vm-legal__text">
+        Um dein Widerrufsrecht auszuüben, musst du uns
+      </p>
+      <p class="vm-legal__text">
+        {{ firma }}<br>
+        {{ strasse }}<br>
+        E-Mail: <a href="mailto:{{ email }}">{{ email }}</a>
+      </p>
+      <p class="vm-legal__text">
+        mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über
+        deinen Entschluss, diesen Vertrag zu widerrufen, informieren. Du kannst dafür das beigefügte
+        Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist. Zur Wahrung der
+        Widerrufsfrist reicht es aus, dass du die Mitteilung über die Ausübung des Widerrufsrechts vor
+        Ablauf der Widerrufsfrist absendest.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Folgen des Widerrufs</h2>
+      <p class="vm-legal__text">
+        Wenn du diesen Vertrag widerrufst, haben wir dir alle Zahlungen, die wir von dir erhalten haben,
+        einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass
+        du eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt
+        hast), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die
+        Mitteilung über deinen Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung
+        verwenden wir dasselbe Zahlungsmittel, das du bei der ursprünglichen Transaktion eingesetzt hast,
+        es sei denn, mit dir wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden dir wegen
+        dieser Rückzahlung Entgelte berechnet.
+      </p>
+      <p class="vm-legal__text">
+        Wir können die Rückzahlung verweigern, bis wir die Waren wieder zurückerhalten haben oder bis du den
+        Nachweis erbracht hast, dass du die Waren zurückgesandt hast, je nachdem, welches der frühere
+        Zeitpunkt ist.
+      </p>
+      <p class="vm-legal__text">
+        Du hast die Waren unverzüglich und in jedem Fall spätestens binnen vierzehn Tagen ab dem Tag, an dem
+        du uns über den Widerruf dieses Vertrags unterrichtest, an uns zurückzusenden oder zu übergeben. Die
+        Frist ist gewahrt, wenn du die Waren vor Ablauf der Frist von vierzehn Tagen absendest. Du trägst die
+        unmittelbaren Kosten der Rücksendung der Waren.
+      </p>
+      <p class="vm-legal__text">
+        Du musst für einen etwaigen Wertverlust der Waren nur aufkommen, wenn dieser Wertverlust auf einen zur
+        Prüfung der Beschaffenheit, Eigenschaften und Funktionsweise der Waren nicht notwendigen Umgang mit
+        ihnen zurückzuführen ist.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Dienstleistungen / Digitale Inhalte</span>
+      <h2 class="vm-legal__h2">Besonderheiten bei VeloMatch&nbsp;Pro</h2>
+      <p class="vm-legal__text">
+        Verlangst du ausdrücklich, dass die Dienstleistung (Pro-Mitgliedschaft) bereits vor Ablauf der
+        Widerrufsfrist beginnt, schuldest du bei Widerruf einen angemessenen Betrag für die bis zum Widerruf
+        bereits erbrachte Leistung. Das Widerrufsrecht erlischt bei Dienstleistungen, wenn wir die Leistung
+        vollständig erbracht haben und du dem vor Vertragsschluss ausdrücklich zugestimmt und deine Kenntnis
+        vom Erlöschen des Widerrufsrechts bestätigt hast.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <span class="vm-legal__block-heading">Ausschluss / Erlöschen</span>
+      <h2 class="vm-legal__h2">Ausnahmen vom Widerrufsrecht</h2>
+      <p class="vm-legal__text">
+        Das Widerrufsrecht besteht u. a. nicht bei Waren, die nach Kundenspezifikation angefertigt werden oder
+        eindeutig auf persönliche Bedürfnisse zugeschnitten sind, sowie bei versiegelten Waren, die aus
+        Gründen des Gesundheitsschutzes oder der Hygiene nicht zur Rückgabe geeignet sind, wenn ihre
+        Versiegelung nach der Lieferung entfernt wurde.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Muster-Widerrufsformular</h2>
+      <p class="vm-legal__text">
+        (Wenn du den Vertrag widerrufen willst, dann fülle bitte dieses Formular aus und sende es zurück.)
+      </p>
+      <div class="vm-legal__muster">
+        An {{ firma }}, {{ strasse }}, E-Mail: {{ email }}:<br><br>
+        Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der
+        folgenden Waren (*) / die Erbringung der folgenden Dienstleistung (*)<br><br>
+        _______________________________________________<br><br>
+        Bestellt am (*) / erhalten am (*): __________________<br>
+        Name des/der Verbraucher(s): __________________<br>
+        Anschrift des/der Verbraucher(s): __________________<br>
+        Datum: __________________<br>
+        Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier): __________________<br><br>
+        (*) Unzutreffendes streichen.
+      </div>
+    </div>
+
+    <p class="vm-legal__updated">Stand: {{ 'now' | date: '%m/%Y' }} · Dieser Text ist ein Muster und vor Verwendung rechtlich zu prüfen.</p>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Widerruf",
+  "settings": [
+    { "type": "text", "id": "company_name", "label": "Firma/Name", "default": "Paul Ellner – VeloMatch" },
+    { "type": "text", "id": "address", "label": "Anschrift", "default": "Schneckenhofstr. 17, 60596 Frankfurt am Main" },
+    { "type": "text", "id": "email", "label": "E-Mail", "default": "Paul.ellner@velomatch.net" }
+  ],
+  "presets": [{ "name": "Widerruf", "category": "VeloMatch" }]
+}
+{% endschema %}

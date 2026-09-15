@@ -1,0 +1,119 @@
+{%- comment -%}
+  Öffentlicher Kündigungsbutton nach § 312k BGB — ohne Login erreichbar.
+  Nutzt das native Shopify-Kontaktformular: Eingang wird an die Shop-E-Mail
+  gesendet, der/die Nutzer:in erhält eine Bestätigung am Bildschirm.
+{%- endcomment -%}
+{% render 'legal-styles' %}
+
+<style>
+.vm-kuend__form { margin-top: 8px; }
+.vm-kuend__field { margin-bottom: 18px; }
+.vm-kuend__label {
+  display: block; font-family: var(--vm-mono); font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--vm-sage); margin-bottom: 6px;
+}
+.vm-kuend__input, .vm-kuend__select, .vm-kuend__textarea {
+  width: 100%; padding: 12px 14px; font-family: var(--vm-sans); font-size: 15px;
+  color: var(--vm-ink); background: #fff; border: var(--vm-stroke) solid var(--vm-olive);
+}
+.vm-kuend__textarea { min-height: 90px; resize: vertical; }
+.vm-kuend__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .vm-kuend__row { grid-template-columns: 1fr; } }
+.vm-kuend__submit {
+  display: inline-flex; align-items: center; gap: 10px; background: var(--vm-signal);
+  color: var(--vm-ink); border: none; cursor: pointer; font-family: var(--vm-sans);
+  font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 15px 26px; margin-top: 8px;
+}
+.vm-kuend__success {
+  background: var(--vm-signal); border: var(--vm-stroke) solid var(--vm-olive);
+  padding: 22px 24px; font-size: 15px; line-height: 1.7; color: var(--vm-ink);
+}
+</style>
+
+<div class="vm-legal">
+  <div class="vm-legal__inner">
+
+    <span class="vm-legal__eyebrow">Vertrag beenden</span>
+    <h1 class="vm-legal__title">Verträge kündigen</h1>
+
+    {%- if form.posted_successfully? -%}
+      <div class="vm-kuend__success">
+        <strong>Deine Kündigung ist eingegangen.</strong><br>
+        Wir haben deine Kündigungserklärung erhalten und bestätigen dir den Eingang zusätzlich per E-Mail.
+        Bitte bewahre diese Bestätigung auf. Der Zeitpunkt deiner Erklärung wird dokumentiert.
+      </div>
+    {%- else -%}
+      <p class="vm-legal__intro">
+        Hier kannst du dein VeloMatch-Pro-Abonnement (oder einen anderen Dauervertrag) kündigen – ohne
+        Anmeldung. Fülle das Formular aus und klicke auf „Jetzt kündigen". Den Eingang bestätigen wir dir
+        umgehend per E-Mail.
+      </p>
+
+      {%- form 'contact', class: 'vm-kuend__form' -%}
+        <input type="hidden" name="contact[Betreff]" value="Kündigung Dauervertrag (§ 312k BGB)">
+
+        <div class="vm-kuend__field">
+          <label class="vm-kuend__label" for="k-vertrag">Welchen Vertrag möchtest du kündigen?</label>
+          <select id="k-vertrag" class="vm-kuend__select" name="contact[Vertragsart]">
+            <option>VeloMatch Pro (monatliches Abonnement)</option>
+            <option>Anderer Dauervertrag</option>
+          </select>
+        </div>
+
+        <div class="vm-kuend__field">
+          <label class="vm-kuend__label" for="k-art">Art der Kündigung</label>
+          <select id="k-art" class="vm-kuend__select" name="contact[Kuendigungsart]">
+            <option>Ordentliche Kündigung zum nächstmöglichen Zeitpunkt</option>
+            <option>Außerordentliche Kündigung</option>
+          </select>
+        </div>
+
+        <div class="vm-kuend__field">
+          <label class="vm-kuend__label" for="k-datum">Kündigung zum (Datum, optional)</label>
+          <input id="k-datum" class="vm-kuend__input" type="text" name="contact[Kuendigungsdatum]" placeholder="z. B. nächstmöglicher Termin">
+        </div>
+
+        <div class="vm-kuend__row">
+          <div class="vm-kuend__field">
+            <label class="vm-kuend__label" for="k-name">Vor- und Nachname</label>
+            <input id="k-name" class="vm-kuend__input" type="text" name="contact[Name]" required>
+          </div>
+          <div class="vm-kuend__field">
+            <label class="vm-kuend__label" for="k-email">E-Mail für die Bestätigung</label>
+            <input id="k-email" class="vm-kuend__input" type="email" name="contact[email]" required>
+          </div>
+        </div>
+
+        <div class="vm-kuend__field">
+          <label class="vm-kuend__label" for="k-kennung">Kunden-/Vertragsnummer oder Konto-E-Mail (zur Zuordnung)</label>
+          <input id="k-kennung" class="vm-kuend__input" type="text" name="contact[Vertragskennung]">
+        </div>
+
+        <div class="vm-kuend__field">
+          <label class="vm-kuend__label" for="k-msg">Weitere Angaben (optional)</label>
+          <textarea id="k-msg" class="vm-kuend__textarea" name="contact[body]"></textarea>
+        </div>
+
+        <button class="vm-kuend__submit" type="submit" name="commit">Jetzt kündigen →</button>
+      {%- endform -%}
+    {%- endif -%}
+
+    <div class="vm-legal__block" style="margin-top:40px;border-top:1px solid rgba(61,74,47,0.15);padding-top:32px">
+      <p class="vm-legal__text">
+        Alternativ kannst du Pro auch im eingeloggten <a href="/pages/vm-pro-dashboard">Dashboard</a> kündigen
+        oder uns formlos per E-Mail schreiben. Deine Rechte aus der
+        <a href="/pages/widerruf">Widerrufsbelehrung</a> bleiben unberührt.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Verträge kündigen",
+  "settings": [],
+  "presets": [{ "name": "Verträge kündigen", "category": "VeloMatch" }]
+}
+{% endschema %}

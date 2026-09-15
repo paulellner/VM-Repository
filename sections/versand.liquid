@@ -1,0 +1,67 @@
+{%- comment -%} Versand & Zahlung — Werte im Theme-Editor an dein Angebot anpassen. {%- endcomment -%}
+{% render 'legal-styles' %}
+
+<div class="vm-legal">
+  <div class="vm-legal__inner">
+
+    <span class="vm-legal__eyebrow">Bestellung</span>
+    <h1 class="vm-legal__title">Versand &amp; Zahlung</h1>
+    <p class="vm-legal__intro">
+      Hier findest du alle Angaben zu Versandkosten, Lieferzeiten und den verfügbaren Zahlungsarten.
+    </p>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Versandkosten</h2>
+      <p class="vm-legal__text">
+        {{ section.settings.shipping_costs | default: 'Innerhalb Deutschlands versenden wir zu einem Pauschalpreis von 4,90 €. Ab einem Bestellwert von 50 € liefern wir versandkostenfrei.' }}
+      </p>
+      <p class="vm-legal__text">
+        Alle Preise sind Endpreise inkl. gesetzlicher MwSt. Die konkreten Versandkosten für deine Bestellung
+        werden dir vor Abschluss der Bestellung im Warenkorb und im Checkout angezeigt.
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Lieferzeit</h2>
+      <p class="vm-legal__text">
+        {{ section.settings.delivery_time | default: 'Die Lieferzeit beträgt in der Regel 2–4 Werktage nach Zahlungseingang, soweit auf der Produktseite nichts anderes angegeben ist.' }}
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Liefergebiet</h2>
+      <p class="vm-legal__text">
+        {{ section.settings.delivery_area | default: 'Wir liefern innerhalb Deutschlands. Lieferungen in weitere Länder auf Anfrage.' }}
+      </p>
+    </div>
+
+    <div class="vm-legal__block">
+      <h2 class="vm-legal__h2">Zahlungsarten</h2>
+      <p class="vm-legal__text">
+        {{ section.settings.payment_methods | default: 'Die im Checkout angebotenen Zahlungsarten (z. B. Kreditkarte, PayPal, Apple Pay / Google Pay und weitere) werden dir vor Abschluss der Bestellung angezeigt.' }}
+      </p>
+      <p class="vm-legal__text">
+        Die VeloMatch-Pro-Mitgliedschaft ({{ section.settings.abo_price | default: '5,99 € pro Monat' }}) wird
+        wiederkehrend über die im Checkout gewählte Zahlungsart abgebucht und ist jederzeit kündbar – siehe
+        <a href="/pages/kuendigung">Verträge kündigen</a>.
+      </p>
+    </div>
+
+    <p class="vm-legal__updated">Stand: {{ 'now' | date: '%m/%Y' }} · Bitte an dein tatsächliches Versand- und Zahlungsangebot anpassen.</p>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Versand & Zahlung",
+  "settings": [
+    { "type": "textarea", "id": "shipping_costs", "label": "Versandkosten", "default": "Innerhalb Deutschlands versenden wir zu einem Pauschalpreis von 4,90 €. Ab einem Bestellwert von 50 € liefern wir versandkostenfrei." },
+    { "type": "textarea", "id": "delivery_time", "label": "Lieferzeit", "default": "Die Lieferzeit beträgt in der Regel 2–4 Werktage nach Zahlungseingang, soweit auf der Produktseite nichts anderes angegeben ist." },
+    { "type": "textarea", "id": "delivery_area", "label": "Liefergebiet", "default": "Wir liefern innerhalb Deutschlands. Lieferungen in weitere Länder auf Anfrage." },
+    { "type": "textarea", "id": "payment_methods", "label": "Zahlungsarten", "default": "Die im Checkout angebotenen Zahlungsarten (z. B. Kreditkarte, PayPal, Apple Pay / Google Pay und weitere) werden dir vor Abschluss der Bestellung angezeigt." },
+    { "type": "text", "id": "abo_price", "label": "Abo-Preis", "default": "5,99 € pro Monat" }
+  ],
+  "presets": [{ "name": "Versand & Zahlung", "category": "VeloMatch" }]
+}
+{% endschema %}

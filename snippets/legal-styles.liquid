@@ -1,0 +1,148 @@
+{%- comment -%}
+  snippets/legal-styles.liquid — gemeinsame Styles für alle Rechtsseiten
+  (Datenschutz, AGB, Widerruf, Versand & Zahlung, Kündigung, Impressum-Stil).
+  Einbinden mit {% render 'legal-styles' %} am Anfang der jeweiligen Section.
+{%- endcomment -%}
+<style>
+.vm-legal {
+  --vm-olive:  #3D4A2F;
+  --vm-ink:    #14160F;
+  --vm-bone:   #F2F0E6;
+  --vm-paper:  #FBFAF3;
+  --vm-signal: #C9E45B;
+  --vm-sage:   #9CA982;
+  --vm-sans:   'Helvetica Neue', Arial, sans-serif;
+  --vm-mono:   'Courier New', 'Lucida Console', monospace;
+  --vm-stroke: 1.5px;
+
+  background:  var(--vm-bone);
+  font-family: var(--vm-sans);
+  color:       var(--vm-ink);
+  box-sizing:  border-box;
+}
+.vm-legal *, .vm-legal *::before, .vm-legal *::after { box-sizing: inherit; }
+
+.vm-legal__inner {
+  max-width: 820px;
+  margin:    0 auto;
+  padding:   64px 40px 96px;
+}
+
+.vm-legal__eyebrow {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  16px;
+}
+
+.vm-legal__title {
+  font-size:      clamp(30px, 5vw, 50px);
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  line-height:    1;
+  margin:         0 0 20px;
+}
+
+.vm-legal__intro {
+  font-size:   15px;
+  line-height: 1.7;
+  color:       var(--vm-olive);
+  margin:      0 0 40px;
+  padding-bottom: 32px;
+  border-bottom:  var(--vm-stroke) solid var(--vm-olive);
+}
+
+.vm-legal__block {
+  margin-bottom:  36px;
+  padding-bottom: 36px;
+  border-bottom:  1px solid rgba(61,74,47,0.15);
+}
+.vm-legal__block:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.vm-legal__h2 {
+  font-size:      18px;
+  font-weight:    800;
+  letter-spacing: -0.01em;
+  margin:         0 0 14px;
+  color:          var(--vm-ink);
+}
+
+.vm-legal__block-heading {
+  font-family:    var(--vm-mono);
+  font-size:      10px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color:          var(--vm-sage);
+  display:        block;
+  margin-bottom:  14px;
+}
+
+.vm-legal__text {
+  font-size:   15px;
+  line-height: 1.75;
+  color:       var(--vm-ink);
+  margin:      0 0 12px;
+}
+.vm-legal__text:last-child { margin-bottom: 0; }
+
+.vm-legal__text a {
+  color:           var(--vm-olive);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition:      color 220ms ease;
+}
+.vm-legal__text a:hover { color: var(--vm-ink); }
+
+.vm-legal__list {
+  margin:      0 0 12px;
+  padding-left: 22px;
+}
+.vm-legal__list li {
+  font-size:   15px;
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+
+.vm-legal__note {
+  background:   var(--vm-paper);
+  border:       var(--vm-stroke) solid var(--vm-olive);
+  padding:      18px 20px;
+  font-size:    13px;
+  line-height:  1.7;
+  color:        var(--vm-olive);
+  margin:       0 0 12px;
+}
+
+.vm-legal__muster {
+  background:   #fff;
+  border:       1px dashed var(--vm-sage);
+  padding:      22px 24px;
+  font-size:    14px;
+  line-height:  1.7;
+  margin:       8px 0 0;
+}
+
+.vm-legal__updated {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  color:          var(--vm-sage);
+  letter-spacing: 0.06em;
+  margin-top:     40px;
+}
+
+@media (max-width: 600px) {
+  .vm-legal__inner { padding: 40px 20px 64px; }
+  .vm-legal__title { font-size: 30px; }
+  .vm-legal__block { margin-bottom: 28px; padding-bottom: 28px; }
+}
+</style>

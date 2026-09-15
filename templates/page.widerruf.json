@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "widerruf",
+      "disabled": false,
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

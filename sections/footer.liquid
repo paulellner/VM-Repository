@@ -73,9 +73,10 @@
   max-width:  1200px;
   margin:     0 auto;
   display:    flex;
+  flex-wrap:  wrap;
   justify-content: space-between;
   align-items: center;
-  gap:        16px;
+  gap:        12px 20px;
   font-size:  12px;
   opacity:    0.5;
   font-family: 'Courier New', monospace;
@@ -89,6 +90,13 @@
   transition:      opacity 220ms ease;
 }
 .vm-footer__bottom-link:hover { opacity: 0.8; }
+
+.vm-footer__legal {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       6px 16px;
+  align-items: center;
+}
 
 @media (max-width: 880px) {
   .vm-footer__inner  { grid-template-columns: 1fr; padding: 40px 20px; gap: 32px; }
@@ -130,9 +138,15 @@
 
   </div>
   <div class="vm-footer__bottom">
-    <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
-    <span>Alle Preise inkl. MwSt.</span>
-    <a class="vm-footer__bottom-link" href="/pages/impressum">Impressum</a>
+    <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} · Alle Preise inkl. MwSt.</span>
+    <nav class="vm-footer__legal" aria-label="Rechtliches">
+      <a class="vm-footer__bottom-link" href="/pages/impressum">Impressum</a>
+      <a class="vm-footer__bottom-link" href="/pages/datenschutz">Datenschutz</a>
+      <a class="vm-footer__bottom-link" href="/pages/agb">AGB</a>
+      <a class="vm-footer__bottom-link" href="/pages/widerruf">Widerruf</a>
+      <a class="vm-footer__bottom-link" href="/pages/versand">Versand &amp; Zahlung</a>
+      <a class="vm-footer__bottom-link" href="/pages/kuendigung">Verträge kündigen</a>
+    </nav>
   </div>
 </footer>
 

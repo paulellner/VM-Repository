@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "agb",
+      "disabled": false,
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
