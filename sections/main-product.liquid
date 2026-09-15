@@ -263,9 +263,15 @@
         <div class="vm-pdp__vendor">{{ product.vendor }}</div>
         <h1 class="vm-pdp__title">{{ product.title }}</h1>
 
+        {%- assign cur_variant = product.selected_or_first_available_variant -%}
         <div class="vm-pdp__price">
           {{ product.price | money }}
-          <small>UVP inkl. MwSt.</small>
+          <small>inkl. MwSt. zzgl. <a href="/pages/versand" style="color:inherit;text-decoration:underline;text-underline-offset:2px">Versand</a></small>
+          {%- if cur_variant.unit_price_measurement -%}
+            <small style="display:block;margin-top:4px;font-family:'Courier New',monospace;font-size:11px;letter-spacing:0.04em;color:#9CA982">
+              {{ cur_variant.unit_price | money }} /{% if cur_variant.unit_price_measurement.reference_value != 1 %} {{ cur_variant.unit_price_measurement.reference_value }}{% endif %} {{ cur_variant.unit_price_measurement.reference_unit }}
+            </small>
+          {%- endif -%}
         </div>
 
         <!-- Compatibility chips from vm-* tags -->
