@@ -1,0 +1,83 @@
+{%- comment -%}
+  Cookie-Consent-Banner (§ 25 TTDSG / DSGVO).
+  Speichert die Auswahl lokal und meldet sie – falls verfügbar – an Shopifys
+  Customer-Privacy-API (Consent Mode). Für maximale Rechtssicherheit sollte
+  zusätzlich der native Shopify-Cookie-Banner unter
+  Einstellungen → Kundendatenschutz aktiviert werden.
+{%- endcomment -%}
+<style>
+.vm-cc {
+  position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 9999;
+  max-width: 720px; margin: 0 auto;
+  background: #14160F; color: #F2F0E6;
+  border: 1.5px solid #3D4A2F;
+  padding: 20px 22px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+.vm-cc[hidden] { display: none; }
+.vm-cc__text { font-size: 13px; line-height: 1.6; margin: 0 0 14px; }
+.vm-cc__text a { color: #C9E45B; text-decoration: underline; text-underline-offset: 2px; }
+.vm-cc__row { display: flex; flex-wrap: wrap; gap: 10px; }
+.vm-cc__btn {
+  font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; padding: 11px 18px;
+  cursor: pointer; border: 1.5px solid #C9E45B; background: transparent; color: #F2F0E6;
+}
+.vm-cc__btn--primary { background: #C9E45B; color: #14160F; border-color: #C9E45B; }
+@media (max-width: 520px) { .vm-cc__btn { flex: 1 1 auto; text-align: center; } }
+</style>
+
+<div class="vm-cc" id="vm-cookie-consent" role="dialog" aria-label="Cookie-Einwilligung" aria-live="polite" hidden>
+  <p class="vm-cc__text">
+    Wir verwenden technisch notwendige Cookies für den Betrieb des Shops. Mit „Alle akzeptieren"
+    stimmst du zusätzlich Statistik-/Marketing-Cookies zu. Details in der
+    <a href="/pages/datenschutz">Datenschutzerklärung</a>.
+  </p>
+  <div class="vm-cc__row">
+    <button class="vm-cc__btn vm-cc__btn--primary" type="button" data-cc="all">Alle akzeptieren</button>
+    <button class="vm-cc__btn" type="button" data-cc="essential">Nur notwendige</button>
+    <a class="vm-cc__btn" href="/pages/datenschutz" style="text-decoration:none">Einstellungen</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var KEY = 'vm_cookie_consent_v1';
+  var el  = document.getElementById('vm-cookie-consent');
+  if (!el) return;
+
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+
+  function applyConsent(all) {
+    /* An Shopify Customer Privacy API melden, falls vorhanden (Consent Mode). */
+    try {
+      if (window.Shopify && Shopify.customerPrivacy && Shopify.customerPrivacy.setTrackingConsent) {
+        Shopify.customerPrivacy.setTrackingConsent({
+          analytics:   all,
+          marketing:   all,
+          preferences: all,
+          sale_of_data: all
+        }, function () {});
+      }
+    } catch (e) {}
+  }
+
+  function choose(all) {
+    try { localStorage.setItem(KEY, all ? 'all' : 'essential'); } catch (e) {}
+    applyConsent(all);
+    el.hidden = true;
+  }
+
+  var prev = stored();
+  if (prev === null) {
+    el.hidden = false;
+  } else {
+    applyConsent(prev === 'all');
+  }
+
+  el.querySelectorAll('[data-cc]').forEach(function (b) {
+    b.addEventListener('click', function () { choose(b.getAttribute('data-cc') === 'all'); });
+  });
+})();
+</script>
