@@ -1,9 +1,5 @@
 <style>
-/* ── VeloMatch Pro — Landing Page Section ──────────────────────────────── */
-
-.vm-pro-page__ /* namespace anchor — all rules below use this prefix */ {
-  /* (empty rule — tokens defined per-element below) */
-}
+/* ── VeloMatch Pro — Landing Page (Design-Refresh) ─────────────────────── */
 
 .vm-pro-page__section {
   --vm-olive:  #3D4A2F;
@@ -21,26 +17,47 @@
   color:       var(--vm-ink);
   box-sizing:  border-box;
 }
-
 .vm-pro-page__section *,
 .vm-pro-page__section *::before,
-.vm-pro-page__section *::after {
-  box-sizing: inherit;
-}
+.vm-pro-page__section *::after { box-sizing: inherit; }
 
 .vm-pro-page__inner {
-  max-width: 1100px;
+  max-width: 1120px;
   margin:    0 auto;
-  padding:   72px 40px 96px;
+  padding:   80px 40px 104px;
 }
 
-/* ── HERO ────────────────────────────────────────────────────────────────── */
+/* Gemeinsame Mono-Label-Optik mit Signal-Strich */
+.vm-pro-page__features-heading,
+.vm-pro-page__benefits-label,
+.vm-pro-page__faq-heading {
+  font-family:    var(--vm-mono);
+  font-size:      11px;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color:          var(--vm-sage);
+  display:        flex;
+  align-items:    center;
+  gap:            12px;
+}
+.vm-pro-page__features-heading::before,
+.vm-pro-page__benefits-label::before,
+.vm-pro-page__faq-heading::before {
+  content: ''; width: 26px; height: 2px; background: var(--vm-signal); flex-shrink: 0;
+}
 
+/* ── HERO — editorial, linksbündig ───────────────────────────────────────── */
 .vm-pro-page__hero {
-  text-align:    center;
-  margin-bottom: 72px;
-  padding-bottom: 64px;
-  border-bottom: var(--vm-stroke) solid var(--vm-olive);
+  text-align:     left;
+  position:       relative;
+  margin-bottom:  72px;
+  padding-bottom: 56px;
+  border-bottom:  var(--vm-stroke) solid var(--vm-olive);
+}
+.vm-pro-page__hero::after {
+  content: ''; position: absolute; left: 0; bottom: -2.5px;
+  width: 128px; height: 4px; background: var(--vm-signal);
 }
 
 .vm-pro-page__hero-eyebrow {
@@ -48,200 +65,140 @@
   font-size:      11px;
   font-weight:    700;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color:          var(--vm-signal);
-  margin-bottom:  24px;
-  display:        block;
+  letter-spacing: 0.2em;
+  color:          var(--vm-olive);
+  margin-bottom:  28px;
+  display:        inline-flex;
+  align-items:    center;
+  gap:            12px;
+}
+.vm-pro-page__hero-eyebrow::before {
+  content: ''; width: 28px; height: 2px; background: var(--vm-signal);
 }
 
-/* VM Pro wordmark — replicates the "Tag Signal" logo variant */
 .vm-pro-wordmark {
   display:         inline-flex;
   align-items:     center;
-  justify-content: center;
+  justify-content: flex-start;
   gap:             0;
   font-family:     var(--vm-sans);
-  font-size:       clamp(44px, 7.5vw, 88px);
-  line-height:     1;
-  margin:          0 0 28px;
-  letter-spacing:  -0.04em;
+  font-size:       clamp(52px, 10vw, 120px);
+  line-height:     0.92;
+  margin:          0 0 32px;
+  letter-spacing:  -0.045em;
   text-transform:  uppercase;
 }
-.vm-pro-wordmark__velo  { font-weight: 400; color: var(--vm-ink); }
+.vm-pro-wordmark__velo  { font-weight: 300; color: var(--vm-ink); }
 .vm-pro-wordmark__match { font-weight: 800; color: var(--vm-ink); }
 .vm-pro-wordmark__tag {
   background:     var(--vm-signal);
   color:          var(--vm-ink);
   font-family:    var(--vm-sans);
-  font-size:      0.20em;
+  font-size:      0.19em;
   font-weight:    800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding:        0.35em 0.7em 0.3em;
-  line-height:    1.4;
+  letter-spacing: 0.14em;
+  padding:        0.4em 0.72em 0.34em;
+  line-height:    1.3;
   align-self:     center;
   flex-shrink:    0;
-  margin-left:    0.55em;
+  margin-left:    0.5em;
 }
 
 .vm-pro-page__hero-tagline {
-  font-size:   20px;
-  font-weight: 400;
-  color:       var(--vm-sage);
-  line-height: 1.5;
-  margin:      0 auto;
-  max-width:   560px;
-  letter-spacing: 0;
+  font-size:   clamp(21px, 2.6vw, 30px);
+  font-weight: 500;
+  color:       var(--vm-ink);
+  line-height: 1.3;
+  margin:      0;
+  max-width:   680px;
+  letter-spacing: -0.01em;
 }
-
 .vm-pro-page__hero-accent {
-  color:          var(--vm-signal);
-  font-weight:    700;
+  color:       var(--vm-ink);
+  font-weight: 700;
+  background:  linear-gradient(transparent 62%, var(--vm-signal) 62%);
+  padding:     0 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-/* ── FEATURE CARDS ───────────────────────────────────────────────────────── */
-
-.vm-pro-page__features {
-  margin-bottom: 72px;
-}
-
-.vm-pro-page__features-heading {
-  font-family:    var(--vm-mono);
-  font-size:      11px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color:          var(--vm-sage);
-  margin-bottom:  28px;
-}
+/* ── FEATURE CARDS — editoriale Nummern-Kacheln ─────────────────────────── */
+.vm-pro-page__features { margin-bottom: 72px; }
+.vm-pro-page__features-heading { margin-bottom: 28px; }
 
 .vm-pro-page__cards {
   display:               grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap:                   0;
   border:                var(--vm-stroke) solid var(--vm-ink);
+  background:            var(--vm-ink);
 }
-@media (max-width: 900px) {
-  .vm-pro-page__cards { grid-template-columns: 1fr 1fr; }
-  .vm-pro-page__card  { border-right: var(--vm-stroke) solid var(--vm-ink); }
-  .vm-pro-page__card:nth-child(2n) { border-right: none; }
-  .vm-pro-page__card  { border-bottom: var(--vm-stroke) solid var(--vm-ink); }
-  .vm-pro-page__card:last-child, .vm-pro-page__card:nth-last-child(2):nth-child(odd) { border-bottom: none; }
-}
-
 .vm-pro-page__card {
-  background:     var(--vm-paper);
-  padding:        36px 32px;
-  border-right:   var(--vm-stroke) solid var(--vm-ink);
+  background:      var(--vm-paper);
+  padding:        44px 40px;
   position:       relative;
-  display:        flex;
-  flex-direction: column;
-  min-height:     220px;
+  display:        grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto 1fr;
+  column-gap:     28px;
+  transition:     background 280ms cubic-bezier(0.2,0.7,0.2,1),
+                  color 280ms cubic-bezier(0.2,0.7,0.2,1);
 }
-
-.vm-pro-page__card:last-child {
-  border-right: none;
-}
-
-.vm-pro-page__card--muted {
-  opacity: 0.55;
-}
+.vm-pro-page__card:nth-child(odd)   { border-right:  var(--vm-stroke) solid var(--vm-ink); }
+.vm-pro-page__card:nth-child(-n+2)  { border-bottom: var(--vm-stroke) solid var(--vm-ink); }
 
 .vm-pro-page__card-num {
+  grid-column: 1; grid-row: 1 / -1;
   font-family:    var(--vm-mono);
-  font-size:      11px;
-  letter-spacing: 0.08em;
+  font-size:      clamp(34px, 4.4vw, 54px);
+  font-weight:    400;
+  letter-spacing: -0.03em;
+  line-height:    0.8;
   color:          var(--vm-sage);
-  margin-bottom:  20px;
+  margin:         2px 0 0;
+  transition:     color 280ms ease;
 }
 
 .vm-pro-page__card-icon {
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  width:           44px;
-  height:          44px;
-  border:          1.5px solid rgba(61,74,47,0.4);
-  color:           var(--vm-olive);
-  margin-bottom:   20px;
-  flex-shrink:     0;
+  grid-column: 2; grid-row: 1;
+  width: auto; height: auto; border: none; background: none;
+  color: var(--vm-olive);
+  margin: 0 0 18px;
+  transition: color 280ms ease;
 }
-.vm-pro-page__card-icon svg {
-  width:  22px;
-  height: 22px;
-}
-.vm-pro-page__card--active .vm-pro-page__card-icon {
-  border-color: rgba(201,228,91,0.4);
-  color:        var(--vm-signal);
-  background:   var(--vm-ink);
-}
-
-/* ── BENEFITS STRIP ─────────────────────────────────────────────────────────── */
-.vm-pro-page__benefits {
-  background:    var(--vm-ink);
-  color:         var(--vm-bone);
-  padding:       28px 40px;
-  margin-bottom: 56px;
-  border:        var(--vm-stroke) solid var(--vm-ink);
-}
-.vm-pro-page__benefits-label {
-  font-family:    var(--vm-mono);
-  font-size:      10px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color:          var(--vm-sage);
-  margin-bottom:  20px;
-  display:        block;
-}
-.vm-pro-page__benefits-list {
-  list-style: none;
-  padding:    0;
-  margin:     0;
-  display:    grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:        12px 32px;
-}
-.vm-pro-page__benefits-list li {
-  font-size:   13px;
-  font-weight: 600;
-  color:       rgba(242,240,230,0.85);
-  display:     flex;
-  align-items: center;
-  gap:         10px;
-}
-.vm-pro-page__benefits-list li::before {
-  content:     '✓';
-  color:       var(--vm-signal);
-  font-family: var(--vm-mono);
-  font-weight: 700;
-  font-size:   12px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 900px) {
-  .vm-pro-page__benefits      { padding: 24px 20px; }
-  .vm-pro-page__benefits-list { grid-template-columns: 1fr 1fr; }
-}
+.vm-pro-page__card-icon svg { width: 26px; height: 26px; }
 
 .vm-pro-page__card-title {
-  font-size:      22px;
+  grid-column: 2; grid-row: 2;
+  font-size:      23px;
   font-weight:    800;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   line-height:    1.0;
   margin:         0 0 12px;
 }
-
 .vm-pro-page__card-desc {
+  grid-column: 2; grid-row: 3;
   font-size:   14px;
   line-height: 1.6;
   color:       var(--vm-sage);
   margin:      0;
-  flex:        1;
+  transition:  color 280ms ease;
 }
 
+/* Hover: Kachel invertiert auf Ink + Signal-Akzente */
+@media (hover: hover) {
+  .vm-pro-page__card:hover { background: var(--vm-ink); color: var(--vm-bone); }
+  .vm-pro-page__card:hover .vm-pro-page__card-num  { color: var(--vm-signal); }
+  .vm-pro-page__card:hover .vm-pro-page__card-icon { color: var(--vm-signal); }
+  .vm-pro-page__card:hover .vm-pro-page__card-title { color: var(--vm-bone); }
+  .vm-pro-page__card:hover .vm-pro-page__card-desc { color: rgba(242,240,230,0.72); }
+}
+
+/* Badge (falls in Karten genutzt) */
 .vm-pro-page__card-badge {
+  grid-column: 2; grid-row: 4;
   display:        inline-block;
   font-family:    var(--vm-mono);
   font-size:      10px;
@@ -255,208 +212,130 @@
   align-self:     flex-start;
 }
 
-/* ── PRICING BOX ─────────────────────────────────────────────────────────── */
-
-.vm-pro-page__pricing {
+/* ── BENEFITS STRIP ─────────────────────────────────────────────────────── */
+.vm-pro-page__benefits {
+  background:    var(--vm-ink);
+  color:         var(--vm-bone);
+  padding:       36px 44px;
   margin-bottom: 72px;
+  border:        var(--vm-stroke) solid var(--vm-ink);
+  position:      relative;
+}
+.vm-pro-page__benefits::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--vm-signal);
+}
+.vm-pro-page__benefits-label { color: var(--vm-sage); margin-bottom: 22px; }
+.vm-pro-page__benefits-label::before { background: var(--vm-signal); }
+.vm-pro-page__benefits-list {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 36px;
+}
+.vm-pro-page__benefits-list li {
+  font-size: 14px; font-weight: 600; color: rgba(242,240,230,0.9);
+  display: flex; align-items: baseline; gap: 12px;
+}
+.vm-pro-page__benefits-list li::before {
+  content: '›'; color: var(--vm-signal); font-family: var(--vm-mono);
+  font-weight: 700; font-size: 15px; flex-shrink: 0;
+}
+@media (max-width: 900px) {
+  .vm-pro-page__benefits      { padding: 28px 22px 28px 26px; }
+  .vm-pro-page__benefits-list { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── PRICING BOX ────────────────────────────────────────────────────────── */
+.vm-pro-page__pricing { margin-bottom: 80px; }
 .vm-pro-page__pricing-box {
   background:  var(--vm-olive);
   color:       var(--vm-bone);
   border:      2px solid var(--vm-ink);
-  padding:     48px 56px;
+  padding:     52px 56px 52px 64px;
   display:     flex;
   align-items: center;
   gap:         64px;
   flex-wrap:   wrap;
+  position:    relative;
+  overflow:    hidden;
 }
-
-.vm-pro-page__pricing-left {
-  flex: 0 0 auto;
+.vm-pro-page__pricing-box::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: var(--vm-signal);
 }
-
+.vm-pro-page__pricing-left { flex: 0 0 auto; }
 .vm-pro-page__pricing-amount {
-  font-family:    var(--vm-mono);
-  font-size:      72px;
-  font-weight:    400;
-  letter-spacing: -0.03em;
-  line-height:    1;
-  color:          var(--vm-signal);
+  font-family: var(--vm-mono); font-size: 76px; font-weight: 400;
+  letter-spacing: -0.04em; line-height: 1; color: var(--vm-signal);
 }
-
 .vm-pro-page__pricing-period {
-  font-family:    var(--vm-mono);
-  font-size:      13px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color:          var(--vm-sage);
-  margin-top:     8px;
+  font-family: var(--vm-mono); font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em; color: var(--vm-sage); margin-top: 10px;
 }
-
-.vm-pro-page__pricing-note {
-  font-size:   13px;
-  color:       var(--vm-sage);
-  margin-top:  8px;
-  line-height: 1.4;
-}
-
-.vm-pro-page__pricing-right {
-  flex: 1;
-  min-width: 240px;
-}
-
+.vm-pro-page__pricing-note { font-size: 13px; color: var(--vm-sage); margin-top: 8px; line-height: 1.4; }
+.vm-pro-page__pricing-right { flex: 1; min-width: 260px; }
 .vm-pro-page__pricing-desc {
-  font-size:     17px;
-  line-height:   1.55;
-  color:         var(--vm-bone);
-  margin-bottom: 32px;
-  opacity:       0.85;
+  font-size: 18px; line-height: 1.55; color: var(--vm-bone); margin-bottom: 32px; opacity: 0.9;
 }
 
 .vm-pro-page__cta-btn {
-  display:        inline-block;
-  background:     var(--vm-signal);
-  color:          var(--vm-ink);
-  text-decoration: none;
-  font-family:    var(--vm-sans);
-  font-size:      15px;
-  font-weight:    800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  padding:        16px 36px;
-  border:         none;
-  cursor:         pointer;
-  transition:     transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
-                  box-shadow 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  display: inline-block; background: var(--vm-signal); color: var(--vm-ink);
+  text-decoration: none; font-family: var(--vm-sans); font-size: 15px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.01em; padding: 16px 38px; border: none; cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.2,0.7,0.2,1), box-shadow 220ms cubic-bezier(0.2,0.7,0.2,1);
 }
-
 @media (prefers-reduced-motion: no-preference) {
-  .vm-pro-page__cta-btn:hover {
-    transform:  translate(-3px, -3px);
-    box-shadow: 6px 6px 0 var(--vm-bone);
-  }
+  .vm-pro-page__cta-btn:hover { transform: translate(-3px,-3px); box-shadow: 6px 6px 0 var(--vm-bone); }
 }
+.vm-pro-page__already-pro { display: flex; align-items: center; gap: 16px; }
+.vm-pro-page__pro-check { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; color: var(--vm-signal); }
+.vm-pro-page__pro-detail { font-size: 14px; color: var(--vm-sage); line-height: 1.5; margin: 12px 0 24px; }
 
-.vm-pro-page__already-pro {
-  display:     flex;
-  align-items: center;
-  gap:         16px;
-}
-
-.vm-pro-page__pro-check {
-  font-size:      20px;
-  font-weight:    800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  color:          var(--vm-signal);
-}
-
-.vm-pro-page__pro-detail {
-  font-size:   14px;
-  color:       var(--vm-sage);
-  line-height: 1.5;
-}
-
-/* ── FAQ ─────────────────────────────────────────────────────────────────── */
-
-.vm-pro-page__faq {
-  border-top: var(--vm-stroke) solid var(--vm-olive);
-  padding-top: 56px;
-}
-
-.vm-pro-page__faq-heading {
-  font-family:    var(--vm-mono);
-  font-size:      11px;
-  font-weight:    700;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color:          var(--vm-sage);
-  margin-bottom:  40px;
-}
-
+/* ── FAQ — mit CSS-Nummerierung ─────────────────────────────────────────── */
+.vm-pro-page__faq { border-top: var(--vm-stroke) solid var(--vm-olive); padding-top: 56px; }
+.vm-pro-page__faq-heading { margin-bottom: 36px; }
 .vm-pro-page__faq-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: var(--vm-stroke) solid var(--vm-ink);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+  border: var(--vm-stroke) solid var(--vm-ink); counter-reset: vmfaq;
 }
-
 .vm-pro-page__faq-item {
-  padding:      36px 32px;
-  border-right: var(--vm-stroke) solid var(--vm-ink);
-  background:   var(--vm-paper);
+  padding: 40px 32px 36px; border-right: var(--vm-stroke) solid var(--vm-ink);
+  background: var(--vm-paper); position: relative;
 }
-
-.vm-pro-page__faq-item:last-child {
-  border-right: none;
-}
-
+.vm-pro-page__faq-item:last-child { border-right: none; }
 .vm-pro-page__faq-q {
-  font-size:      15px;
-  font-weight:    800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height:    1.1;
-  margin:         0 0 14px;
-  color:          var(--vm-ink);
+  font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em;
+  line-height: 1.15; margin: 0 0 14px; color: var(--vm-ink); position: relative; padding-top: 26px;
 }
-
-.vm-pro-page__faq-a {
-  font-size:   14px;
-  line-height: 1.65;
-  color:       var(--vm-sage);
-  margin:      0;
+.vm-pro-page__faq-q::before {
+  counter-increment: vmfaq; content: 'F0' counter(vmfaq);
+  position: absolute; top: 0; left: 0;
+  font-family: var(--vm-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--vm-signal);
 }
+.vm-pro-page__faq-a { font-size: 14px; line-height: 1.65; color: var(--vm-sage); margin: 0; }
 
-/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
-
+/* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .vm-pro-page__inner {
-    padding: 48px 20px 64px;
-  }
-
-  /* cards responsive override handled in the cards block above */
-
-  .vm-pro-page__pricing-box {
-    padding:        36px 28px;
-    flex-direction: column;
-    gap:            32px;
-  }
-
-  .vm-pro-page__pricing-amount {
-    font-size: 56px;
-  }
-
-  .vm-pro-page__faq-list {
-    grid-template-columns: 1fr;
-  }
-
-  .vm-pro-page__faq-item {
-    border-right:  none;
-    border-bottom: var(--vm-stroke) solid var(--vm-ink);
-  }
-
-  .vm-pro-page__faq-item:last-child {
-    border-bottom: none;
-  }
+  .vm-pro-page__inner       { padding: 56px 22px 72px; }
+  .vm-pro-page__cards       { grid-template-columns: 1fr; }
+  .vm-pro-page__card        { border-right: none !important; }
+  .vm-pro-page__card:not(:last-child) { border-bottom: var(--vm-stroke) solid var(--vm-ink); }
+  .vm-pro-page__pricing-box { padding: 40px 28px 40px 34px; flex-direction: column; align-items: flex-start; gap: 32px; }
+  .vm-pro-page__pricing-amount { font-size: 60px; }
+  .vm-pro-page__faq-list    { grid-template-columns: 1fr; }
+  .vm-pro-page__faq-item    { border-right: none; border-bottom: var(--vm-stroke) solid var(--vm-ink); }
+  .vm-pro-page__faq-item:last-child { border-bottom: none; }
 }
-
 @media (max-width: 600px) {
-  .vm-pro-page__inner       { padding: 36px 16px 48px; }
-  .vm-pro-page__hero        { margin-bottom: 48px; padding-bottom: 40px; }
-  .vm-pro-wordmark          { font-size: clamp(30px, 9vw, 52px); gap: 10px; }
-  .vm-pro-page__hero-tagline { font-size: 16px; }
-  .vm-pro-page__card        { padding: 24px 18px; min-height: 0; }
-  .vm-pro-page__card-title  { font-size: 18px; }
-  .vm-pro-page__card-desc   { font-size: 13px; }
-  .vm-pro-page__benefits    { padding: 20px 16px; }
-  .vm-pro-page__benefits-list { grid-template-columns: 1fr; gap: 10px; }
-  .vm-pro-page__pricing-box { padding: 24px 16px; }
-  .vm-pro-page__pricing-amount { font-size: 44px; }
-  .vm-pro-page__faq-item    { padding: 24px 18px; }
-  .vm-pro-page__cta-btn     { width: 100%; text-align: center; font-size: 14px; padding: 14px 24px; }
+  .vm-pro-page__inner        { padding: 40px 16px 56px; }
+  .vm-pro-page__hero         { margin-bottom: 52px; padding-bottom: 40px; }
+  .vm-pro-wordmark           { font-size: clamp(38px, 13vw, 60px); }
+  .vm-pro-page__hero-tagline { font-size: 19px; }
+  .vm-pro-page__card         { padding: 30px 22px; column-gap: 20px; }
+  .vm-pro-page__card-title   { font-size: 20px; }
+  .vm-pro-page__benefits     { padding: 24px 18px 24px 22px; }
+  .vm-pro-page__benefits-list { grid-template-columns: 1fr; gap: 12px; }
+  .vm-pro-page__pricing-box  { padding: 28px 18px 28px 24px; }
+  .vm-pro-page__pricing-amount { font-size: 48px; }
+  .vm-pro-page__faq-item     { padding: 30px 20px; }
+  .vm-pro-page__cta-btn      { width: 100%; text-align: center; }
 }
 </style>
 
