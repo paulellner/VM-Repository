@@ -17,22 +17,22 @@
         "brightness": 88,
         "eyebrow": "velomatch PRO",
         "subtext": "Verschleißtracking, Strava-Integration und smarte Kaufvorschläge — alles in einem Dashboard. Für Fahrer, die es ernst meinen.",
-        "stat1_num": "12",
+        "stat1_num": "21",
         "stat1_lbl": "Marken",
-        "stat2_num": "88",
+        "stat2_num": "160",
         "stat2_lbl": "Modellreihen",
-        "stat3_num": "247",
+        "stat3_num": "401",
         "stat3_lbl": "Varianten"
       }
     },
     "stats": {
       "type": "vm-stats",
       "settings": {
-        "stat1_num": "12",
+        "stat1_num": "21",
         "stat1_lbl": "Marken",
-        "stat2_num": "88",
+        "stat2_num": "160",
         "stat2_lbl": "Modellreihen",
-        "stat3_num": "247",
+        "stat3_num": "401",
         "stat3_lbl": "Varianten"
       }
     },
